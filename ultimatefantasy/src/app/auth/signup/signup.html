@@ -1,0 +1,50 @@
+<div class="register-container">
+  <h2>Create Account</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <div class="field">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        placeholder="Enter your username"
+      />
+      @if (form.get('username')?.invalid && form.get('username')?.touched) {
+        <span class="error">Username is required</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="Enter your email"
+      />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <span class="error">Email is required</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Enter your password"
+      />
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="error">Password is required</span>
+      }
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">Register</button>
+
+  </form>
+
+  <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+</div>
