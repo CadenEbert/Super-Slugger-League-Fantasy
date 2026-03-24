@@ -1,26 +1,40 @@
-
+::ng-deep .html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
 
 ::ng-deep .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
-    
-    height: auto;
     background-color: #686868;
+    height: 4rem;
+    
 
+}
+
+.nav-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-left: 1.5rem;
+    font-weight: bold;
+    width: 100%;
 }
 
 .nav-button {
+    background: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: larger;
+    font-size: 1.4rem;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding-right: 1.5rem;
+    padding-left: 1rem;
+    width: 100%;
     
     
 }
 
-.nav-right {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-   
-}

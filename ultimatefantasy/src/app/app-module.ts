@@ -8,10 +8,11 @@ import { Signup } from './auth/signup/signup';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Homepage } from './home/homepage/homepage';
 import { Nav } from './nav/nav';
-
+import { Leagecreate } from './league/leaguecreate/leagecreate';
+import { Leaguejoin } from './league/leaguejoin/leaguejoin';
 
 @NgModule({
-  declarations: [App, Login, Signup, Homepage, Nav],
+  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Leaguejoin],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -1,10 +1,17 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { Login } from './auth/login/login';
-import { Signup } from './auth/signup/signup';
-import { Homepage } from './home/homepage/homepage';
+
+
 
 
 export const serverRoutes: ServerRoute[] = [
+  {
+    path: 'join-league',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'create-league',
+    renderMode: RenderMode.Server
+  },
   {
     path: 'login',
     renderMode: RenderMode.Server
