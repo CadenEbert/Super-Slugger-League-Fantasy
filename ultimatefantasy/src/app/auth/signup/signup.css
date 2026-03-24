@@ -1,0 +1,142 @@
+::ng-deep .html, ::ng-deep body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; 
+}
+
+::ng-deep .signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #258ac4;
+}
+
+::ng-deep .signup-panel {
+    height: 70%;
+    width: 30%;
+    background-color: #ffffff;
+    padding: 2rem;
+    margin: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+::ng-deep .signup-text {
+    font-size: 2.5rem;
+    
+    color: #333333;
+    border-bottom: 1px solid #ccc;
+    width: 80%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+::ng-deep .signup-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 1%;
+}
+
+::ng-deep #email {
+    padding: .7rem;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    
+}
+
+::ng-deep #username {
+    padding: 0.7rem;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+::ng-deep #password {
+    padding: 0.7rem;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+::ng-deep .username-text {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+    color: #333333;
+}
+
+::ng-deep .email-text {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+    color: #333333;
+}
+
+::ng-deep .password-text {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+    color: #333333;
+}
+
+::ng-deep #signup-button {
+    border:#333333;
+    background-color: #0bf5ca;
+    color: #333333;
+    padding: 0.75rem;
+    width: 40%;
+    height: 40%;
+    border-radius: 20px;
+    font-size:large;
+
+}
+
+::ng-deep .nothing-entered {
+    margin: .3rem;
+    
+    width: 100%;
+    height:100%;
+
+}
+
+::ng-deep .forgot-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333333;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+
+
+.error {
+    color: red;
+   
+    font-weight: bold;  
+    
+    
+}
+
+
+::ng-deep .login-button:hover {
+    background-color: #00d7b0;
+    color: #333333;
+}
+
+::ng-deep .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+  }

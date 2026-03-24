@@ -1,20 +1,43 @@
-<div>
-  <h1>Login</h1>
-  <form [formGroup]="form" (submit)="onSubmit()"> 
-    <label for="email">Email:</label>
-    <input type="email" id="email" formControlName="email" required>
+
+
+<div class="login-container">
+
+<div class="login-panel">
+  <h1 class="login-text">Login</h1>
+
+  <form class="login-form" [formGroup]="form" (submit)="onSubmit()"> 
+
+    <label class="email-text" for="email">Email:</label>
+    <input type="email" placeholder="Enter your password" id="email" formControlName="email" required>
+    <div class="nothing-entered">
     @if (form.get('email')?.invalid && form.get('email')?.touched) {
         <span class="error">Email is required</span>
       }
-    <br>  
-    <label for="password">Password:</label>
-    <input type="password" id="password" formControlName="password" required>
+      </div>
+   
+
+    <label class="password-text" for="password">Password:</label>
+    <input type="password" placeholder="Enter your password" id="password" formControlName="password" required>
+    
+      
+    
+    <div class="nothing-entered">
     @if (form.get('password')?.invalid && form.get('password')?.touched) {
         <span class="error">Password is required</span>
       }
-    <br>  
-    <button type="submit">Login</button>
-  </form>
+      </div>
 
-    <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+    
+    
+    <button class="login-button" type="submit">Login</button>
+  </form>
+  
+<div class="forgot-links">
+
+
+  <a routerLink="/forgot-password">Forgot password?</a>
+  <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+
+</div>
+</div>
 </div>

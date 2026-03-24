@@ -1,50 +1,47 @@
-<div class="register-container">
-  <h2>Create Account</h2>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
-    <div class="field">
-      <label for="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        formControlName="username"
-        placeholder="Enter your username"
-      />
-      @if (form.get('username')?.invalid && form.get('username')?.touched) {
-        <span class="error">Username is required</span>
-      }
+<div class="signup-container">
+  <div class="signup-panel">
+    <h2 class="signup-text">Create Account</h2>
+    <form class="signup-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="username-text" for="username">Username:</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Enter your username"
+        />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <span class="error">Username is required</span>
+        }
+      </div>
+      <div class="form-group">
+        <label class="email-text" for="email">Email:</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="error">Email is required</span>
+        }
+      </div>
+      <div class="form-group">
+        <label class="password-text" for="password">Password:</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Enter your password"
+        />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <span class="error">Password is required</span>
+        }
+      </div>
+      <button id="signup-button" type="submit" [disabled]="form.invalid">Sign Up</button>
+    </form>
+    <div class="forgot-links">
+      <p>Already have an account? <a routerLink="/login">Sign in</a></p>
     </div>
-
-    <div class="field">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-        placeholder="Enter your email"
-      />
-      @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="error">Email is required</span>
-      }
-    </div>
-
-    <div class="field">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        placeholder="Enter your password"
-      />
-      @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <span class="error">Password is required</span>
-      }
-    </div>
-
-    <button type="submit" [disabled]="form.invalid">Register</button>
-
-  </form>
-
-  <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+  </div>
 </div>
