@@ -1,0 +1,26 @@
+
+
+::ng-deep .nav-bar {
+    
+    
+    height: auto;
+    background-color: #686868;
+
+}
+
+.nav-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+    
+    
+}
+
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+   
+}

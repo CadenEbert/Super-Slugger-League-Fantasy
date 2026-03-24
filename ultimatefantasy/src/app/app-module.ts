@@ -7,9 +7,11 @@ import { Login } from './auth/login/login';
 import { Signup } from './auth/signup/signup';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Homepage } from './home/homepage/homepage';
+import { Nav } from './nav/nav';
+
 
 @NgModule({
-  declarations: [App, Login, Signup, Homepage],
+  declarations: [App, Login, Signup, Homepage, Nav],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideBrowserGlobalErrorListeners(),

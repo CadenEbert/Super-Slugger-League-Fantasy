@@ -13,12 +13,12 @@
     min-height: 100%;
     width: 100%;
     overflow: hidden;
-    background-color: #258ac4;
+    background-color: #dddfd1;
 }
 
 ::ng-deep .signup-panel {
     height: 70%;
-    width: 30%;
+    width: 20%;
     background-color: #ffffff;
     padding: 2rem;
     margin: 2rem;
@@ -91,7 +91,7 @@
 
 ::ng-deep #signup-button {
     border:#333333;
-    background-color: #0bf5ca;
+    background-color: #67c7f3;
     color: #333333;
     padding: 0.75rem;
     width: 40%;
@@ -130,8 +130,8 @@
 }
 
 
-::ng-deep .login-button:hover {
-    background-color: #00d7b0;
+::ng-deep #signup-button:hover {
+    background-color: #14a2c5;
     color: #333333;
 }
 

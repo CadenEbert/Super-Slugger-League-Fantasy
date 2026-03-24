@@ -8,7 +8,7 @@
   <form class="login-form" [formGroup]="form" (submit)="onSubmit()"> 
 
     <label class="email-text" for="email">Email:</label>
-    <input type="email" placeholder="Enter your password" id="email" formControlName="email" required>
+    <input type="email" placeholder="Enter your email" id="email" formControlName="email" required>
     <div class="nothing-entered">
     @if (form.get('email')?.invalid && form.get('email')?.touched) {
         <span class="error">Email is required</span>
