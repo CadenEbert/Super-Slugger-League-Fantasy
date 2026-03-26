@@ -1,6 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { LeagueService } from '../league-service';
-
 
 @Component({
   selector: 'app-myleagues',
@@ -9,25 +8,22 @@ import { LeagueService } from '../league-service';
   styleUrl: './myleagues.css',
 })
 export class Myleagues {
-
-  constructor(private leagueService: LeagueService) { }
   leagues: any[] = [];
 
-
+  constructor(
+    private leagueService: LeagueService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.leagueService.getLeagues().subscribe(leagues => {
+    this.leagueService.getLeaguesForCurrentUser().subscribe(leagues => {
       this.leagues = leagues;
       console.log('DATA:', leagues);
+      this.cdr.detectChanges();  // ← force Angular to re-render
     });
   }
 
-
-
   selectLeague(league: any) {
-    // Placeholder for selecting a league and navigating to its details page
     console.log('Selected league:', league);
   }
-
-
 }

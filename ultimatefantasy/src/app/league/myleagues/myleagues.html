@@ -14,6 +14,7 @@
                 <div class="leaguejoin-form">
                     <input type="text" class="form-control" placeholder="Enter League Code">
                     <button class="join-button">Join</button>
+                   
 
                 </div>
 
@@ -24,10 +25,10 @@
                     
                     
 
-                    <div (click)="selectLeague(league)" class="indiv-leagues" *ngFor="let league of leagues$ | async">
+                    <div (click)="selectLeague(league)" class="indiv-leagues" *ngFor="let league of leagues">
                         <h2>{{ league.name }}</h2>
                         <p>League Code: {{ league.id }}</p>
-                        <p>Members: {{ league.members}}</p>
+                        <p>Members: {{ league.memberCount}}</p>
 
                     </div>
 

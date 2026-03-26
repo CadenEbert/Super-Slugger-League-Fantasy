@@ -1,5 +1,40 @@
 <div class="leaguecreate-container">
-    <app-nav></app-nav>
-    <h1>Create League</h1>
-    <p>This is the create league page.</p>
+  <app-nav></app-nav>
+
+  <div class="leaguecreate-content">
+    <div class="league-container">
+      <h1 class="league-title">Create League</h1>
+
+      <form [formGroup]="leagueForm" (ngSubmit)="createLeague()" class="league-divider">
+
+        <div class="league-content">
+          <label for="leagueName">League Name:</label>
+          <input formControlName="leagueName" type="text" id="leagueName">
+        </div>
+
+        <div class="league-content">
+          <label for="leagueDescription">League Description:</label>
+          <input formControlName="leagueDescription" type="text" id="leagueDescription">
+        </div>
+
+        <div class="league-content">
+          <label for="leagueSize">League Size:</label>
+          <input formControlName="leagueSize" type="number" id="leagueSize" min="2" max="16">
+        </div>
+
+        <div class="league-content">
+          <label for="draftSettings">Draft Settings:</label>
+          <select formControlName="draftSettings" id="draftSettings">
+            <option value="standard">Snake</option>
+            <option value="auction">Auction</option>
+          </select>
+        </div>
+
+        <div class="create-league">
+          <button type="submit" [disabled]="leagueForm.invalid">Create League</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
 </div>
