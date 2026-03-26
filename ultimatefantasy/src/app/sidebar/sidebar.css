@@ -1,0 +1,103 @@
+.sidebar {
+    width: 230px;
+    background-color: #eed4ae;
+    padding: 20px;
+    height: 100vh;
+    font-size: 16px;
+    font-weight: bold;
+    position: fixed;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+
+.dark-theme {
+    background-color: #333;
+    color: #fff;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-right: 20px;
+}
+
+.sidebar-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    
+    text-align: left;
+    text-decoration: none;
+    font-size: 20px;
+    
+
+
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.sidebar-btn:hover {
+    background-color: rgb(124, 109, 91);
+}
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+}
+
+.change-theme {
+    background-color: rgb(82, 72, 59);
+    color: #fff;
+    border: 1px solid #000000;
+    padding: 7px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.menu-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.menu-button:hover {
+    background-color: rgb(124, 109, 91);
+}
+
+.close-button {
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 10px;
+    
+}
+

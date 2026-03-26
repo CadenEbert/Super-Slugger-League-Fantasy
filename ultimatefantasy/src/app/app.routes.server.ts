@@ -5,6 +5,10 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
+    path: 'league-page/:leagueId',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'my-leagues',
     renderMode: RenderMode.Server
   },

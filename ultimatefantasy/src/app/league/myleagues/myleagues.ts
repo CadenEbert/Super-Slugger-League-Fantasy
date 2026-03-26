@@ -1,5 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { LeagueService } from '../league-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-myleagues',
@@ -12,7 +13,8 @@ export class Myleagues {
 
   constructor(
     private leagueService: LeagueService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -24,6 +26,6 @@ export class Myleagues {
   }
 
   selectLeague(league: any) {
-    console.log('Selected league:', league);
+    this.router.navigate(['/league-page', league.id]);
   }
 }

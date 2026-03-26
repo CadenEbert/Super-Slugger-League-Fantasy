@@ -11,9 +11,11 @@ import { Nav } from './nav/nav';
 import { Leagecreate } from './league/leaguecreate/leagecreate';
 
 import { Myleagues } from './league/myleagues/myleagues';
+import { LeaguePage } from './league/league-page/league-page';
+import { Sidebar } from './sidebar/sidebar';
 
 @NgModule({
-  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Myleagues],
+  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Myleagues, LeaguePage, Sidebar],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
