@@ -19,7 +19,7 @@ export class Myleagues {
     this.leagueService.getLeaguesForCurrentUser().subscribe(leagues => {
       this.leagues = leagues;
       console.log('DATA:', leagues);
-      this.cdr.detectChanges();  // ← force Angular to re-render
+      this.cdr.detectChanges();  
     });
   }
 
