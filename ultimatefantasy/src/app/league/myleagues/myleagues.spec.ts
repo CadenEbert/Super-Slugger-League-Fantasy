@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Leaguejoin } from './leaguejoin';
+import { Myleagues } from './myleagues';
 
-describe('Leaguejoin', () => {
-  let component: Leaguejoin;
-  let fixture: ComponentFixture<Leaguejoin>;
+describe('Myleagues', () => {
+  let component: Myleagues;
+  let fixture: ComponentFixture<Myleagues>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Leaguejoin],
+      declarations: [Myleagues],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Leaguejoin);
+    fixture = TestBed.createComponent(Myleagues);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

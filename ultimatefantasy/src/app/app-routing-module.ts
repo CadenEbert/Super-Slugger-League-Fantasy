@@ -4,17 +4,17 @@ import { Login } from './auth/login/login';
 import { Signup } from './auth/signup/signup';
 import { Homepage } from './home/homepage/homepage';
 import { Leagecreate } from './league/leaguecreate/leagecreate';
-import { Leaguejoin } from './league/leaguejoin/leaguejoin';
+
+import { Myleagues } from './league/myleagues/myleagues';
 
 const routes: Routes = [
   { path: '', redirectTo: '/homepage', pathMatch: 'full' },
   { path: 'create-league', component: Leagecreate },
-  { path: 'join-league', component: Leaguejoin },
-
+  { path: 'my-leagues', component: Myleagues },
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
   { path: 'homepage', component: Homepage },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/' }
 
 ];
 

@@ -5,7 +5,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
-    path: 'join-league',
+    path: 'my-leagues',
     renderMode: RenderMode.Server
   },
   {

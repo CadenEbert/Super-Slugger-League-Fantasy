@@ -9,10 +9,11 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Homepage } from './home/homepage/homepage';
 import { Nav } from './nav/nav';
 import { Leagecreate } from './league/leaguecreate/leagecreate';
-import { Leaguejoin } from './league/leaguejoin/leaguejoin';
+
+import { Myleagues } from './league/myleagues/myleagues';
 
 @NgModule({
-  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Leaguejoin],
+  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Myleagues],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideBrowserGlobalErrorListeners(),

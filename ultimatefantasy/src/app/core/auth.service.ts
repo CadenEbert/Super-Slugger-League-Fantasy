@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthResponse, createClient } from '@supabase/supabase-js';
 import { Observable, from } from 'rxjs';
+import { SupabaseService } from './supabase';  
 
 
 @Injectable({
@@ -10,15 +11,12 @@ import { Observable, from } from 'rxjs';
 
 export class AuthService {
 
-    supabase = createClient(
-        environment.supabaseUrl,
-        environment.supabaseKey
-    );
+    constructor(private supabase: SupabaseService) {}
 
     signUp(email: string, password: string, username: string): Observable<AuthResponse> {
 
         
-            const promise = this.supabase.auth.signUp({
+            const promise = this.supabase.client.auth.signUp({
             email,
             password,
             options: {
@@ -32,7 +30,7 @@ export class AuthService {
     }
 
     login(email: string, password: string): Observable<AuthResponse> {
-        const promise = this.supabase.auth.signInWithPassword({
+        const promise = this.supabase.client.auth.signInWithPassword({
             email,
             password,
         });
