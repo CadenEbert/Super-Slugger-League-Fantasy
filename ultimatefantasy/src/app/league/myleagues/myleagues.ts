@@ -26,6 +26,7 @@ export class Myleagues {
   }
 
   selectLeague(league: any) {
+    console.log('Navigating with league:', league);
     this.router.navigate(['/league-page', league.id]);
   }
 }

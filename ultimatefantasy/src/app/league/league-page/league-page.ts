@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { LeagueService } from '../league-service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-league-page',
@@ -7,19 +10,23 @@ import { Component } from '@angular/core';
   styleUrl: './league-page.css',
 })
 export class LeaguePage {
-  league = {
-    id: 1,
-    name: 'Fantasy League 1',
-    description: 'A fun fantasy league for football fans.',
-    size: 10,
-    draftSettings: 'Standard',
-    members: [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-      { id: 3, name: 'Charlie' },
-    ],
-  };
 
 
-  
+  league: any = null;
+  @Input() leagueId: string | null = null;
+
+
+  constructor(private route: ActivatedRoute, private leagueService: LeagueService) { }
+
+  ngOnInit() {
+    const leagueId = this.leagueId || this.route.snapshot.paramMap.get('leagueId');
+    if (leagueId) {
+      this.leagueService.fetchLeagueDetails(leagueId).subscribe(
+        data => this.league = data,
+        error => console.error('Failed to fetch league:', error)
+      );
+    } else {
+      console.error('No league ID found in route');
+    }
+  }
 }
