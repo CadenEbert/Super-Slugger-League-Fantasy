@@ -1,17 +1,28 @@
 <app-sidebar></app-sidebar>
 <div class="leaguepage-container">
 
-    
-<h1 class="league-title">{{ league?.name }}</h1>    
+
+    <h1 class="league-title">{{ league?.name }}</h1>
 
     <div class="leaguepage-content">
-        
+
 
         <div class="league-header">
             <h2 class="league-description-header">Description:</h2>
             <p class="league-description">{{ league?.description }}</p>
         </div>
 
+       
+        <nav class="tab-nav">
+            <a class="route-button" routerLink="teams" routerLinkActive="active">Teams</a>
+            <a class="route-button" routerLink="schedule" routerLinkActive="active">Schedule</a>
+            <a class="route-button" routerLink="standings" routerLinkActive="active">Standings</a>
+            <a class="route-button" routerLink="free-agents" routerLinkActive="active">Free Agents</a>
+            <a class="route-button" routerLink="player-stats" routerLinkActive="active">Player Stats</a>
+            <a class="route-button" routerLink="draft-board" routerLinkActive="active">Draft Board</a>
+        </nav>
+        <router-outlet></router-outlet>
         
+
     </div>
 </div>

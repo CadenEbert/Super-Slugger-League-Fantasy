@@ -13,9 +13,31 @@ import { Leagecreate } from './league/leaguecreate/leagecreate';
 import { Myleagues } from './league/myleagues/myleagues';
 import { LeaguePage } from './league/league-page/league-page';
 import { Sidebar } from './sidebar/sidebar';
+import { Draft } from './league/league-components/draft/draft';
+import { Standings } from './league/league-components/standings/standings';
+import { Rosters } from './league/league-components/rosters/rosters';
+import { Schedule } from './league/league-components/schedule/schedule';
+import { FreeAgents } from './league/league-components/free-agents/free-agents';
+import { PlayerStats } from './league/league-components/player-stats/player-stats';
 
 @NgModule({
-  declarations: [App, Login, Signup, Homepage, Nav, Leagecreate, Myleagues, LeaguePage, Sidebar],
+  declarations: [
+    App,
+    Login,
+    Signup,
+    Homepage,
+    Nav,
+    Leagecreate,
+    Myleagues,
+    LeaguePage,
+    Sidebar,
+    Draft,
+    Standings,
+    Rosters,
+    Schedule,
+    FreeAgents,
+    PlayerStats,
+  ],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideBrowserGlobalErrorListeners(),

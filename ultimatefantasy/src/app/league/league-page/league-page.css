@@ -13,6 +13,7 @@
 .leaguepage-content {
   display: flex;
   flex-direction: column;
+  align-items: center;
   
 
   width: 60%;
@@ -58,7 +59,38 @@
   
 }
 
+.tab-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 20px;
+}
 
+.route-button {
+  padding: 10px 20px;
+  font-size: 1.7rem;
+  color: #333;
+  background-color: #dbccb5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  
+
+}
+
+.route-button.active,
+.route-button[aria-current="page"] {
+  background-color: #fceed9;
+  color: #222;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.route-button:not(.active):hover {
+  background-color: #e5d6b8;
+}
 
 
 
