@@ -1,0 +1,58 @@
+.settings-btn {
+    position: fixed;
+    top: 20px;
+    right: 70px;
+    z-index: 1100;
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.settings-btn:hover {
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(155, 136, 112);
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 500px;
+    height: 400px;
+}
+
+.popup.open {
+    display: block;
+}
+
+.settings-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+}
+
+.setting-section {
+    margin-bottom: 20px;
+
+    
+}
+
+.form-group {
+    display: flex;
+
+    margin-bottom: 15px;
+    gap:5px;
+}

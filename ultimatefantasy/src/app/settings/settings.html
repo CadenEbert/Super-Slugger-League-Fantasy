@@ -1,1 +1,43 @@
-<p>settings works!</p>
+<button *ngIf="!isSettingsOpen" class="settings-btn" (click)="toggleSettings()">League Settings</button>
+
+<div class="popup" *ngIf="isSettingsOpen">
+    <div class="popup-content">        
+        <div class="settings-header">
+        <h2>League Settings</h2>
+        <button class="close-button" (click)="toggleSettings()">X</button>
+        </div>
+
+        <div class="setting-section">
+            <h3>Add Position</h3>
+
+            <div class="form-group">
+            <input type="text" placeholder="Position Name" [(ngModel)]="newPositionName">
+            <button (click)="addPosition()">Add Position</button>
+            </div>
+
+        </div>
+
+        <div class="setting-section">
+            <h3>Add Players</h3>
+
+            <div class="form-group">
+            <input type="text" placeholder="Player Name" [(ngModel)]="newPlayerName">
+            <select [(ngModel)]="newPlayerPosition">
+                <option value="" disabled selected>Select Position</option>
+                <option *ngFor="let pos of positions" [value]="pos">{{ pos }}</option>
+            </select>
+            <button (click)="addPlayer()">Add Player</button>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <h3>Upload Player CSV</h3>
+
+            <div class="form-group">
+            <input type="file" (change)="handleFileInput($event)">
+            </div>
+        </div>
+        
+    </div>
+
+</div>

@@ -6,4 +6,16 @@ import { Component } from '@angular/core';
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
-export class Settings {}
+export class Settings {
+  isSettingsOpen = false;
+  positions: any[] = [];
+  players: any[] = [];
+
+  toggleSettings() {
+    this.isSettingsOpen = !this.isSettingsOpen;
+  }
+
+  addPlayer() {
+    this.players.push({ name: '', position: '' });
+  }
+}

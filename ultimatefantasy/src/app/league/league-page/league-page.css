@@ -62,12 +62,12 @@
 .tab-nav {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  
   margin-top: 20px;
 }
 
 .route-button {
-  padding: 10px 20px;
+  padding: 5px 10px;
   font-size: 1.7rem;
   color: #333;
   background-color: #dbccb5;
