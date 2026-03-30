@@ -1,0 +1,46 @@
+::ng-deep .free-agent-container {
+    display: flex;
+    flex-direction: column;
+      align-items: center;
+      
+    
+    height: 100%;
+    width: 100%;
+    
+    overflow: hidden;
+  }
+
+  .free-agent-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    
+    overflow-y: auto;
+  }
+.free-agent-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    padding: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    background-color: #fceed9;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    
+}
+
+.nameplate {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    
+    align-items: center;
+    justify-content: space-between;
+    
+        
+  
+  }

@@ -1,1 +1,14 @@
-<p>free-agents works!</p>
+<div class="free-agent-container">
+  <div class="free-agent-list">
+    <div class="free-agent-card" *ngFor="let player of freeAgents" class="free-agent-card">
+
+        <div class="nameplate">
+            <img [src]="player.photoUrl" alt="{{ player.name }}" class="player-photo" />
+            <h3>{{ player.name }}</h3>
+        </div>
+        
+      <p>Position: {{ player.position }}</p>
+      <button (click)="addToTeam(player)">Add to Team</button>
+    </div>
+  </div>
+</div>
