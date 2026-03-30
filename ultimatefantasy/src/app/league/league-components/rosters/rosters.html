@@ -1,1 +1,23 @@
-<p>rosters works!</p>
+<div class="roster-container" *ngIf="!isLoading; else loading">
+    <div class="my-leagues" *ngIf="rosters.length > 0">
+
+
+
+        <div class="indiv-leagues" *ngFor="let roster of rosters">
+            <h2>{{ roster.teamName }}</h2>
+            <p>General Manager: {{ roster.ownerId }}</p>
+            <p>Players: {{ roster.players.length }}</p>
+
+        </div>
+
+    </div>
+    <div class="roster-create" *ngIf="canCreateRoster">
+        <h3>Create New Roster</h3>
+        <input type="text" placeholder="Team Name" [(ngModel)]="newRosterName" />
+        <button (click)="createRoster()">Create</button>
+    </div>
+</div>
+
+<ng-template #loading>
+    <div class="loading-spinner">Loading...</div>
+</ng-template>

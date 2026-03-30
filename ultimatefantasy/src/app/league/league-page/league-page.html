@@ -1,5 +1,6 @@
 <app-sidebar></app-sidebar>
 <div class="leaguepage-container">
+    
 
 
     <h1 class="league-title">{{ league?.name }}</h1>
@@ -21,7 +22,9 @@
             <a class="route-button" routerLink="player-stats" routerLinkActive="active">Player Stats</a>
             <a class="route-button" routerLink="draft-board" routerLinkActive="active">Draft Board</a>
         </nav>
+        <div class="tab-content">
         <router-outlet></router-outlet>
+        </div>
         
 
     </div>

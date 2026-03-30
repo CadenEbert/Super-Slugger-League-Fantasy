@@ -63,4 +63,8 @@ export class AuthService {
         });
         return from(promise);
     }
+
+    getUserId(): string | null {
+        return this.userSubject.value?.id || null;
+    }
 }

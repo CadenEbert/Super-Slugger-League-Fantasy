@@ -9,7 +9,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Homepage } from './home/homepage/homepage';
 import { Nav } from './nav/nav';
 import { Leagecreate } from './league/leaguecreate/leagecreate';
-
+import { CommonModule } from '@angular/common';
 import { Myleagues } from './league/myleagues/myleagues';
 import { LeaguePage } from './league/league-page/league-page';
 import { Sidebar } from './sidebar/sidebar';
@@ -38,7 +38,7 @@ import { PlayerStats } from './league/league-components/player-stats/player-stat
     FreeAgents,
     PlayerStats,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),

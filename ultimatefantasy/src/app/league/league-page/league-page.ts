@@ -1,4 +1,4 @@
-import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LeagueService } from '../league-service';
 import { isPlatformBrowser } from '@angular/common';
@@ -16,13 +16,17 @@ export class LeaguePage {
   @Input() leagueId: string | null = null;
 
 
-  constructor(private route: ActivatedRoute, private leagueService: LeagueService) { }
+  constructor(private route: ActivatedRoute, private leagueService: LeagueService,
+     private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     const leagueId = this.leagueId || this.route.snapshot.paramMap.get('leagueId');
     if (leagueId) {
       this.leagueService.fetchLeagueDetails(leagueId).subscribe(
-        data => this.league = data,
+        data => {
+          this.league = data;
+          this.cdr.detectChanges();
+        },
         error => console.error('Failed to fetch league:', error)
       );
     } else {

@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: center;
     
-    background-color: #686868;
+    background-color: #dbccb5;
     height: 4rem;
     
 
@@ -16,7 +16,7 @@
 
 .nav-title {
     font-size: 1.5rem;
-    color: white;
+    color: rgb(0, 0, 0);
     margin-left: 1.5rem;
     font-weight: bold;
     width: 100%;
@@ -30,7 +30,7 @@
     font-size: 1.4rem;
     border: none;
     cursor: pointer;
-    color: white;
+    color: rgb(0, 0, 0);
     padding-right: 1.5rem;
     padding-left: 1rem;
     width: 100%;
