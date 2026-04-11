@@ -1,17 +1,16 @@
 const http = require("http");
 const URL = require("url").URL;
 const crypto = require("crypto");
-const app = require("./backend/app");
+const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
-const rostersRoutes = require('./routes/rosters');
+
 
 
 // import http from "http";
 // import { URL } from "url";
 // import crypto from "crypto";
 
-app.use(express.json());
-app.use('/api', rostersRoutes);
+
 
 // Normalize a port into a number, string, or false.
 const normalizedPort = (val) => {
