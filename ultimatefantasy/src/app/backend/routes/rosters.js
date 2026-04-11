@@ -1,16 +1,11 @@
 
-
 const express = require('express');
-const app = express();
-const rostersRoutes = require('./routes/rosters');
+const router = express.Router();
 
-
-app.use(express.json());
-app.use('/api', rostersRoutes);
-
-rostersRoutes.get('/api/rosters', (req, res) => {
-
-  
+// Example GET endpoint for /api/rosters
+router.get('/rosters', (req, res) => {
+  // Your logic here
+  res.json({ message: 'List of rosters' });
 });
 
-module.exports = app;
+module.exports = router;
