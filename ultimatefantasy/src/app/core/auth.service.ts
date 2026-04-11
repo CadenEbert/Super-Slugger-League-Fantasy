@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthResponse, createClient, Session } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { SupabaseService } from './supabase';  
+import { SupabaseService } from '../backend/supabase';  
 
 
 @Injectable({

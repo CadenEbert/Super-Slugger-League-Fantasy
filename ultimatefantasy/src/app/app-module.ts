@@ -19,7 +19,8 @@ import { Rosters } from './league/league-components/rosters/rosters';
 import { Schedule } from './league/league-components/schedule/schedule';
 import { FreeAgents } from './league/league-components/free-agents/free-agents';
 import { PlayerStats } from './league/league-components/player-stats/player-stats';
-import { Settings } from './settings/settings';
+import { Settings } from './settings/settings'; 
+
 
 @NgModule({
   declarations: [
