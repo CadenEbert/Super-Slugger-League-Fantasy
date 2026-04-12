@@ -38,14 +38,12 @@
             "styles": [
               "src/styles.css"
             ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
+            
+            "outputMode": "static",
             "security": {
               "allowedHosts": []
-            },
-            "ssr": {
-              "entry": "src/server.ts"
             }
+            
           },
           "configurations": {
             "production": {
@@ -78,7 +76,8 @@
               "buildTarget": "ultimatefantasy:build:production"
             },
             "development": {
-              "buildTarget": "ultimatefantasy:build:development"
+              "buildTarget": "ultimatefantasy:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

@@ -1,6 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Login } from './auth/login/login';
@@ -20,6 +20,7 @@ import { Schedule } from './league/league-components/schedule/schedule';
 import { FreeAgents } from './league/league-components/free-agents/free-agents';
 import { PlayerStats } from './league/league-components/player-stats/player-stats';
 import { Settings } from './settings/settings'; 
+import { AuthInterceptor } from './core/auth.interceptor';
 
 
 @NgModule({
@@ -40,13 +41,19 @@ import { Settings } from './settings/settings';
     FreeAgents,
     PlayerStats,
     Settings,
+    
   ],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule],
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
-  ],
+  provideBrowserGlobalErrorListeners(),
+  provideClientHydration(withEventReplay()),
+  provideHttpClient(withFetch(), withInterceptorsFromDi()), 
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }
+],
   bootstrap: [App],
 })
 export class AppModule {}

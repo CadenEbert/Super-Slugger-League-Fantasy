@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "server": "node server.js",
@@ -22,7 +22,9 @@
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.3",
     "@supabase/supabase-js": "^2.100.0",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "postgres": "^3.4.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

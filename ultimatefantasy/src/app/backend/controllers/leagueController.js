@@ -1,9 +1,12 @@
+const leagueService = require('../services/leagueService');
+
 exports.getLeagues = async (req, res) => {
     try {
-        const userId = req.user.id; // Make sure authentication middleware sets req.user
+        const userId = req.user.id; 
         const leagues = await leagueService.getLeaguesForUser(userId);
         res.json(leagues);
     } catch (error) {
+        console.error('getLeagues error:', error); 
         res.status(500).json({ error: 'Failed to fetch leagues' });
     }   
 };
