@@ -32,3 +32,18 @@ exports.getLeagueById = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch league' });
     }
 };
+
+exports.updateLeague = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const leagueData = req.body;
+        const updatedLeague = await leagueService.updateLeague(leagueId, leagueData);
+        if (updatedLeague) {
+            res.json(updatedLeague);
+        } else {
+            res.status(404).json({ error: 'League not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update league' });
+    }
+};

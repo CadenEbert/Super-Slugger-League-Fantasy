@@ -14,7 +14,4 @@ router.get('/leagues/:id', leagueController.getLeagueById);
 
 router.put('/leagues/:id', leagueController.updateLeague);
 
-
-router.delete('/leagues/:id', leagueController.deleteLeague);
-
 module.exports = router;

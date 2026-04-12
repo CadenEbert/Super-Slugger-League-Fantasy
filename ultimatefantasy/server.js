@@ -1,8 +1,14 @@
 const http = require("http");
 const URL = require("url").URL;
 const crypto = require("crypto");
-const app = require("./backend/app");
+const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
+
+
+
+// import http from "http";
+// import { URL } from "url";
+// import crypto from "crypto";
 
 
 
