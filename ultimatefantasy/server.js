@@ -5,8 +5,6 @@ const crypto = require("crypto");
 const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
 
-console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
-console.log('SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? 'Loaded' : 'Missing');
 
 
 

@@ -7,13 +7,12 @@ function authMiddleware(req, res, next) {
   }
   const token = authHeader.split(' ')[1];
   try {
-    // Replace 'your-secret' with your actual JWT secret or use the public key if using RS256
-    const decoded = jwt.decode(token); // Use jwt.verify(token, secret) for real validation
+    const decoded = jwt.decode(token); 
     if (!decoded) {
       return res.status(401).json({ message: 'Invalid token' });
     }
     req.user = decoded;
-    req.user.id = decoded.sub; // Ensure user ID is set for downstream use
+    req.user.id = decoded.sub; 
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid token' });

@@ -3,49 +3,18 @@ import { defer } from 'rxjs';
 import { Observable, from, map, switchMap, filter, take, tap, of, pipe } from 'rxjs';
 import { SupabaseService } from '../../backend/supabase';
 import { AuthService } from '../../core/auth.service';
-
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeagueCompService {
 
-  constructor(private supabase: SupabaseService, private authService: AuthService) { }
+  constructor(private http: HttpClient, private supabase: SupabaseService, private authService: AuthService) { }
 
-  getAllRosters(leagueId: string): Observable<any[]> {
-    if (!leagueId || leagueId === 'null') {
-      return of([]);
-    }
+  getAllRosters(leagueId): Observable<any[]> {
 
-    return defer(() =>
-      from(
-        this.supabase.client
-          .from('rosters')
-          .select(`
-        id,
-        team_name,
-        owner_id,
-        roster_players (
-          player_id,
-          position
-        )
-      `)
-          .eq('league_id', leagueId)
-      ).pipe(
-        map(res => {
-          if (res.error) throw new Error(res.error.message);
-          return res.data.map((roster: any) => ({
-            id: roster.id,
-            teamName: roster.team_name,
-            ownerId: roster.owner_id,
-            players: roster.roster_players.map((rp: any) => ({
-              playerId: rp.player_id,
-              position: rp.position
-            }))
-          }));
-        })
-      ));
-
+      return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters`);
   }
 
   canCreateRoster(leagueId: string, userId: string): Observable<boolean> {
@@ -53,42 +22,18 @@ export class LeagueCompService {
       return of(false);
     }
 
-    return from(
-      this.supabase.client
-        .from('rosters')
-        .select('id')
-        .eq('league_id', leagueId)
-        .eq('owner_id', userId)
-    ).pipe(
-      map(res => {
-        if (res.error) throw new Error(res.error.message);
-        return res.data.length === 0;
-      })
-    );
-  }
+    return this.http.get<{ canCreate: boolean }>(
+      `/api/leagues/${leagueId}/rosters/can-create?userId=${userId}` 
+  ).pipe(
+      map(res => res.canCreate) 
+  );  }
 
   rosterCreate(leagueId: string, teamName: string, userId: string): Observable<any> {
     if (!leagueId || leagueId === 'null') {
       return of(null);
     }
 
-    return from(
-      this.supabase.client
-        .from('rosters')
-        .insert({
-          league_id: leagueId,
-          team_name: teamName,
-          owner_id: userId
-        })
-        .select() 
-    ).pipe(
-      map(res => {
-        if (res.error) throw new Error(res.error.message);
-        if (!res.data) throw new Error('Roster creation failed');
-        return res.data[0];
-      })
-    );
+    return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId });
   }
-
 }
 

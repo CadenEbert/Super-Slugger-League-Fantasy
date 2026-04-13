@@ -14,9 +14,6 @@ exports.getLeaguesForUser = async (userId) => {
   `)
     .eq('user_id', userId);
 
-  console.log('rows:', JSON.stringify(rows, null, 2));
-  console.log('error:', error);
-
   if (error) throw new Error(error.message);
 
   const leagues = (rows || []).map(row => ({
