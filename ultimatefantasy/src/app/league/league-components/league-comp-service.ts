@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import { defer } from 'rxjs';
-import { Observable, from, map, switchMap, filter, take, tap, of, pipe } from 'rxjs';
-import { SupabaseService } from '../../backend/supabase';
-import { AuthService } from '../../core/auth.service';
+import { Observable,  map, of} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -10,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LeagueCompService {
 
-  constructor(private http: HttpClient, private supabase: SupabaseService, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
   getAllRosters(leagueId): Observable<any[]> {
 
