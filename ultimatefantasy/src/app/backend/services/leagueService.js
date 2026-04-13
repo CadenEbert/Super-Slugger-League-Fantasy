@@ -1,17 +1,21 @@
-const supabase = require('../supabase'); // Adjust import as needed
+const supabase = require('../supabase'); 
 
 exports.getLeaguesForUser = async (userId) => {
   const { data: rows, error } = await supabase.client
     .from('league_members')
     .select(`
-      role,
-      leagues (
-        id,
-        name,
-        created_at
-      )
-    `)
+    role,
+    league_id,
+    leagues (
+      id,
+      name,
+      created_at
+    )
+  `)
     .eq('user_id', userId);
+
+  console.log('rows:', JSON.stringify(rows, null, 2));
+  console.log('error:', error);
 
   if (error) throw new Error(error.message);
 

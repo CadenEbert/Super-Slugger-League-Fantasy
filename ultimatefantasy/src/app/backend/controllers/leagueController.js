@@ -3,6 +3,8 @@ const leagueService = require('../services/leagueService');
 exports.getLeagues = async (req, res) => {
     try {
         const userId = req.user.id; 
+        console.log('userId:', userId);
+        console.log('req.user:', req.user);
         const leagues = await leagueService.getLeaguesForUser(userId);
         res.json(leagues);
     } catch (error) {
