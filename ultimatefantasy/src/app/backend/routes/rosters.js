@@ -10,4 +10,6 @@ router.get('/leagues/:leagueId/rosters/can-create', authMiddleware, rosterContro
 
 router.post('/leagues/:leagueId/rosters', authMiddleware, rosterController.createRoster);
 
+router.get('/leagues/:leagueId/rosters/:rosterId', authMiddleware, rosterController.getRosterById);
+
 module.exports = router;

@@ -12,6 +12,7 @@ import { PlayerStats } from './league/league-components/player-stats/player-stat
 import { Rosters } from './league/league-components/rosters/rosters';
 import { Schedule } from './league/league-components/schedule/schedule';
 import { Standings } from './league/league-components/standings/standings';
+import { RosterPage } from './league/league-components/roster-page/roster-page';
 
 const routes: Routes = [
   { path: '', redirectTo: '/homepage', pathMatch: 'full' },
@@ -20,7 +21,8 @@ const routes: Routes = [
     component: LeaguePage,
     children: [
       { path: '', redirectTo: 'teams', pathMatch: 'full' },
-      { path: 'teams', component: Rosters },
+      { path: 'teams', component: Rosters},
+      { path: 'teams/:rosterId', component: RosterPage },
       { path: 'schedule', component: Schedule },
       { path: 'standings', component: Standings },
       { path: 'free-agents', component: FreeAgents },

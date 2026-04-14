@@ -1,15 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Observable,  map, of} from 'rxjs';
+import { BehaviorSubject, Observable,  map, of} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeagueCompService {
+  
+
 
   constructor(private http: HttpClient) { }
 
-  getAllRosters(leagueId): Observable<any[]> {
+  getProfile(): Observable<any> {
+    return this.http.get('/api/profile');
+  }
+
+  getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
+  }
+
+  getAllRosters(leagueId: string): Observable<any[]> {
 
       return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters`);
   }
@@ -31,6 +41,10 @@ export class LeagueCompService {
     }
 
     return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId });
+  }
+
+  getFreeAgents(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`);
   }
 }
 

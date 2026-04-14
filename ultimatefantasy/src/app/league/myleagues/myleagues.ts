@@ -15,6 +15,8 @@ import { AuthService } from '../../core/auth.service';
 export class Myleagues {
   leagues: any[] = [];
 
+  
+
   constructor(
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
@@ -23,6 +25,7 @@ export class Myleagues {
   ) { }
 
   ngOnInit() {
+
     this.authService.session$.pipe(
       filter(session => {
         console.log('Session in myleagues:', session);
@@ -35,7 +38,11 @@ export class Myleagues {
       console.log('DATA:', leagues);
       this.cdr.detectChanges();
     });
+
+    
   }
+
+  
 
   selectLeague(league: any) {
     console.log('Navigating with league:', league);

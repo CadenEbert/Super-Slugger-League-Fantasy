@@ -3,9 +3,22 @@ const rosterService = require('../services/rosterService');
 exports.getRoster = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
+        
         const roster = await rosterService.getRoster(leagueId);
+        
         res.json(roster);
     } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch roster' });
+    }
+}
+
+exports.getRosterById = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const roster = await rosterService.getRosterById(rosterId);
+        res.json(roster);
+    }
+    catch (error) {
         res.status(500).json({ error: 'Failed to fetch roster' });
     }
 }
@@ -18,6 +31,7 @@ exports.canCreateRoster = async (req, res) => {
         res.json({ canCreate });
     } catch (error) {
         res.status(500).json({ error: 'Failed to check roster creation' });
+        console.error('canCreateRoster error:', error.message);
     }
 }
 

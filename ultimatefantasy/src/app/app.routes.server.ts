@@ -29,6 +29,9 @@ export const serverRoutes: ServerRoute[] = [
     path: 'league-page/:leagueId/draft-board',
     renderMode: RenderMode.Server
   },
+  { path: 'league-page/:leagueId/teams/:rosterId', 
+    renderMode: RenderMode.Server
+  },
   {
     path: 'my-leagues',
     renderMode: RenderMode.Server

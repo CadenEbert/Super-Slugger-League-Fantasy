@@ -1,7 +1,10 @@
 import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LeagueService } from '../league-service';
 import { isPlatformBrowser } from '@angular/common';
+import { LeagueCompService } from '../league-components/league-comp-service';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-league-page',
@@ -10,6 +13,7 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrl: './league-page.css',
 })
 export class LeaguePage {
+  
 
 
   league: any = null;
@@ -32,5 +36,8 @@ export class LeaguePage {
     } else {
       console.error('No league ID found in route');
     }
+
+    
   }
+
 }

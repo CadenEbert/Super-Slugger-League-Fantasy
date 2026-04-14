@@ -7,6 +7,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { filter } from 'rxjs/internal/operators/filter';
 import { map } from 'rxjs/internal/operators/map';
 import { AuthService } from '../../../core/auth.service';
+import { Router } from '@angular/router';
 
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -20,11 +21,17 @@ import { ChangeDetectorRef } from '@angular/core';
 export class Rosters {
   rosters: any[] = [];
   canCreateRoster: boolean = false;
+
+  profile: {
+    username: string;
+  } | null = null;
+
   constructor(
     private leagueService: LeagueCompService,
      private route: ActivatedRoute,
      private authService: AuthService,
-     private cdr: ChangeDetectorRef) { }
+     private cdr: ChangeDetectorRef,
+     private router: Router) { }
   @Input() leagueId: string | null = null;
 
   newRosterName: string = '';
@@ -48,6 +55,13 @@ export class Rosters {
       this.cdr.detectChanges();
     });
 
+    this.leagueService.getProfile().subscribe((profile: any) => {
+      this.profile = profile;
+      console.log('Profile data:', profile);
+      this.cdr.detectChanges();
+    });
+
+
     this.route.parent?.params.pipe(
       map(params => params['leagueId']),
       filter(leagueId => !!leagueId),
@@ -63,6 +77,7 @@ export class Rosters {
       this.currentUserId = this.authService.getUserId();
       this.isLoading = false;
     });
+    
   }
 
   createRoster() {
@@ -86,6 +101,16 @@ export class Rosters {
     
 
   }
+
+  onRosterClick(roster: any) {
+  console.log('Navigating with roster:', roster);
+  this.router.navigate([
+    '/league-page',
+    this.leagueId,
+    'teams',
+    roster.id
+  ]);
+}
 
 
 

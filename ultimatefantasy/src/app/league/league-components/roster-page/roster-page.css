@@ -19,14 +19,3 @@
      padding-right: 10px;
      font-size: 1.2em;
 }
-
-.my-leagues {
-    height: 700px;
-    overflow-y: auto;
-    
-}
-  
-.roster-container {
-  
-  overflow-y: auto;
-}

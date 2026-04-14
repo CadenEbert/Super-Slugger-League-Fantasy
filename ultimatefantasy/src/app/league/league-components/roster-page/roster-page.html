@@ -1,0 +1,37 @@
+<div class="roster-container">
+    <div class="my-leagues">
+
+
+
+       
+
+        <mat-card *ngFor="let p of players" class="indiv-players">
+            <mat-accordion>
+                <mat-expansion-panel class="player-info">
+                    <mat-expansion-panel-header class="player-header">
+                        <mat-panel-title class="player-header">
+                            Name: {{ p.character.characterName }}
+                        </mat-panel-title>
+                        <mat-content class="player-header">
+                            Position: {{ p.position }} | Batting Order: {{ p.batting_order }}
+                        </mat-content>
+                    </mat-expansion-panel-header>
+
+                  
+                    <div>
+                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
+                        <p>Batting Arm: {{ p.character.battingArm }}</p>
+                        <p>Character Class: {{ p.character.characterClass }}</p>
+                        <p>Weight: {{ p.character.weight }}</p>
+                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
+                        <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
+                    </div>
+                    
+
+                </mat-expansion-panel>
+            </mat-accordion>
+        </mat-card>
+
+    </div>
+
+</div>

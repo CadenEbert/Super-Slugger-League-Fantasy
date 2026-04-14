@@ -1,6 +1,11 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withFetch,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Login } from './auth/login/login';
@@ -19,9 +24,11 @@ import { Rosters } from './league/league-components/rosters/rosters';
 import { Schedule } from './league/league-components/schedule/schedule';
 import { FreeAgents } from './league/league-components/free-agents/free-agents';
 import { PlayerStats } from './league/league-components/player-stats/player-stats';
-import { Settings } from './settings/settings'; 
+import { Settings } from './settings/settings';
 import { AuthInterceptor } from './core/auth.interceptor';
-
+import { RosterPage } from './league/league-components/roster-page/roster-page';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -41,19 +48,19 @@ import { AuthInterceptor } from './core/auth.interceptor';
     FreeAgents,
     PlayerStats,
     Settings,
-    
+    RosterPage,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule, MatCardModule, MatExpansionModule],
   providers: [
-  provideBrowserGlobalErrorListeners(),
-  provideClientHydration(withEventReplay()),
-  provideHttpClient(withFetch(), withInterceptorsFromDi()), 
-  {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true
-  }
-],
+    provideBrowserGlobalErrorListeners(),
+    provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [App],
 })
 export class AppModule {}

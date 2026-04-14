@@ -4,7 +4,7 @@
   
   height: 100%;
   width: 100%;
-  background-color: #fceed9;
+  background-color: #f1f1f1;
   overflow: hidden;
 }
 
@@ -27,9 +27,9 @@
   
   
   
-  height: 70%;
-  width: 50%;
-  background-color: #dbccb5;
+  height: 80%;
+  width: 60%;
+  background-color: #90bffd;
   border-radius: 20px;
 }
 
@@ -37,6 +37,7 @@
     font-size: 2.5em;
     margin-bottom: 20px;
     border-bottom: black solid 2px;
+    padding:10px;
     width: 80%;
     text-align: center;
 }
@@ -117,7 +118,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem;
-    background-color: #fceed9;
+    background-color: white;
     border-radius: 4px;
     cursor: pointer;
     margin-bottom: 1rem;

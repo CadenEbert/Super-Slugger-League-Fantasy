@@ -1,14 +1,35 @@
-<div class="free-agent-container">
-  <div class="free-agent-list">
-    <div class="free-agent-card" *ngFor="let player of freeAgents" class="free-agent-card">
+<div class="roster-container">
+  <div class="my-leagues">
 
-        <div class="nameplate">
-            <img [src]="player.photoUrl" alt="{{ player.name }}" class="player-photo" />
-            <h3>{{ player.name }}</h3>
-        </div>
-        
-      <p>Position: {{ player.position }}</p>
-      <button (click)="addToTeam(player)">Add to Team</button>
-    </div>
+
+
+
+
+    <mat-card *ngFor="let p of players" class="indiv-players">
+      <mat-accordion>
+        <mat-expansion-panel class="player-info">
+          <mat-expansion-panel-header class="player-header">
+            <mat-panel-title class="player-header">
+              {{ p?.characterName || 'Unknown' }}
+            </mat-panel-title>
+            <mat-content class="player-header">
+              Class: {{ p?.characterClass || 'N/A' }}
+            </mat-content>
+          </mat-expansion-panel-header>
+
+          <div>
+            <p>Pitching Arm: {{ p?.pitchingArm || 'N/A' }}</p>
+            <p>Batting Arm: {{ p?.battingArm || 'N/A' }}</p>
+            <p>Character Class: {{ p?.characterClass || 'N/A' }}</p>
+            <p>Weight: {{ p?.weight || 'N/A' }}</p>
+            <p>Captain: {{ p?.captain ? 'Yes' : 'No' }}</p>
+            <p>Star Pitch: {{ p?.starPitch || 'N/A' }}</p>
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card>
+
   </div>
+
 </div>
