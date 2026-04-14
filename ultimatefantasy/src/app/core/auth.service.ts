@@ -12,7 +12,7 @@ import { SupabaseService } from '../backend/supabase';
 export class AuthService {
 
     
-    private sessionSubject = new BehaviorSubject<Session | null>(null);
+    private sessionSubject = new BehaviorSubject<Session | null | undefined>(undefined);
     private userSubject = new BehaviorSubject<any>(null);
 
     session$ = this.sessionSubject.asObservable();

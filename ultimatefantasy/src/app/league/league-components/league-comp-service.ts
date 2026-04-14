@@ -44,12 +44,13 @@ getUsersRosterId(leagueId: string, userId: string): Observable<string> {
     );
   }
 
-  rosterCreate(leagueId: string, teamName: string, userId: string): Observable<any> {
+  rosterCreate(leagueId: string, teamName: string, userId: string, userName: string | null): Observable<any> {
     if (!leagueId || leagueId === 'null') {
       return of(null);
     }
+    console.log('Creating roster with:', { leagueId, teamName, userId, userName });
 
-    return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId });
+    return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId, userName });
   }
 
   getFreeAgents(leagueId: string): Observable<any[]> {

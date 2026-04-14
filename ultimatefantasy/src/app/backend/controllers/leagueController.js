@@ -17,7 +17,8 @@ exports.createLeague = async (req, res) => {
     try {
         const userId = req.user.id;
         const leagueData = req.body;
-        const newLeague = await leagueService.createLeague(userId, leagueData);
+        const userName = req.user.name || 'Unknown User';
+        const newLeague = await leagueService.createLeague(userId, leagueData, userName);
         res.status(201).json(newLeague);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create league' });

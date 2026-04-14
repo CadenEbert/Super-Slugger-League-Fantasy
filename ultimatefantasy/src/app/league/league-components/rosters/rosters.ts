@@ -88,7 +88,7 @@ export class Rosters {
       console.error('Missing leagueId or userId');
       return;
     }
-    this.leagueService.rosterCreate(this.leagueId!, this.newRosterName, this.currentUserId).subscribe({
+    this.leagueService.rosterCreate(this.leagueId!, this.newRosterName, this.currentUserId, this.profile?.username ?? null).subscribe({
       next: roster => {
         console.log('Roster created:', roster);
         this.rosters.push(roster);

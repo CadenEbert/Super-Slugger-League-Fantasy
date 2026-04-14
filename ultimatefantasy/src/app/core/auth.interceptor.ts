@@ -2,15 +2,15 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
 import { AuthService } from './auth.service';  // adjust path if needed
-import { switchMap, take } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    console.log('AuthInterceptor intercept() called for:', req.url);
     return this.authService.session$.pipe(
+      filter(session => session !== undefined), 
       take(1),
       switchMap(session => {
         if (!session?.access_token) return next.handle(req);
@@ -18,7 +18,6 @@ export class AuthInterceptor implements HttpInterceptor {
         const cloned = req.clone({
           headers: req.headers.set('Authorization', `Bearer ${session.access_token}`)
         });
-        console.log('Attaching Authorization header:', cloned.headers.get('Authorization'));
         return next.handle(cloned);
       })
     );

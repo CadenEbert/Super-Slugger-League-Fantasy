@@ -13,31 +13,38 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './league-page.css',
 })
 export class LeaguePage {
-  
-
-
   league: any = null;
   @Input() leagueId: string | null = null;
 
-
-  constructor(private route: ActivatedRoute, private leagueService: LeagueService,
-     private cdr: ChangeDetectorRef) { }
+  constructor(
+    private route: ActivatedRoute,
+    private leagueService: LeagueService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    const leagueId = this.leagueId || this.route.snapshot.paramMap.get('leagueId');
-    if (leagueId) {
-      this.leagueService.fetchLeagueDetails(leagueId).subscribe(
-        data => {
-          this.league = data;
-          this.cdr.detectChanges();
-        },
-        error => console.error('Failed to fetch league:', error)
-      );
+    if (this.leagueId) {
+      this.fetchLeague(this.leagueId);
     } else {
-      console.error('No league ID found in route');
+      
+      this.route.paramMap.subscribe(params => {
+        const leagueId = params.get('leagueId');
+        if (leagueId) {
+          this.fetchLeague(leagueId);
+        } else {
+          console.error('No league ID found in route');
+        }
+      });
     }
-
-    
   }
 
+  private fetchLeague(leagueId: string) {
+    this.leagueService.fetchLeagueDetails(leagueId).subscribe({
+      next: data => {
+        this.league = data;
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to fetch league:', err)
+    });
+  }
 }

@@ -15,13 +15,16 @@ export class LeagueService {
   }
 
  
-  
+  getProfile(): Observable<any> {
+    return this.http.get('/api/profile');
+  }
 
   createLeague(leagueData: {
     leagueName: string;
     leagueDescription: string;
     leagueSize: number;
     draftSettings: any;
+    userName?: string;
   }): Observable<any> {
     return this.authService.user$.pipe(
       take(1),

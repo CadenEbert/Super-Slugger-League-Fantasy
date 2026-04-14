@@ -40,6 +40,7 @@ exports.getLeaguesForUser = async (userId) => {
 };
 
 exports.createLeague = async (userId, leagueData) => {
+  console.log('Creating league with data:', leagueData, 'for userId:', userId);
 
   const { data: leagueArr, error: leagueError } = await supabase.client
     .from('leagues')
@@ -48,7 +49,8 @@ exports.createLeague = async (userId, leagueData) => {
       description: leagueData.leagueDescription,
       size: leagueData.leagueSize,
       draft_settings: leagueData.draftSettings,
-      owner_id: userId
+      owner_id: userId,
+      owner_username: leagueData.userName || 'Unknown User'
     })
     .select();
 

@@ -5,7 +5,7 @@
 
         <div class="indiv-leagues" *ngFor="let roster of rosters" (click)="onRosterClick(roster)">
             <h2>{{ roster.teamName }}</h2>
-            <p>General Manager: {{ roster.ownerId }}</p>
+            <p>General Manager: {{ roster.owner_username }}</p>
             <p>Stadium: Peaches Ice Garden</p>
 
         </div>

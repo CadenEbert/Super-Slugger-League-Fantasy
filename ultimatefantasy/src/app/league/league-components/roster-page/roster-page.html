@@ -1,9 +1,11 @@
 <div class="roster-container">
-    <div class="my-leagues">
+    <div>
 
 
-
-       
+        
+        <div class="no-players" *ngIf="players.length === 0">
+            <p>No players on this roster yet.</p>
+        </div>
 
         <mat-card *ngFor="let p of players" class="indiv-players">
             <mat-accordion>

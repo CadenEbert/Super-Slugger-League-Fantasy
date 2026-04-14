@@ -40,7 +40,9 @@ exports.createRoster = async (req, res) => {
         const leagueId = req.params.leagueId;
         const userId = req.user.id; 
         const teamName = req.body.teamName;
-        const newRoster = await rosterService.createRoster(leagueId, userId, teamName);
+        const userName = req.body.userName || 'Unknown User';
+        console.log('Received create roster request with:', { leagueId, userId, teamName, userName });
+        const newRoster = await rosterService.createRoster(leagueId, userId, teamName, userName);
         res.status(201).json(newRoster);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create roster' });

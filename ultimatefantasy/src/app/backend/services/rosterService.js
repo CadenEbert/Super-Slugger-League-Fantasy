@@ -6,7 +6,8 @@ exports.getRoster = async (leagueId) => {
         .select(`
             id,
             team_name,
-            owner_id
+            owner_id,
+            owner_username
         `)
         .eq('league_id', leagueId);
 
@@ -18,7 +19,8 @@ exports.getRoster = async (leagueId) => {
     return (data || []).map(roster => ({
         id: roster.id,
         teamName: roster.team_name,
-        ownerId: roster.owner_id
+        ownerId: roster.owner_id,
+        owner_username: roster.owner_username
     }));
 };
 
@@ -80,14 +82,15 @@ exports.canCreateRoster = async (leagueId, userId) => {
     return !data;
 }
 
-exports.createRoster = async (leagueId, userId, teamName) => {
+exports.createRoster = async (leagueId, userId, teamName, userName) => {
+    console.log('Creating roster with:', { leagueId, userId, teamName, userName });
     const { data, error } = await supabase.client
         .from('rosters')
         .insert({
             league_id: leagueId,
             team_name: teamName,
-            owner_id: userId
-
+            owner_id: userId,
+            owner_username: userName || 'Unknown User'
         })
         .select()
         .single();
@@ -98,6 +101,7 @@ exports.createRoster = async (leagueId, userId, teamName) => {
         id: data.id,
         teamName: data.team_name,
         ownerId: data.owner_id,
+        owner_username: data.owner_username,
         players: []
     };
 }
