@@ -8,33 +8,32 @@
         </div>
 
         <div class="setting-section">
-            <h3>Add Position</h3>
+            <h3>Draft Settings</h3>
 
             <div class="form-group">
-            <input type="text" placeholder="Position Name" [(ngModel)]="newPositionName">
-            <button (click)="addPosition()">Add Position</button>
-            </div>
-
-        </div>
-
-        <div class="setting-section">
-            <h3>Add Players</h3>
-
-            <div class="form-group">
-            <input type="text" placeholder="Player Name" [(ngModel)]="newPlayerName">
-            <select [(ngModel)]="newPlayerPosition">
-                <option value="" disabled selected>Select Position</option>
-                <option *ngFor="let pos of positions" [value]="pos">{{ pos }}</option>
+            <select [(ngModel)]="newDraftSetting">
+                <option value="" disabled selected>Select Draft Type</option>
+                <option *ngFor="let setting of draftSettings" [value]="setting">{{ setting }}</option>
             </select>
-            <button (click)="addPlayer()">Add Player</button>
+            <button (click)="updateDraftSettings(newDraftSetting)">Save</button>
             </div>
+
         </div>
 
-        <div class="setting-section">
-            <h3>Upload Player CSV</h3>
-
+        <div> 
+            <h3>Set Roster Limit</h3>
             <div class="form-group">
-            <input type="file" (change)="handleFileInput($event)">
+                <input type="number" [(ngModel)]="rosterLimit" placeholder="Enter roster limit" />
+                <button (click)="updateRosterLimit(rosterLimit)">Save</button>
+            </div>
+
+        </div>
+
+
+        <div class="setting-section">
+            <h3>Delete League</h3>
+            <div class="form-group">
+                <button (click)="deleteLeague()">Delete League</button>
             </div>
         </div>
         

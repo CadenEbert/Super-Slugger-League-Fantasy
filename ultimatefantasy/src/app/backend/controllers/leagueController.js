@@ -70,3 +70,54 @@ exports.getUsersRosterId = async (req, res) => {
     }
 
 }
+
+exports.deleteLeague = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const deleted = await leagueService.deleteLeague(leagueId);
+        if (deleted) {
+            res.json({ message: 'League deleted successfully' });
+        }
+        else {
+            res.status(404).json({ error: 'League not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to delete league' });
+    }
+};
+
+exports.updateDraftSettings = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const { draftSettings } = req.body;
+        const updatedLeague = await leagueService.updateDraftSettings(leagueId, draftSettings);
+        if (updatedLeague) {
+            res.json({ message: 'Draft settings updated successfully' });
+        }
+        else {
+            res.status(404).json({ error: 'League not found' });
+        } 
+    }
+        catch (error) {
+            res.status(500).json({ error: 'Failed to update draft settings' });
+        }
+};
+
+exports.updateRosterLimit = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const { rosterLimit } = req.body;
+        console.log('Received request to update roster limit:', leagueId, rosterLimit);
+        const updatedLeague = await leagueService.updateRosterLimit(leagueId, rosterLimit);
+        if (updatedLeague) {
+            res.json({ message: 'Roster limit updated successfully' });
+        }
+        else {  
+            res.status(404).json({ error: 'League not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to update roster limit' });
+    }
+};

@@ -12,14 +12,25 @@
           <input formControlName="leagueName" type="text" id="leagueName">
         </div>
 
-        <div class="league-content">
-          <label for="leagueDescription">League Description:</label>
-          <input formControlName="leagueDescription" type="text" id="leagueDescription">
+
+       
+        <div class="roster-content">
+          
+          <div class="roster-limit">
+          <label for="roster_size">Roster Limit:</label>
+          <input formControlName="roster_size" type="number" id="roster_size" min="9" max="13">
+          </div>
+          
+          <div class="roster-size-note" *ngIf="leagueForm.get('roster_size')?.invalid">
+            <p>Note: Roster size must be between 9 and 13 players.</p>
+          </div>
+         
         </div>
+        
 
         <div class="league-content">
           <label for="leagueSize">League Size:</label>
-          <input formControlName="leagueSize" type="number" id="leagueSize" min="2" max="16">
+          <input formControlName="leagueSize" type="number" id="leagueSize" min="2" max="8">
         </div>
 
         <div class="league-content">

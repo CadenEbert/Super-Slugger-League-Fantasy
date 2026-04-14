@@ -72,5 +72,18 @@ getUsersRosterId(leagueId: string, userId: string): Observable<string> {
   changePlayerBattingOrder(leagueId: string, rosterId: string, characterId: string, newOrder: number): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}/batting-order`, { newBattingOrder:  newOrder } );
   }
+
+  deleteLeague(leagueId: string): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}`);
+  }
+
+  updateDraftSettings(leagueId: string, newSetting: string): Observable<any> {
+    console.log('Updating draft settings for league:', leagueId, 'with new setting:', newSetting);
+    return this.http.post(`/api/leagues/${leagueId}/draft-settings`, { draftSettings: newSetting });
+  }
+
+  updateRosterLimit(leagueId: string, newLimit: number): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/roster-limit`, { rosterLimit: newLimit });
+  }
 }
 

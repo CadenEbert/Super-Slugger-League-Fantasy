@@ -6,7 +6,7 @@
   
   height: 100%;
   width: 100%;
-  background-color: #fceed9;
+  background-color: #f1f1f1;
 }
 
 .homepage-content {
@@ -26,7 +26,7 @@
   
   height: 70%;
   width: 40%;
-  background-color: #dbccb5;
+  background-color: #90bffd;
   border-radius: 20px;
 }
 
@@ -36,4 +36,5 @@
     border-bottom: black solid 2px;
     width: 80%;
     text-align: center;
+    padding: 1rem;
 }

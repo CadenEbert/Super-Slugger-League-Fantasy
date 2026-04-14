@@ -21,7 +21,7 @@ export class LeagueService {
 
   createLeague(leagueData: {
     leagueName: string;
-    leagueDescription: string;
+    roster_size: number;
     leagueSize: number;
     draftSettings: any;
     userName?: string;

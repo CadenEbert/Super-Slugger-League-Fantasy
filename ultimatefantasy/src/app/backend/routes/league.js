@@ -17,4 +17,10 @@ router.put('/leagues/:id', authMiddleware, leagueController.updateLeague);
 
 router.get('/leagues/:id/rosters/user/:userId', authMiddleware, leagueController.getUsersRosterId);
 
+router.delete('/leagues/:id', authMiddleware, leagueController.deleteLeague);
+
+router.post('/leagues/:id/draft-settings', authMiddleware, leagueController.updateDraftSettings);
+
+router.post('/leagues/:id/roster-limit', authMiddleware, leagueController.updateRosterLimit);
+
 module.exports = router;

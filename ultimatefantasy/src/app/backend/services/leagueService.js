@@ -46,7 +46,7 @@ exports.createLeague = async (userId, leagueData) => {
     .from('leagues')
     .insert({
       name: leagueData.leagueName,
-      description: leagueData.leagueDescription,
+      roster_size: leagueData.roster_size,
       size: leagueData.leagueSize,
       draft_settings: leagueData.draftSettings,
       owner_id: userId,
@@ -54,7 +54,19 @@ exports.createLeague = async (userId, leagueData) => {
     })
     .select();
 
+
+
   if (leagueError) throw new Error(leagueError.message);
+
+  const {  } = await supabase.client
+    .from('draft')
+    .insert({
+      league_id: leagueArr[0].id,
+      status: 'not_started',
+      draft_type: leagueData.draftSettings === 'snake' ? 'snake' : 'linear'
+    })
+    .select()
+    .single();
 
   const league = leagueArr?.[0];
   if (!league) throw new Error('League creation failed');
@@ -79,9 +91,10 @@ exports.fetchLeagueDetails = async (leagueId) => {
     .select(`
       id,
       name,
-      description,
       size,
       draft_settings,
+      owner_username,
+      roster_size,
       league_members (
         user_id,
         role
@@ -95,9 +108,10 @@ exports.fetchLeagueDetails = async (leagueId) => {
   return {
     id: data.id,
     name: data.name,
-    description: data.description,
     size: data.size,
     draftSettings: data.draft_settings,
+    ownerUsername: data.owner_username,
+    rosterSize: data.roster_size,
     members: (data.league_members || []).map(m => ({
       userId: m.user_id,
       role: m.role,
@@ -116,4 +130,44 @@ exports.getUsersRosterId = async (leagueId, userId) => {
   if (error) throw new Error(error.message);
 
   return data ? data.id : null;
+}
+
+exports.deleteLeague = async (leagueId) => {
+  console.log('Deleting league with ID:', leagueId);
+  const { data, error } = await supabase.client
+    .from('leagues')
+    .delete()
+    .eq('id', leagueId)
+    .select(); // Get deleted rows
+
+  if (error) throw new Error(error.message);
+
+ 
+  return data && data.length > 0;
+}
+
+exports.updateDraftSettings = async (leagueId, newSetting) => {
+  console.log('Updating draft settings for league ID:', leagueId, 'with new setting:', newSetting);
+  const { data, error } = await supabase.client
+    .from('leagues')
+    .update({ draft_settings: newSetting })
+    .eq('id', leagueId)
+    .select(); 
+
+    if (error) throw new Error(error.message);
+
+    return data && data.length > 0 ? data[0] : null;
+}
+
+exports.updateRosterLimit = async (leagueId, newLimit) => {
+  console.log('Updating roster limit for league ID:', leagueId, 'with new limit:', newLimit);
+  const { data, error } = await supabase.client
+  .from('leagues')
+  .update({ roster_size: newLimit })
+  .eq('id', leagueId)
+  .select();
+
+  if (error) throw new Error(error.message);
+
+  return data && data.length > 0 ? data[0] : null;
 }

@@ -34,10 +34,9 @@ export class RosterPage {
     });
 
     this.leagueService.getAllPlayers(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']).subscribe(players => {
-      console.log('Fetched players:', players);
       this.players = players;
       this.cdr.detectChanges();
-      console.log('players:', JSON.stringify(this.players, null, 2));
+
     });
 
   }

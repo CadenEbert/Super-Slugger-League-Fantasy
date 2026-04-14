@@ -49,7 +49,6 @@ export class Rosters {
         return this.leagueService.getAllRosters(leagueId);
       })
     ).subscribe(rosters => {
-      console.log('Fetched rosters:', rosters);
       this.rosters = rosters;
       this.isLoading = false;
       this.cdr.detectChanges();
@@ -57,7 +56,6 @@ export class Rosters {
 
     this.leagueService.getProfile().subscribe((profile: any) => {
       this.profile = profile;
-      console.log('Profile data:', profile);
       this.cdr.detectChanges();
     });
 
@@ -76,6 +74,7 @@ export class Rosters {
       this.canCreateRoster = canCreate;
       this.currentUserId = this.authService.getUserId();
       this.isLoading = false;
+      this.cdr.detectChanges();
     });
     
   }

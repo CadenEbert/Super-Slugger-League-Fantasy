@@ -17,7 +17,7 @@ export class Leagecreate {
 
   leagueForm = new FormGroup({
     leagueName: new FormControl('', Validators.required),
-    leagueDescription: new FormControl(''),
+    roster_size: new FormControl(9, [Validators.required, Validators.min(9), Validators.max(13)]),
     leagueSize: new FormControl(8, Validators.required),
     draftSettings: new FormControl('standard', Validators.required),
   });
@@ -34,13 +34,14 @@ export class Leagecreate {
   createLeague() {
     if (this.leagueForm.invalid) return;
 
-    const { leagueName, leagueDescription, leagueSize, draftSettings } = this.leagueForm.value;
+    const { leagueName, roster_size, leagueSize, draftSettings } = this.leagueForm.value;
 
     this.leagueService.createLeague({
       leagueName: leagueName ?? '',
-      leagueDescription: leagueDescription ?? '',
+      roster_size: Number(roster_size ?? 9),
       leagueSize: Number(leagueSize ?? 8),
       draftSettings: draftSettings ?? 'standard',
+
       userName: this.profile?.username ?? ''
      }).subscribe({
       next: (res) => {

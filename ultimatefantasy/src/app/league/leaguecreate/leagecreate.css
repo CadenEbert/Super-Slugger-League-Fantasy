@@ -1,14 +1,22 @@
+
 ::ng-deep .leaguecreate-container {
   display: flex;
   flex-direction: column;
   
   height: 100%;
   width: 100%;
-  background-color: #fceed9;
+  background-color: #f1f1f1;
   font-family: 'Arial', sans-serif;
 
 }
 
+
+.roster-limit {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
 
 .leaguecreate-content {
     display: flex;
@@ -27,14 +35,14 @@
   height: auto;
   width: 40%;
   min-width: 320px; 
-  background-color: #dbccb5;
+  background-color: #90bffd;
   border-radius: 20px;
   
 }
 
 .league-title  {
     font-size: 2.5em;
-    margin-bottom: 20px;
+    padding: 1rem;
     border-bottom: black solid 2px;
     width: 80%;
     text-align: center;
@@ -50,6 +58,19 @@
     text-overflow: none;
 }
 
+.roster-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  justify-content: center;
+  width: 60%;
+  gap: .5rem;
+  border: black solid 1px;
+  border-radius: 10px;
+  padding: 2.3rem;
+  margin-bottom: 2rem;
+}
 
 
 

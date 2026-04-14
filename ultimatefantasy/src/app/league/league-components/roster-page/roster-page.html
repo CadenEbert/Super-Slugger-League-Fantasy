@@ -25,7 +25,7 @@
                     </mat-expansion-panel-header>
 
                   <div class="drop-down">
-                    <div>
+                    <div class="player-stats">
                         <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
                         <p>Batting Arm: {{ p.character.battingArm }}</p>
                         <p>Character Class: {{ p.character.characterClass }}</p>
@@ -34,7 +34,7 @@
                         <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
                     </div>
 
-                    <div>
+                    <div class="change">
                         <div class="position-change">
                         <p>Change Position:</p>
                         <select [(ngModel)]="p.position" class="position-select">
@@ -51,9 +51,14 @@
                         <button (click)="changeBattingOrder(p.character.id, p.batting_order)" class="position-btn">Update</button>
                         </div>
                         <div class="position-change">
-                            <button (click)="removePlayer(p.character.id)" class="position-btn remove-btn">Remove Player</button>
+                            <button (click)="removePlayer(p.character.id)" class="remove-btn">Remove Player</button>
                         </div>
+                        
+                        
                     </div>
+                    
+                    
+                    
                 </div>
                     
 
