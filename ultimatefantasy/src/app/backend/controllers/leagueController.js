@@ -52,3 +52,20 @@ exports.updateLeague = async (req, res) => {
         res.status(500).json({ error: 'Failed to update league' });
     }
 };
+
+exports.getUsersRosterId = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const userId = req.params.userId;
+        const rosterId = await leagueService.getUsersRosterId(leagueId, userId);
+        if (rosterId) {
+            res.json({ rosterId });
+        }
+        else {
+            res.status(404).json({ error: 'Roster not found for user in this league' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user roster ID' });
+    }
+
+}

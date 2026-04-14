@@ -15,4 +15,6 @@ router.get('/leagues/:id', authMiddleware, leagueController.getLeagueById);
 
 router.put('/leagues/:id', authMiddleware, leagueController.updateLeague);
 
+router.get('/leagues/:id/rosters/user/:userId', authMiddleware, leagueController.getUsersRosterId);
+
 module.exports = router;

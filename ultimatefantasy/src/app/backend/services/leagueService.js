@@ -102,3 +102,16 @@ exports.fetchLeagueDetails = async (leagueId) => {
     }))
   };
 };
+
+exports.getUsersRosterId = async (leagueId, userId) => {
+  const { data, error } = await supabase.client
+    .from('rosters')
+    .select('id')
+    .eq('league_id', leagueId)
+    .eq('owner_id', userId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+
+  return data ? data.id : null;
+}

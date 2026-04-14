@@ -12,4 +12,11 @@ router.post('/leagues/:leagueId/rosters', authMiddleware, rosterController.creat
 
 router.get('/leagues/:leagueId/rosters/:rosterId', authMiddleware, rosterController.getRosterById);
 
+router.post('/leagues/:leagueId/rosters/:rosterId/players/:characterId/position', authMiddleware, rosterController.changePlayerPosition);
+
+router.post('/leagues/:leagueId/rosters/:rosterId/players/:characterId/batting-order', authMiddleware, rosterController.changePlayerBattingOrder);
+
+router.delete('/leagues/:leagueId/rosters/:rosterId/players/:characterId', authMiddleware, rosterController.removePlayer);
+
+
 module.exports = router;

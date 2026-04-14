@@ -13,11 +13,16 @@
                             Name: {{ p.character.characterName }}
                         </mat-panel-title>
                         <mat-content class="player-header">
-                            Position: {{ p.position }} | Batting Order: {{ p.batting_order }}
+                            Position: {{ p.position }} 
+                            
+                        </mat-content>
+                        <mat-content class="player-header">
+                            Batting Order: {{ p.batting_order }}
+                            
                         </mat-content>
                     </mat-expansion-panel-header>
 
-                  
+                  <div class="drop-down">
                     <div>
                         <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
                         <p>Batting Arm: {{ p.character.battingArm }}</p>
@@ -26,6 +31,28 @@
                         <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
                         <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
                     </div>
+
+                    <div>
+                        <div class="position-change">
+                        <p>Change Position:</p>
+                        <select [(ngModel)]="p.position" class="position-select">
+                                <option *ngFor="let pos of positions" [value]="pos">{{ pos }}</option>
+                        </select>
+                        <button (click)="changePosition(p.character.id, p.position)" class="position-btn">Update</button>
+                        </div>
+                    
+                        <div class="position-change">
+                        <p>Change Batting Order:</p>
+                        <select [(ngModel)]="p.batting_order" class="position-select">
+                                <option *ngFor="let bat of battingOrders" [value]="bat">{{ bat }}</option>
+                        </select>
+                        <button (click)="changeBattingOrder(p.character.id, p.batting_order)" class="position-btn">Update</button>
+                        </div>
+                        <div class="position-change">
+                            <button (click)="removePlayer(p.character.id)" class="position-btn remove-btn">Remove Player</button>
+                        </div>
+                    </div>
+                </div>
                     
 
                 </mat-expansion-panel>

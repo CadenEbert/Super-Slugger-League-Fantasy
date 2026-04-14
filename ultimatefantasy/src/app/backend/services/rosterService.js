@@ -51,7 +51,7 @@ exports.getRosterById = async (rosterId) => {
         position: rp.position,
         batting_order: rp.batting_order,
         character: rp.characters ? {
-            id: rp.characters.id,
+            id: rp.characters.ID,
             characterName: rp.characters.character_name,
             pitchingArm: rp.characters.pitching_arm,
             battingArm: rp.characters.batting_arm,
@@ -101,3 +101,70 @@ exports.createRoster = async (leagueId, userId, teamName) => {
         players: []
     };
 }
+
+exports.changePlayerPosition = async (rosterId, characterId, newPosition) => {
+
+
+
+    const { data, error } = await supabase.client
+        .from('roster_players')
+        .update({ position: newPosition })
+        .eq('roster_id', rosterId)
+        .eq('character_id', characterId)
+        .select()
+        .single();
+
+
+
+       
+
+    if (error) throw new Error(error.message);
+
+    return {
+        rosterId,
+        characterId,
+        newPosition: data.position
+    };
+
+    
+}
+
+exports.changePlayerBattingOrder = async (rosterId, characterId, newBattingOrder) => {
+    newBattingOrder = newBattingOrder;
+    const { data, error } = await supabase.client
+        .from('roster_players')
+        .update({ batting_order: newBattingOrder })
+        .eq('roster_id', rosterId)
+        .eq('character_id', characterId)
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
+
+    return {
+        rosterId,
+        characterId,
+        newBattingOrder: data.batting_order
+    };
+}
+
+
+exports.removePlayer = async (rosterId, characterId) => {
+
+    
+
+        const { data, error } = await supabase.client
+    .from('roster_players')
+    .delete()
+    .eq('roster_id', rosterId)
+    .eq('character_id', characterId)
+    .select();
+
+    if (error) throw new Error(error.message);
+
+        return {
+            rosterId,
+            characterId
+        };
+}
+

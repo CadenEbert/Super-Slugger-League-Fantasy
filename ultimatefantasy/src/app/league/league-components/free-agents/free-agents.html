@@ -14,6 +14,7 @@
             </mat-panel-title>
             <mat-content class="player-header">
               Class: {{ p?.characterClass || 'N/A' }}
+              <button (click)="addToRoster(p.id)" class="position-btn add-btn">Add to Roster</button>
             </mat-content>
           </mat-expansion-panel-header>
 
@@ -25,6 +26,8 @@
             <p>Captain: {{ p?.captain ? 'Yes' : 'No' }}</p>
             <p>Star Pitch: {{ p?.starPitch || 'N/A' }}</p>
           </div>
+
+          
 
         </mat-expansion-panel>
       </mat-accordion>

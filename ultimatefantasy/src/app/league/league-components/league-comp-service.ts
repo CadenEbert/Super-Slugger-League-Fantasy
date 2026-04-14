@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable,  map, of} from 'rxjs';
+import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeagueCompService {
-  
+
+
+
 
 
   constructor(private http: HttpClient) { }
@@ -15,13 +17,19 @@ export class LeagueCompService {
     return this.http.get('/api/profile');
   }
 
+getUsersRosterId(leagueId: string, userId: string): Observable<string> {
+  return this.http
+    .get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${userId}`)
+    .pipe(map(res => res.rosterId)); 
+}
+
   getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
   }
 
   getAllRosters(leagueId: string): Observable<any[]> {
 
-      return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters`);
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters`);
   }
 
   canCreateRoster(leagueId: string, userId: string): Observable<boolean> {
@@ -30,10 +38,11 @@ export class LeagueCompService {
     }
 
     return this.http.get<{ canCreate: boolean }>(
-      `/api/leagues/${leagueId}/rosters/can-create?userId=${userId}` 
-  ).pipe(
-      map(res => res.canCreate) 
-  );  }
+      `/api/leagues/${leagueId}/rosters/can-create?userId=${userId}`
+    ).pipe(
+      map(res => res.canCreate)
+    );
+  }
 
   rosterCreate(leagueId: string, teamName: string, userId: string): Observable<any> {
     if (!leagueId || leagueId === 'null') {
@@ -45,6 +54,22 @@ export class LeagueCompService {
 
   getFreeAgents(leagueId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`);
+  }
+
+  changePlayerPosition(leagueId: string, rosterId: string, characterId: string, newPosition: string): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}/position`, { newPosition });
+  }
+
+  removePlayer(leagueId: string, rosterId: string, characterId: string): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}`);
+  }
+
+  addPlayerToRoster(leagueId: string, rosterId: string, characterId: string): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}`, {});
+  }
+
+  changePlayerBattingOrder(leagueId: string, rosterId: string, characterId: string, newOrder: number): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}/batting-order`, { newBattingOrder:  newOrder } );
   }
 }
 

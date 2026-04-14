@@ -16,6 +16,8 @@ export class RosterPage {
   players: any[] = [];
   rosterName: string = '';
   username: string = '';
+  positions: string[] = ['Bench', 'Pitcher', 'Catcher', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
+  battingOrders: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -38,6 +40,65 @@ export class RosterPage {
       console.log('players:', JSON.stringify(this.players, null, 2));
     });
 
+  }
+
+  changePosition(characterId: string, newPosition: string) {
+    const leagueId = this.route.parent?.snapshot.params['leagueId'];
+    const rosterId = this.route.snapshot.params['rosterId'];
+
+    if (!leagueId || !rosterId) {
+      console.error('Missing leagueId or rosterId');
+      return;
+    }
+
+    this.leagueService.changePlayerPosition(leagueId, rosterId, characterId, newPosition).subscribe({
+      next: () => {
+        console.log('Position updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating position:', err);
+      }
+    });
+  }
+
+  changeBattingOrder(characterId: string, newOrder: number) {
+    const leagueId = this.route.parent?.snapshot.params['leagueId'];
+    const rosterId = this.route.snapshot.params['rosterId'];
+
+    if (!leagueId || !rosterId) {
+      console.error('Missing leagueId or rosterId');
+      return;
+    }
+
+    this.leagueService.changePlayerBattingOrder(leagueId, rosterId, characterId, newOrder).subscribe({
+      next: () => {
+        console.log('Batting order updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating batting order:', err);
+      }
+    });
+  }
+
+  removePlayer(characterId: string) {
+    const leagueId = this.route.parent?.snapshot.params['leagueId'];
+    const rosterId = this.route.snapshot.params['rosterId'];
+
+    if (!leagueId || !rosterId) {
+      console.error('Missing leagueId or rosterId');
+      return;
+    }
+
+    this.leagueService.removePlayer(leagueId, rosterId, characterId).subscribe({
+      next: () => {
+        console.log('Player removed successfully');
+        this.players = this.players.filter(p => p.character.id !== characterId);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error removing player:', err);
+      }
+    });
   }
 
 

@@ -47,3 +47,40 @@ exports.createRoster = async (req, res) => {
     }
 
 }
+
+exports.changePlayerPosition = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const characterId = req.params.characterId;
+        const newPosition = req.body.newPosition;
+        const updatedPlayer = await rosterService.changePlayerPosition(rosterId, characterId, newPosition);
+        res.json(updatedPlayer);
+
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to change player position' });
+    }
+}
+
+exports.removePlayer = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const characterId = req.params.characterId;
+        await rosterService.removePlayer(rosterId, characterId);
+        res.status(204).send();
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to remove player' });
+    }
+}
+
+exports.changePlayerBattingOrder = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const characterId = req.params.characterId;
+        const newBattingOrder = req.body.newBattingOrder;
+        const updatedPlayer = await rosterService.changePlayerBattingOrder(rosterId, characterId, newBattingOrder);
+        res.json(updatedPlayer);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to change player batting order' });
+    }
+}
