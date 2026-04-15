@@ -2,8 +2,11 @@ require('dotenv').config();
 const http = require("http");
 const URL = require("url").URL;
 const crypto = require("crypto");
+const { Server } = require('socket.io');
+const { setupDraftChannel } = require('./src/app/backend/supabase');
 const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
+
 
 
 
@@ -36,6 +39,9 @@ const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
 const RATE_LIMIT_MAX = 120; // max 120 requests per window per IP
 
 const buckets = new Map(); // to track request counts per IP
+
+
+
 
 
 function rateLimit(ip) {
@@ -169,6 +175,33 @@ const server = http.createServer((req, res) => {
     console.error(err);
     safeLogLine(req, 500);
   }
+});
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  }
+});
+
+setupDraftChannel(io);
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  socket.on('subscribeToDraft', (data) => {
+    channel.on('postgres_changes', { event: '*', schema: 'public', table: 'draft' }, (payload) => {
+      console.log('Draft table change:', payload);
+      socket.emit('draftUpdate', payload);
+    });
+  });
+
+
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+  
 });
 
 server.on("clientError", (_err, socket) => socket.end("HTTP/1.1 400 Bad Request\r\n\r\n"));

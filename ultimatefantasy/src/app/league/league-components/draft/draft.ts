@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DraftService } from '../draft-service';
 
 @Component({
   selector: 'app-draft',
@@ -7,5 +8,18 @@ import { Component } from '@angular/core';
   styleUrl: './draft.css',
 })
 export class Draft {
-  
+
+  draftData: any = null;
+
+  constructor(private draftService: DraftService) { }
+
+  ngOnInit() {
+    this.draftService.onDraftUpdate().subscribe(update => {
+      console.log('Draft update:', update);
+      this.draftData = update;
+      
+    });
+  }
+
+
 }

@@ -17,4 +17,18 @@ const client = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   }
 });
 
-module.exports = { client };
+function setupDraftChannel(io) {
+  client
+    .channel('draft-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'draft' },
+      (payload) => {
+        console.log('Draft table change:', payload);
+        io.emit('draftUpdate', payload);
+      }
+    )
+    .subscribe();
+}
+
+module.exports = { client, setupDraftChannel };
