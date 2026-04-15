@@ -9,3 +9,25 @@ exports.getDraftState = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch draft state' });
     }
 };
+
+exports.joinDraftChannel = async (req, res) => {
+    try {
+        const draftId = req.params.draftId;
+        const userId = req.user.id; 
+        const success = await draftService.joinDraftChannel(draftId, userId);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to join draft channel' });
+    }
+}
+
+exports.getDraftIdByLeagueId = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const draftId = await draftService.getDraftIdByLeagueId(leagueId);
+        res.json({ draftId });
+
+    }   catch (error) {
+        res.status(500).json({ error: 'Failed to fetch draft ID' });
+    }
+}

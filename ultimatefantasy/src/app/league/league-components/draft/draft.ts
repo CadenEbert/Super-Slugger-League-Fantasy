@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './draft.css',
 })
 export class Draft {
+  draftId: string = '';
 
 
   draftData: any = null;
@@ -17,23 +18,31 @@ export class Draft {
   constructor(private draftService: DraftService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    
-    
-    
-
-    this.draftService.getInitialDraftData(this.route.parent?.snapshot.params['leagueId']).subscribe(data => {
-      console.log('Initial draft data received:', data);
-      this.draftData = data;
+    this.draftService.getDraftId(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (id) => {
+        this.draftId = id;
+        console.log('Draft ID:', id);
+        this.draftService.onDraftUpdate(id);
+        this.draftService.joinDraft(id);
+     
+      },
+      error: (err) => {
+        console.error('Error fetching draft ID:', err);
+      }
     });
+
     
-    this.draftService.onDraftUpdate().subscribe(update => {
-      console.log('Draft update received:', update);
-      this.draftData = update;
+
+    this.draftService.getInitialDraftData(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (data) => {
+        this.draftData = data;
+      },
+      error: (err) => {
+        console.error('Error fetching initial draft data:', err);
+      }
     });
 
     
-
-    console.log('Draft component initialized', this.draftData);
   }
 
 

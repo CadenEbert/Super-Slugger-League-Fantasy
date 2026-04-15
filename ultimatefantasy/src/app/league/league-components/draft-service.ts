@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { io, Socket } from 'socket.io-client';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DraftService {
   private socket: Socket;
+
 
 
   game$ = new BehaviorSubject<any>(null);
@@ -24,18 +25,43 @@ export class DraftService {
     return this.http.get(`/api/leagues/${leagueId}/draft`);
   }
 
-  onDraftUpdate(): Observable<any> {
+  getDraftId(leagueId: string): Observable<string> {
+    return this.http.get<{ draftId: string }>(`/api/league/${leagueId}/draftId`).pipe(
+      map(response => response.draftId)
+    );
+  }
+
+
+  joinDraft(draftId: string) {
+    this.socket.emit('joinDraft', draftId);
+  }
+
+  onDraftUpdate(draftId: string): Observable<any> {
     return new Observable(observer => {
-      this.socket.on('draftUpdate', (data: any) => {
-        console.log('Received draft update:', data);
+      const eventName = `draftUpdate:${draftId}`; 
+      this.socket.on(eventName, (data) => {
         observer.next(data);
       });
-
+  
       return () => {
-        this.socket.off('draftUpdate');
+        this.socket.off(eventName);
       };
     });
   }
+
+
+  
+  getDraftData(draftId: string): Observable<any> {
+    return this.http.get<any>(`/api/draft/${draftId}`);
+  }
+
+  subscribeToDraftUpdates(draftId: string): void {
+    this.http.post(`/api/draft/${draftId}/join`, {}).subscribe({
+      next: () => console.log('Subscribed'),
+      error: (err) => console.error(err)
+    });
+  }
+
 }
 
 

@@ -11,6 +11,7 @@ const debug = require("debug")("node-angular");
 
 
 
+
 // import http from "http";
 // import { URL } from "url";
 // import crypto from "crypto";
@@ -184,10 +185,13 @@ const io = new Server(server, {
   }
 });
 
-setupDraftChannel(io);
+
 
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+  socket.on('joinDraft', (draftId) => {
+    setupDraftChannel(socket, draftId);
+    socket.join(`draft_${draftId}`);
+  });
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
