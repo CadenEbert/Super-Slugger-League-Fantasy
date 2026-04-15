@@ -17,23 +17,28 @@ const client = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   }
 });
 
+const activeChannels = new Map();
+
 function setupDraftChannel(io, draftId) {
-  
   const id = typeof draftId === 'object' && draftId.uuid ? draftId.uuid : draftId;
-  console.log(`Setting up channel for draftId: ${id}`);
-  client
+
+  if (activeChannels.has(id)) return;
+
+  const channel = client
     .channel(`draft-changes-${id}`)
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'draft', filter: `id=eq.${id}` },
+      { event: '*', schema: 'public', table: 'draft', filter: `uuid=eq.${id}` }, 
       (payload) => {
         console.log(`Draft row ${id} change:`, payload);
-        io.emit(`draftUpdate:${id}`, payload);
+        io.to(`draft_${id}`).emit(`draftUpdate:${id}`, payload);
       }
     )
     .subscribe((status) => {
-      console.log(`Subscribed to draft-changes-${id}:`, status);
+      console.log(`Channel status for ${id}:`, status);
     });
+
+  activeChannels.set(id, channel);
 }
 
 module.exports = { client, setupDraftChannel };

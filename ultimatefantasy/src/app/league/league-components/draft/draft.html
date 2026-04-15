@@ -1,6 +1,6 @@
 <div class="draft-container">
 
-    <div *ngIf="draftData">
+    <div *ngIf="draftData$ | async as draftData">
         Status: {{ draftData.status }}
     </div>
 
