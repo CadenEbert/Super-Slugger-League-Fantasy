@@ -56,3 +56,24 @@ exports.getDraftIdByLeagueId = async (leagueId) => {
 };
 
 
+exports.getAllLeagueMembers = async (leagueId) => {
+  console.log('Fetching league members for leagueId:', leagueId);
+
+  const { data, error } = await client
+    .from('league_members')
+    .select('user_id, profiles(username)')
+    .eq('league_id', leagueId);
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
+
+
+  const members = data.map(member => ({
+    user_id: member.user_id,
+    username: member.profiles?.username || null
+  }));
+
+  return members;
+};

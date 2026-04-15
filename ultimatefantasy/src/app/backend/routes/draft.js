@@ -10,4 +10,6 @@ router.post('/draft/:draftId/join', authMiddleware, draftController.joinDraftCha
 
 router.get('/league/:leagueId/draftId', authMiddleware, draftController.getDraftIdByLeagueId);
 
+router.get('/league/:leagueId/draft/members', authMiddleware, draftController.getAllLeagueMembers);
+
 module.exports = router;

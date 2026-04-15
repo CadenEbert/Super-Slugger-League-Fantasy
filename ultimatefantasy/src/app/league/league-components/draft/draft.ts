@@ -16,6 +16,9 @@ export class Draft {
   draftData$: Observable<any> = this.draftDataSubject.asObservable();
   draftId: string = '';
 
+  members: any[] = [];
+
+  players: any[] = ["Player 1", "Player 2", "Player 3"]; 
 
 
  
@@ -47,6 +50,16 @@ export class Draft {
       },
       error: (err) => {
         console.error('Error fetching initial draft data:', err);
+      }
+    });
+
+    this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (members) => {
+        this.members = members;
+        console.log('League Members:', members);
+      },
+      error: (err) => {
+        console.error('Error fetching league members:', err);
       }
     });
 

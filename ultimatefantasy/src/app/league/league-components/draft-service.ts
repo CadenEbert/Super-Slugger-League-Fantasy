@@ -62,6 +62,12 @@ export class DraftService {
     });
   }
 
+  getAllLeagueMembers(leagueId: string): Observable<any[]> {
+    return this.http.get<{ members: any[] }>(`/api/league/${leagueId}/draft/members`).pipe(
+      map(response => response.members)
+    );
+  }
+
 }
 
 

@@ -1,0 +1,33 @@
+.draft-container {
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    width: 97%;
+    height: 97%;
+    padding: 20px;
+  
+}
+
+.draft-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.draft-settings {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 20px;
+    text-align: left;
+    
+}

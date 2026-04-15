@@ -1,7 +1,16 @@
 <div class="draft-container">
 
-    <div *ngIf="draftData$ | async as draftData">
-        Status: {{ draftData.status }}
+    <div *ngIf="draftData$ | async as draftData" class="draft-content">
+        <div *ngIf="draftData.status === 'not_started'">
+            <h3>DRAFT SETTINGS</h3>
+
+            <div class="draft-settings">
+                <p>Draft Type: {{ draftData.draft_type }}</p>
+                                <p>Draft Order:</p>
+                                <ul>
+                                    <li *ngFor="let player of players">{{ player }}</li>
+                                </ul>
+            </div>
     </div>
 
 </div>

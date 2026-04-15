@@ -31,3 +31,13 @@ exports.getDraftIdByLeagueId = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch draft ID' });
     }
 }
+
+exports.getAllLeagueMembers = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const members = await draftService.getAllLeagueMembers(leagueId);
+        res.json({ members });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch league members' });
+    }
+}
