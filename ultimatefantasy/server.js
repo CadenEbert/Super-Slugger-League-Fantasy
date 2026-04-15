@@ -189,15 +189,6 @@ setupDraftChannel(io);
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  socket.on('subscribeToDraft', (data) => {
-    channel.on('postgres_changes', { event: '*', schema: 'public', table: 'draft' }, (payload) => {
-      console.log('Draft table change:', payload);
-      socket.emit('draftUpdate', payload);
-    });
-  });
-
-
-
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });

@@ -9,34 +9,34 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DraftService {
-  private readonly socket: Socket | null = null;
-  
+  private socket: Socket;
+
 
   game$ = new BehaviorSubject<any>(null);
 
 
 
-  constructor() {
-      this.socket = io('http://localhost:3000'); 
-   }
+  constructor(private http: HttpClient) {
+    this.socket = io('http://localhost:3000');
+  }
 
-   onDraftUpdate(): Observable<any> {
+  getInitialDraftData(leagueId: string): Observable<any> {
+    return this.http.get(`/api/leagues/${leagueId}/draft`);
+  }
+
+  onDraftUpdate(): Observable<any> {
     return new Observable(observer => {
-      if (!this.socket) return;
-      
       this.socket.on('draftUpdate', (data: any) => {
         console.log('Received draft update:', data);
         observer.next(data);
       });
 
       return () => {
-        if (this.socket) {
-          this.socket.off('draftUpdate');
-        }
+        this.socket.off('draftUpdate');
       };
     });
   }
-
-
-
 }
+
+
+

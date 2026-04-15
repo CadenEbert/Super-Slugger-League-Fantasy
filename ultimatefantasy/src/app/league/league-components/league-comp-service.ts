@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -8,10 +9,16 @@ import { HttpClient } from '@angular/common/http';
 export class LeagueCompService {
 
 
+  
 
 
+  constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
-  constructor(private http: HttpClient) { }
+  ngOnInit(): void {
+    
+  }
+
+ 
 
   getProfile(): Observable<any> {
     return this.http.get('/api/profile');
