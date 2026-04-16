@@ -77,3 +77,17 @@ exports.getAllLeagueMembers = async (leagueId) => {
 
   return members;
 };
+
+exports.updateDraftData = async (draftId, data) => {
+  console.log(`Updating draft data for draftId: ${draftId} with data:`, data);
+  const { error } = await client
+    .from('draft')
+    .update(data)
+    .eq('uuid', draftId);
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
+  return true;
+};

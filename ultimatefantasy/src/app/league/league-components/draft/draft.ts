@@ -3,6 +3,8 @@ import { DraftService } from '../draft-service';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+
 
 
 @Component({
@@ -28,7 +30,7 @@ export class Draft {
   ngOnInit() {
     this.draftService.getDraftId(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (id) => {
-       
+        this.draftId = id;
         console.log('Draft ID:', id);
         this.draftService.onDraftUpdate(id).subscribe(update => {
           console.log('Live update:', update);
@@ -70,5 +72,19 @@ export class Draft {
     this.draftDataSubject.next(data);
   }
 
+  startDraft() {
+  const current = this.draftDataSubject.value;
+  if (current) {
+    this.draftDataSubject.next({ ...current, status: 'in_progress' });
+    this.draftService.updateDraftData(this.draftId, { ...current, status: 'in_progress' }).subscribe({
+      next: () => console.log('Draft started'),
+      error: (err) => console.error('Error starting draft:', err)
+    
+    });
+  }
+  }
 
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.players, event.previousIndex, event.currentIndex);
+  }
 }

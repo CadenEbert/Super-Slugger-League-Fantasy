@@ -12,4 +12,6 @@ router.get('/league/:leagueId/draftId', authMiddleware, draftController.getDraft
 
 router.get('/league/:leagueId/draft/members', authMiddleware, draftController.getAllLeagueMembers);
 
+router.put('/draft/:draftId/update', authMiddleware, draftController.updateDraftData);
+
 module.exports = router;

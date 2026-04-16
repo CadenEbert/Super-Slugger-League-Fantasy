@@ -29,6 +29,7 @@ import { AuthInterceptor } from './core/auth.interceptor';
 import { RosterPage } from './league/league-components/roster-page/roster-page';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -49,8 +50,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
     PlayerStats,
     Settings,
     RosterPage,
+
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule, MatCardModule, MatExpansionModule],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule, MatCardModule, MatExpansionModule, DragDropModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),

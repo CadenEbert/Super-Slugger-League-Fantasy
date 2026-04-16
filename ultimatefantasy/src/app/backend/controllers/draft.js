@@ -41,3 +41,15 @@ exports.getAllLeagueMembers = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch league members' });
     }
 }
+
+exports.updateDraftData = async (req, res) => {
+    try {
+        console.log('Received request to update draft data with body:', req.body);
+        const draftId = req.params.draftId;
+        const data = req.body;
+        await draftService.updateDraftData(draftId, data);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update draft data' });
+    }
+}

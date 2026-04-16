@@ -68,6 +68,10 @@ export class DraftService {
     );
   }
 
+  updateDraftData(draftId: string, data: any): Observable<any> {
+    return this.http.put(`/api/draft/${draftId}/update`, data);
+  }
+
 }
 
 
