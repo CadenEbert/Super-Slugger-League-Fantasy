@@ -12,9 +12,9 @@
                                     
                                 <p>Draft Order:</p>
                                 <div class="draft-order" cdkDropList (cdkDropListDropped)="drop($event)">
-                                    <div *ngFor="let id of (draftData$ | async)?.pick_order"cdkDrag class="draft-team">
-                                        {{ memberMap[id] || id }}
-                                    </div>
+                                    <div class="draft-team" *ngFor="let memberId of pickOrder$ | async" cdkDrag>
+                                        {{ memberMap[memberId] }}
+                                      </div>
                                 </div>
                                 </div>
 

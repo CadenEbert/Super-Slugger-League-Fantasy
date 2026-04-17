@@ -12,7 +12,7 @@ export interface DraftState {
   current_pick: number;
   round: number;
   pick_order: string[];
-  // Add other fields as needed
+  
 }
 
 export interface DraftPick {
@@ -22,7 +22,7 @@ export interface DraftPick {
   player_id: string;
   pick_number: number;
   round: number;
-  // Add other fields as needed
+  
 }
 
 
@@ -41,6 +41,9 @@ export class Draft {
   private draftPlayersSubject = new BehaviorSubject<DraftPick[]>([]);
   draftPlayers$: Observable<DraftPick[]> = this.draftPlayersSubject.asObservable();
 
+  private pickOrderSubject = new BehaviorSubject<string[]>([]);
+  pickOrder$: Observable<string[]> = this.pickOrderSubject.asObservable();
+  
   public memberMap: { [id: string]: string } = {};
 
 
@@ -59,6 +62,8 @@ export class Draft {
         this.draftService.getDraftPlayers(this.draftId).subscribe({
           next: (data) => {
             this.setDraftPlayers(data.players);
+
+            
           }
         });
         this.draftService.onDraftUpdate(id).subscribe(update => {
@@ -83,6 +88,24 @@ export class Draft {
     this.draftService.getInitialDraftData(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (data) => {
         this.setDraftData(data);
+
+        this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
+          next: (members) => {
+            this.setMembers(members);
+            console.log('First member object:', JSON.stringify(members[0]));
+    
+            this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
+    
+            console.log('League Members:', members);
+            console.log('Member Map:', this.memberMap);
+            console.log('Draft Data  after setting members:', this.draftDataSubject.value);
+    
+          },
+          error: (err) => {
+            console.error('Error fetching league members:', err);
+          }
+        });
+
       },
       error: (err) => {
         console.error('Error fetching initial draft data:', err);
@@ -91,18 +114,7 @@ export class Draft {
 
 
 
-    this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
-      next: (members) => {
-        this.setMembers(members);
-
-        this.setDraftDataPlayerList(members.map((m: any) => m.id));
-        console.log('League Members:', members);
-
-      },
-      error: (err) => {
-        console.error('Error fetching league members:', err);
-      }
-    });
+    
 
 
 
@@ -117,21 +129,23 @@ export class Draft {
     this.draftPlayersSubject.next(players);
   }
 
-  setDraftDataPlayerList(data: string[]) {
-    const current = this.draftDataSubject.value;
-    if (current) {
-      this.draftDataSubject.next({ ...current, pick_order: data });
-    }
+  setDraftDataPlayerList(data: any[]) {
+    this.pickOrderSubject.next(data);
   }
 
   startDraft() {
     const current = this.draftDataSubject.value;
     if (current) {
-      this.draftDataSubject.next({ ...current, status: 'in_progress' });
+      
 
+      console.log(this.pickOrderSubject.value);
 
-
-      this.draftService.updateDraftData(this.draftId, { ...current, status: 'in_progress' }).subscribe({
+      this.draftService.updateDraftData(this.draftId, { ...current,
+        status: 'in_progress',
+        current_pick: 1,
+        current_round: 1, 
+        pick_order: this.pickOrderSubject.value 
+      }).subscribe({
         next: () => console.log('Draft started'),
         error: (err) => console.error('Error starting draft:', err)
 
@@ -141,11 +155,13 @@ export class Draft {
 
   setMembers(members: any[]) {
     members.forEach(member => {
-      this.memberMap[member.id] = member.username;
+      this.memberMap[member.user_id] = member.username;
     });
   }
 
-  drop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(Object.values(this.memberMap), event.previousIndex, event.currentIndex);
+  drop(event: CdkDragDrop<string[]>) {
+    const order = [...this.pickOrderSubject.value];
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
+    this.pickOrderSubject.next(order);
   }
 }
