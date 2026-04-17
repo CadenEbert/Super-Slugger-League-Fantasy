@@ -41,12 +41,10 @@ export class Draft {
   private draftPlayersSubject = new BehaviorSubject<DraftPick[]>([]);
   draftPlayers$: Observable<DraftPick[]> = this.draftPlayersSubject.asObservable();
 
-  private membersSubject = new BehaviorSubject<any[]>([]);
-  members$: Observable<any[]> = this.membersSubject.asObservable();
+  public memberMap: { [id: string]: string } = {};
 
-  
 
-  players: any[] = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"];
+
 
 
 
@@ -96,12 +94,17 @@ export class Draft {
     this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (members) => {
         this.setMembers(members);
+
+        this.setDraftDataPlayerList(members.map((m: any) => m.id));
         console.log('League Members:', members);
+
       },
       error: (err) => {
         console.error('Error fetching league members:', err);
       }
     });
+
+
 
 
   }
@@ -114,14 +117,20 @@ export class Draft {
     this.draftPlayersSubject.next(players);
   }
 
-  setMembers(members: any[]) {
-    this.membersSubject.next(members);
+  setDraftDataPlayerList(data: string[]) {
+    const current = this.draftDataSubject.value;
+    if (current) {
+      this.draftDataSubject.next({ ...current, pick_order: data });
+    }
   }
 
   startDraft() {
     const current = this.draftDataSubject.value;
     if (current) {
       this.draftDataSubject.next({ ...current, status: 'in_progress' });
+
+
+
       this.draftService.updateDraftData(this.draftId, { ...current, status: 'in_progress' }).subscribe({
         next: () => console.log('Draft started'),
         error: (err) => console.error('Error starting draft:', err)
@@ -130,7 +139,13 @@ export class Draft {
     }
   }
 
+  setMembers(members: any[]) {
+    members.forEach(member => {
+      this.memberMap[member.id] = member.username;
+    });
+  }
+
   drop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(this.players, event.previousIndex, event.currentIndex);
+    moveItemInArray(Object.values(this.memberMap), event.previousIndex, event.currentIndex);
   }
 }

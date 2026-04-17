@@ -16,11 +16,16 @@
   align-items: center;
   
   margin-bottom: 20px;
-  height: 80%;
-  height: auto;
+  height: 100%;
+  
+  margin-top: 20px;
+  width: 70%;
   padding: 20px;
   background-color: #90bffd;
   border-radius: 10px;
+  min-height: 80%;
+  
+  overflow: hidden;
 }
 
 .league-header {
@@ -72,7 +77,8 @@
   align-items: center;
   justify-content: center;
   font-size: 1.7rem;
-  width: 150px;
+  padding: 0 20px;
+  text-wrap: nowrap;
   height: 35px;
  
   color: #333;
@@ -104,6 +110,7 @@
   margin-top: 20px;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   background-color: #6caafc;
   border-radius: 10px;
 }
