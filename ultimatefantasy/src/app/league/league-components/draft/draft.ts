@@ -13,6 +13,7 @@ export interface DraftState {
   round: number;
   pick_order: string[];
   current_pick_index: number;
+
   
 }
 
@@ -24,6 +25,13 @@ export interface DraftPick {
   pick_number: number;
   round: number;
   
+}
+
+export interface playerPool {
+  id: number;
+  name: string;
+  
+
 }
 
 
@@ -44,6 +52,9 @@ export class Draft {
 
   private pickOrderSubject = new BehaviorSubject<string[]>([]);
   pickOrder$: Observable<string[]> = this.pickOrderSubject.asObservable();
+
+  private playerPoolSubject = new BehaviorSubject<playerPool[]>([]);
+  playerPool$: Observable<playerPool[]> = this.playerPoolSubject.asObservable();
   
   public memberMap: { [id: string]: string } = {};
 
