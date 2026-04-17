@@ -53,3 +53,13 @@ exports.updateDraftData = async (req, res) => {
         res.status(500).json({ error: 'Failed to update draft data' });
     }
 }
+
+exports.getDraftPlayers = async (req, res) => {
+    try {
+        const draftId = req.params.draftId;
+        const players = await draftService.getDraftPlayers(draftId);
+        res.json({ players });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch draft players' });
+    }
+}

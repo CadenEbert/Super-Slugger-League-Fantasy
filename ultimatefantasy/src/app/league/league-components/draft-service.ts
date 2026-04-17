@@ -49,7 +49,22 @@ export class DraftService {
     });
   }
 
+  onDraftPlayersUpdate(draftId: string): Observable<any> {
+    return new Observable(observer => {
+      const eventName = `draftPlayersUpdate:${draftId}`;
+      this.socket.on(eventName, (data) => {
+        observer.next(data);
+      });
 
+      return () => {
+        this.socket.off(eventName);
+      };
+    });
+  }
+
+  getDraftPlayers(draftId: string): Observable<any> {
+    return this.http.get(`/api/draft/${draftId}/players`);
+  }
   
   getDraftData(draftId: string): Observable<any> {
     return this.http.get<any>(`/api/draft/${draftId}`);

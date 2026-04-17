@@ -34,6 +34,14 @@ function setupDraftChannel(io, draftId) {
         io.to(`draft_${id}`).emit(`draftUpdate:${id}`, payload);
       }
     )
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'draft_players', filter: `draft_id=eq.${id}` }, 
+      (payload) => {
+        console.log(`Draft players change for ${id}:`, payload);
+        io.to(`draft_${id}`).emit(`draftPlayersUpdate:${id}`, payload);
+      }
+    )
+
     .subscribe((status) => {
       console.log(`Channel status for ${id}:`, status);
     });

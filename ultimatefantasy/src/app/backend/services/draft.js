@@ -91,3 +91,17 @@ exports.updateDraftData = async (draftId, data) => {
   }
   return true;
 };
+
+exports.getDraftPlayers = async (draftId) => {
+  console.log(`Fetching draft players for draftId: ${draftId}`);
+  const { data, error } = await client
+    .from('draft_players')
+    .select('id, draft_id, character_picked, member_picking, league_id, pick_number')
+    .eq('draft_id', draftId);
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
+  return data;
+};

@@ -2,18 +2,63 @@
 
     <div *ngIf="draftData$ | async as draftData" class="draft-content">
         <div *ngIf="draftData.status === 'not_started'">
+            <div class="content">
             <h3>DRAFT SETTINGS</h3>
+            </div>
 
             <div class="draft-settings">
-                <p>Draft Type: {{ draftData.draft_type }}</p>
+
+                                <div class="draft-order-section">
+                                    
                                 <p>Draft Order:</p>
                                 <div class="draft-order" cdkDropList (cdkDropListDropped)="drop($event)">
-                                    <div *ngFor="let player of players" cdkDrag class="draft-team">
-                                        {{ player }}
+                                    <div *ngFor="let p of players" cdkDrag class="draft-team">
+                                        {{ p }}
                                     </div>
                                 </div>
+                                </div>
+
+                                <div class="settings">
+                                    <p>Time per pick: {{ draftData.time_per_pick }} seconds</p>
+                                    <select class="select" [(ngModel)]="draftData.time_per_pick">
+                                        <option *ngFor="let time of [60, 90, 120]" [value]="time">{{ time }}</option>
+                                    </select>
+                                </div>
+
+                                <div class="settings">
+                                    <p>Draft Type: {{ draftData.draft_type }}</p>
+                                    <select class="select" [(ngModel)]="draftData.draft_type">
+                                        <option *ngFor="let type of ['Snake', 'Linear']" [value]="type">{{ type }}</option>
+                                    </select>
+                                </div>
+
+                                <div class="settings">
+                                    
+                                    <p>Number of rounds: </p>
+                                    <select class="select" [(ngModel)]="draftData.number_of_rounds">
+                                        <option *ngFor="let round of [9, 10, 11, 12, 13]" [value]="round">{{ round }}</option>
+                                    </select>
+                               
+
+                                    
+
+                                </div>
+
+                                <div class="content">
+
+                                
                                 <button class="start-draft-btn" (click)="startDraft()">Start Draft</button>
+                                </div>
             </div>
+    </div>
+
+    <div *ngIf="draftData.status === 'in_progress'">
+            <div class="draft-board">
+
+            </div>
+           
+
+            
     </div>
 
 </div>

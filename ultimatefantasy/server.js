@@ -190,6 +190,7 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   socket.on('joinDraft', (draftId) => {
     setupDraftChannel(io, draftId);
+    
     socket.join(`draft_${draftId}`);
   });
 

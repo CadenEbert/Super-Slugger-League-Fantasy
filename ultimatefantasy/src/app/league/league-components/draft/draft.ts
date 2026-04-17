@@ -5,6 +5,26 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
+export interface DraftState {
+  id: string;
+  league_id: string;
+  status: 'pending' | 'in_progress' | 'done';
+  current_pick: number;
+  round: number;
+  pick_order: string[];
+  // Add other fields as needed
+}
+
+export interface DraftPick {
+  id: string;
+  draft_id: string;
+  member_id: string;
+  player_id: string;
+  pick_number: number;
+  round: number;
+  // Add other fields as needed
+}
+
 
 
 @Component({
@@ -14,16 +34,22 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrl: './draft.css',
 })
 export class Draft {
-  private draftDataSubject = new BehaviorSubject<any>(null);
-  draftData$: Observable<any> = this.draftDataSubject.asObservable();
+  private draftDataSubject = new BehaviorSubject<DraftState | null>(null);
+  draftData$: Observable<DraftState | null> = this.draftDataSubject.asObservable();
   draftId: string = '';
 
-  members: any[] = [];
+  private draftPlayersSubject = new BehaviorSubject<DraftPick[]>([]);
+  draftPlayers$: Observable<DraftPick[]> = this.draftPlayersSubject.asObservable();
 
-  players: any[] = ["Player 1", "Player 2", "Player 3"]; 
+  private membersSubject = new BehaviorSubject<any[]>([]);
+  members$: Observable<any[]> = this.membersSubject.asObservable();
+
+  
+
+  players: any[] = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"];
 
 
- 
+
 
   constructor(private draftService: DraftService, private route: ActivatedRoute) { }
 
@@ -32,9 +58,19 @@ export class Draft {
       next: (id) => {
         this.draftId = id;
         console.log('Draft ID:', id);
+        this.draftService.getDraftPlayers(this.draftId).subscribe({
+          next: (data) => {
+            this.setDraftPlayers(data.players);
+          }
+        });
         this.draftService.onDraftUpdate(id).subscribe(update => {
           console.log('Live update:', update);
           this.setDraftData(update.new);
+
+        });
+        this.draftService.onDraftPlayersUpdate(id).subscribe(update => {
+          console.log('Draft players update:', update);
+          this.setDraftPlayers(update.new);
         });
         this.draftService.joinDraft(id);
 
@@ -55,9 +91,11 @@ export class Draft {
       }
     });
 
+
+
     this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (members) => {
-        this.members = members;
+        this.setMembers(members);
         console.log('League Members:', members);
       },
       error: (err) => {
@@ -72,16 +110,24 @@ export class Draft {
     this.draftDataSubject.next(data);
   }
 
-  startDraft() {
-  const current = this.draftDataSubject.value;
-  if (current) {
-    this.draftDataSubject.next({ ...current, status: 'in_progress' });
-    this.draftService.updateDraftData(this.draftId, { ...current, status: 'in_progress' }).subscribe({
-      next: () => console.log('Draft started'),
-      error: (err) => console.error('Error starting draft:', err)
-    
-    });
+  setDraftPlayers(players: DraftPick[]) {
+    this.draftPlayersSubject.next(players);
   }
+
+  setMembers(members: any[]) {
+    this.membersSubject.next(members);
+  }
+
+  startDraft() {
+    const current = this.draftDataSubject.value;
+    if (current) {
+      this.draftDataSubject.next({ ...current, status: 'in_progress' });
+      this.draftService.updateDraftData(this.draftId, { ...current, status: 'in_progress' }).subscribe({
+        next: () => console.log('Draft started'),
+        error: (err) => console.error('Error starting draft:', err)
+
+      });
+    }
   }
 
   drop(event: CdkDragDrop<any[]>) {

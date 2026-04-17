@@ -7,7 +7,7 @@
   height: 100%;
   width: 100%;
   background-color: #f1f1f1;
-  overflow: hidden;
+ 
 }
 
 .leaguepage-content {
@@ -16,8 +16,8 @@
   align-items: center;
   
   margin-bottom: 20px;
-  width: 60%;
-  height: 100%;
+  height: 80%;
+  height: auto;
   padding: 20px;
   background-color: #90bffd;
   border-radius: 10px;
