@@ -8,10 +8,11 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export interface DraftState {
   id: string;
   league_id: string;
-  status: 'pending' | 'in_progress' | 'done';
+  status: 'not_started' | 'in_progress' | 'done';
   current_pick: number;
   round: number;
   pick_order: string[];
+  current_pick_index: number;
   
 }
 

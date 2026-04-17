@@ -8,7 +8,7 @@ exports.getDraftState = async (leagueId) => {
 
   const { data, error } = await client
     .from('draft')
-    .select('uuid, league_id, status, current_pick, current_round, number_of_players, draft_type, timer_seconds, timer_ends_at, number_of_rounds, time_per_pick, pick_order')
+    .select('uuid, league_id, status, current_pick, current_round, number_of_players, draft_type, timer_seconds, timer_ends_at, number_of_rounds, time_per_pick, pick_order, current_pick_index')
     .eq('league_id', leagueId)
     .single();
 

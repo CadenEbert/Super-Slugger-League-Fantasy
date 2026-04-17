@@ -50,15 +50,37 @@
                                 <button class="start-draft-btn" (click)="startDraft()">Start Draft</button>
                                 </div>
             </div>
-    </div>
-
-    <div *ngIf="draftData.status === 'in_progress'">
-            <div class="draft-board">
-
-            </div>
-           
 
             
     </div>
+    <div *ngIf="draftData.status === 'in_progress'">
+        <div class="draft-board">
+            <div class="draft-header">
+                <h3>DRAFT BOARD</h3>
+
+                <div class="draft-info">
+                <p>Time Remaining: {{ draftData.timer_seconds }} seconds</p>
+                <ng-container *ngIf="(pickOrder$ | async) as pickOrder">
+                    <p>
+                      Current Pick:
+                      {{ memberMap[pickOrder[draftData.current_pick_index]] }}
+                    </p>
+                  </ng-container>
+                <p>Round: {{ draftData.current_round }}</p>
+                </div>
+
+            </div>
+            
+
+
+            
+
+        </div>
+       
+
+        
+    </div>
+
+    
 
 </div>
