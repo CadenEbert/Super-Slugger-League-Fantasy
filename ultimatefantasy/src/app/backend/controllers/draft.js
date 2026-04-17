@@ -1,5 +1,7 @@
 const draftService = require('../services/draft.js');
 
+
+
 exports.getDraftState = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
