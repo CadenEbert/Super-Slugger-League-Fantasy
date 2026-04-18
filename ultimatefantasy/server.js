@@ -208,3 +208,6 @@ server.listen(PORT, HOST, () => {
 
 server.on("error", onError);
 server.on("listening", onListening);
+
+
+module.exports.io = io;

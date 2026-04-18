@@ -1,5 +1,9 @@
 const { client, setupDraftChannel } = require('../supabase.js');
 
+const io = require('../../../../server.js').io;
+
+const activeTimers = {};
+
 
 
 exports.getDraftState = async (leagueId) => {
@@ -8,7 +12,7 @@ exports.getDraftState = async (leagueId) => {
 
   const { data, error } = await client
     .from('draft')
-    .select('uuid, league_id, status, current_pick, current_round, number_of_players, draft_type, timer_seconds, timer_ends_at, number_of_rounds, time_per_pick, pick_order, current_pick_index')
+    .select('uuid, league_id, status, current_pick, current_round, number_of_players, draft_type, timer_seconds,  number_of_rounds, time_per_pick, pick_order, current_pick_index, timer_running, player_pool')
     .eq('league_id', leagueId)
     .single();
 
@@ -105,3 +109,145 @@ exports.getDraftPlayers = async (draftId) => {
   }
   return data;
 };
+
+
+exports.pauseDraftTimer = async (draftId) => {
+  try {
+    const { error } = await client
+      .from('draft')
+      .update({ timer_running: false })
+      .eq('uuid', draftId);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+    return true;
+  } catch (err) {
+    console.error('Caught exception:', err);
+    throw err;
+  }
+};
+
+exports.startDraftTimer = async (draftId, timerSeconds) => {
+  try {
+    const { error } = await client
+      .from('draft')
+      .update({ timer_running: true, timer_seconds: timerSeconds })
+      .eq('uuid', draftId);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+
+    if (activeTimers[draftId]) clearInterval(activeTimers[draftId]);
+
+    activeTimers[draftId] = setInterval(async () => {
+      const { data } = await client
+        .from('draft')
+        .select('timer_seconds, timer_running')
+        .eq('uuid', draftId)
+        .single();
+
+      if (!data || !data.timer_running) {
+        clearInterval(activeTimers[draftId]);
+        return;
+      }
+
+      let newSeconds = data.timer_seconds - 1;
+
+      await client
+        .from('draft')
+        .update({ timer_seconds: newSeconds })
+        .eq('uuid', draftId);
+
+      
+      if (io) {
+        io.to(`draft_${draftId}`).emit('timer_update', { timer_seconds: newSeconds });
+      }
+
+      if (newSeconds <= 0) {
+        clearInterval(activeTimers[draftId]);
+        await client
+          .from('draft')
+          .update({ timer_running: false })
+          .eq('uuid', draftId);
+        autoPick(draftId);
+      }
+    }, 1000);
+
+    return true;
+  } catch (err) {
+    console.error('Caught exception:', err);
+    throw err;
+  }
+};
+
+function autoPick(draftId) {
+    try {
+      const { data, error } = client
+        .from('draft')
+        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type')
+        .eq('uuid', draftId)
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message);
+      }
+
+      const currentPick = data.current_pick_index;
+      const pickOrder = data.pick_order;
+      const currentIndex = data.current_pick_index;
+      const leagueId = data.league_id;
+
+
+      
+
+
+    } catch (err) {
+      console.error('Caught exception in autoPick:', err);
+      throw err;
+    }
+  };
+
+async function getAllPlayers() {
+  const { data, error } = await client
+    .from('characters')
+    .select('id, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type');
+
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
+exports.getAllPlayers = getAllPlayers;
+
+
+  exports.getPlayerPool = async (draftId) => {
+    const { data, error } = await client
+    .from('draft_players')
+    .select('character_picked')
+    .eq('draft_id', draftId);
+
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+
+    const allPlayers = await getAllPlayers();
+
+  
+    const pickedCharacterIds = data.map(p => p.character_picked);
+
+    
+    const availablePlayers = allPlayers.filter(player => !pickedCharacterIds.includes(player.id));
+
+    return availablePlayers;
+  };
+

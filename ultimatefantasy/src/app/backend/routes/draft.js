@@ -16,4 +16,11 @@ router.put('/draft/:draftId/update', authMiddleware, draftController.updateDraft
 
 router.get('/draft/:draftId/players', authMiddleware, draftController.getDraftPlayers);
 
+router.post('/draft/:draftId/pause', authMiddleware, draftController.pauseDraftTimer);
+
+router.post('/draft/:draftId/start', authMiddleware, draftController.startDraftTimer);
+
+router.get('/draft/:draftId/playerpool', authMiddleware, draftController.getPlayerPool);
+
+router.get('/players', authMiddleware, draftController.getAllPlayers);
 module.exports = router;

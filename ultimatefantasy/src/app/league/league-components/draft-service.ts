@@ -88,6 +88,16 @@ export class DraftService {
   }
 
  
+  startDraftTimer(draftId: string, timerSeconds: number): Observable<any> {
+    return this.http.post(`/api/draft/${draftId}/start`, { timerSeconds});
+  }
 
+  pauseDraftTimer(draftId: string): Observable<any> {
+    return this.http.post(`/api/draft/${draftId}/pause`, {});
+  }
+
+  getPlayerPool(draftId: string): Observable<any> {
+    return this.http.get(`/api/draft/${draftId}/playerpool`);
+  }
 }
 

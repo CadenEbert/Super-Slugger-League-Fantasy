@@ -67,6 +67,10 @@
                     </p>
                   </ng-container>
                 <p>Round: {{ draftData.current_round }}</p>
+
+                <button class="start-timer" (click)="toggleTimer(draftData.timer_running)">
+                    {{ draftData.timer_running ? 'Pause Timer' : 'Start Timer' }}
+                </button>
                 </div>
 
             </div>
