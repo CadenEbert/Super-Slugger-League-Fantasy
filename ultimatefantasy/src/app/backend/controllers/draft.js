@@ -104,3 +104,14 @@ exports.getAllPlayers = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch all players' });
     }
 };
+
+exports.makeDraftPick = async (req, res) => {
+    try {
+        const draftId = req.params.draftId;
+        const { characterId, memberPicking} = req.body;
+        await draftService.makeDraftPick(draftId, characterId, memberPicking);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to make draft pick' });
+    }
+}

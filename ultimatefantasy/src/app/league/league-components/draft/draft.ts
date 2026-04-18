@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { AuthService } from '../../../core/auth.service';
 
 export interface DraftState {
   id: string;
@@ -91,17 +92,26 @@ export class Draft {
   private characterStatsSubject = new BehaviorSubject<CharacterStats[]>([]);
   characterStats$: Observable<CharacterStats[]> = this.characterStatsSubject.asObservable();
 
+  private playerPoolSubject = new BehaviorSubject<playerPool[]>([]);
+  playerPool$: Observable<playerPool[]> = this.playerPoolSubject.asObservable();
+
   public memberMap: { [id: string]: string } = {};
 
+  private userId = new BehaviorSubject<string>('');
+  userId$ = this.userId.asObservable();
 
 
 
 
 
 
-  constructor(private draftService: DraftService, private route: ActivatedRoute) { }
+
+  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService) { }
 
   ngOnInit() {
+    
+    
+
     this.draftService.getDraftId(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (id) => {
         this.draftId = id;
@@ -119,7 +129,7 @@ export class Draft {
           this.draftService.getPlayerPool(id).subscribe({
             next: (response) => {
               console.log('Player pool response:', response)
-              this.setDraftDataPlayerList(response.playerPool);
+              this.setPlayerPool(response.pool);
 
               
             },
@@ -151,8 +161,10 @@ export class Draft {
           next: (members) => {
             this.setMembers(members);
             console.log('First member object:', JSON.stringify(members[0]));
+            this.setUserId(this.auth.getUserId());
 
             this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
+        
 
             console.log('League Members:', members);
             console.log('Member Map:', this.memberMap);
@@ -169,7 +181,7 @@ export class Draft {
         console.error('Error fetching initial draft data:', err);
       }
     });
-    
+
     this.draftService.getPlayers().subscribe({
       next: (data) => {
         
@@ -182,6 +194,8 @@ export class Draft {
         console.error('Error fetching character stats:', err);
       }
     });
+
+    
 
   }
 
@@ -200,6 +214,11 @@ export class Draft {
 
   setDraftPlayers(players: DraftPick[]) {
     this.draftPlayersSubject.next(players);
+  }
+
+  setUserId(id: string) {
+    this.userId.next(id);
+    console.log('User ID set to:', id);
   }
 
   setCharacterStats(players: any[]) {
@@ -240,6 +259,14 @@ export class Draft {
 
   setDraftDataPlayerList(data: any[]) {
     this.pickOrderSubject.next(data);
+  }
+
+  setPlayerPool(data: any[]) {
+    const mappedPool: playerPool[] = data.map((p: any) => ({
+      id: p.id,
+      name: p.name
+    }));
+    this.playerPoolSubject.next(mappedPool);
   }
 
   startDraft() {
@@ -286,5 +313,14 @@ export class Draft {
 
       }
     }
+  }
+
+  makePick(characterId: number, memberPicking: string) {
+    console.log('Making pick:', { characterId, memberPicking });
+    
+    this.draftService.makeDraftPick(this.draftId, characterId, memberPicking).subscribe({
+      next: () => console.log('Pick made'),
+      error: (err) => console.error('Error making pick:', err)
+    });
   }
 }

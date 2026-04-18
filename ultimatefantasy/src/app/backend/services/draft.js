@@ -212,7 +212,7 @@ function autoPick(draftId) {
     }
   };
 
-  
+
   async function getAllPlayers() {
     const { data, error } = await client
       .from('characters')
@@ -281,5 +281,49 @@ exports.getAllPlayers = getAllPlayers;
     const availablePlayers = allPlayers.filter(player => !pickedCharacterIds.includes(player.id));
 
     return availablePlayers;
+  };
+
+
+  exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
+    try {
+
+      console.log(`Making draft pick for draftId: ${draftId}, characterId: ${characterId}, memberPicking: ${memberPicking}`);
+      const { data, error } = await client
+        .from('draft')
+        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type')
+        .eq('uuid', draftId)
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message);
+      }
+
+      const currentPick = data.current_pick_index;
+      const pickOrder = data.pick_order;
+      const currentIndex = data.current_pick_index;
+      const leagueId = data.league_id;
+
+      await client
+        .from('draft_players')
+        .insert({
+          draft_id: draftId,
+          character_picked: characterId,
+          member_picking: memberPicking,
+          league_id: leagueId,
+          pick_number: currentPick + 1
+        });
+
+      await client
+        .from('draft')
+        .update({ current_pick_index: currentIndex + 1 })
+        .eq('uuid', draftId);
+
+      return true;
+    }
+     catch (err) {
+      console.error('Caught exception in draftPlayer:', err);
+      throw err;
+    }
   };
 

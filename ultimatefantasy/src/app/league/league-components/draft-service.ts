@@ -103,5 +103,9 @@ export class DraftService {
   getPlayers(): Observable<any> {
     return this.http.get(`/api/players`);
   }
+
+  makeDraftPick(draftId: string, characterId: number, memberPicking: string): Observable<any> {
+    return this.http.post(`/api/draft/${draftId}/pick`, { characterId, memberPicking });
+  }
 }
 
