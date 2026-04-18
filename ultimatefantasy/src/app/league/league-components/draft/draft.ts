@@ -16,7 +16,7 @@ export interface DraftState {
   current_pick_index: number;
   timer_seconds: number;
   timer_running: boolean;
-  player_pool: playerPool[];
+  player_pool: number[];
 
 
 }
@@ -115,6 +115,7 @@ export class Draft {
     this.draftService.getDraftId(this.route.parent?.snapshot.params['leagueId']).subscribe({
       next: (id) => {
         this.draftId = id;
+     
         console.log('Draft ID:', id);
         this.draftService.getDraftPlayers(this.draftId).subscribe({
           next: (data) => {
@@ -126,17 +127,7 @@ export class Draft {
         this.draftService.onDraftUpdate(id).subscribe(update => {
           console.log('Live update:', update);
           this.setDraftData(update.new);
-          this.draftService.getPlayerPool(id).subscribe({
-            next: (response) => {
-              console.log('Player pool response:', response)
-              this.setPlayerPool(response.pool);
-
-              
-            },
-            error: (err) => {
-              console.error('Error fetching player pool:', err);
-            }
-          });
+          
 
         });
         this.draftService.onDraftPlayersUpdate(id).subscribe(update => {
@@ -161,7 +152,7 @@ export class Draft {
           next: (members) => {
             this.setMembers(members);
             console.log('First member object:', JSON.stringify(members[0]));
-            this.setUserId(this.auth.getUserId());
+            this.setUserId(this.auth.getUserId()!);
 
             this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
         
@@ -203,15 +194,15 @@ export class Draft {
     this.draftDataSubject.next(data);
   }
 
+
   getCharacter(id: number): CharacterStats | undefined {
     return this.characterStatsSubject.value.find(c => c.id === id);
   }
 
   getAvailablePlayers(draftData: DraftState): CharacterStats[] {
-    const pool = draftData.player_pool?.map(p => p.id) ?? [];
+    const pool = draftData.player_pool as unknown as number[];
     return this.characterStatsSubject.value.filter(c => pool.includes(Number(c.id)));
   }
-
   setDraftPlayers(players: DraftPick[]) {
     this.draftPlayersSubject.next(players);
   }

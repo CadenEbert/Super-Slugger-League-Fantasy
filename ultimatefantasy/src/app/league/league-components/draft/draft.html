@@ -25,7 +25,7 @@
         <div class="settings">
           <p>Draft Type: {{ draftData.draft_type }}</p>
           <select class="select" [(ngModel)]="draftData.draft_type">
-            <option *ngFor="let type of ['Snake', 'Linear']" [value]="type">{{ type }}</option>
+            <option *ngFor="let type of ['Snake', 'Standard']" [value]="type">{{ type }}</option>
           </select>
         </div>
 
@@ -41,6 +41,7 @@
         </div>
       </div>
     </div>
+
     <div *ngIf="draftData.status === 'in_progress'">
       <div class="draft-board">
         <div class="draft-header">
@@ -65,71 +66,73 @@
         <div class="draft-body">
           <div class="draft-table"></div>
 
+      
+
           <ng-container *ngIf="pickOrder$ | async as pickOrder">
-          <div class="player-pool">
-            <mat-card *ngFor="let p of characterStats$ | async" class="indiv-players">
-              <mat-accordion>
-                <mat-expansion-panel class="player-info">
-                  <mat-expansion-panel-header class="player-header">
-                    <mat-panel-title class="player-header">
-                      {{ p.character_name }}
-                    </mat-panel-title>
-                  </mat-expansion-panel-header>
+            <ng-container *ngIf="userId$ | async as userId">
+              <div class="player-pool">
+                <mat-card *ngFor="let pp of getAvailablePlayers(draftData)" class="indiv-players">
+                  <mat-accordion>
+                    <mat-expansion-panel class="player-info">
+                      <mat-expansion-panel-header class="player-header">
+                        <mat-panel-title class="player-header">
+                          {{ pp.character_name }}
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
 
-                  <div class="drop-down">
-                    <div class="player-stats">
-                      <div class="stat-half">
-                        <p>Pitching Arm: {{ p.pitching_arm }}</p>
-                        <p>Batting Arm: {{ p.batting_arm }}</p>
-                        <p>Character Class: {{ p.character_class }}</p>
-                        <p>Weight: {{ p.weight }}</p>
-                        <p>Captain: {{ p.captain ? 'Yes' : 'No' }}</p>
-                        <p>Star Pitch: {{ p.star_pitch }}</p>
-                        <p>Bunting: {{ p.bunting }}</p>
-                        <p>Speed: {{ p.speed }}</p>
-                        <p>Fielding: {{ p.fielding }}</p>
-                        <p>Curve: {{ p.curve }}</p>
-                        <p>Trajectory: {{ p.traj }}</p>
-                        <p>Stamina: {{ p.stamina }}</p>
-                        <p>Fielding Ability: {{ p.fielding_ability }}</p>
-                        <p>Star Swing: {{ p.star_swing }}</p>
-                      </div>
+                      <div class="drop-down">
+                        <div class="player-stats">
+                          <div class="stat-half">
+                            <p>Pitching Arm: {{ pp.pitching_arm }}</p>
+                            <p>Batting Arm: {{ pp.batting_arm }}</p>
+                            <p>Character Class: {{ pp.character_class }}</p>
+                            <p>Weight: {{ pp.weight }}</p>
+                            <p>Captain: {{ pp.captain ? 'Yes' : 'No' }}</p>
+                            <p>Star Pitch: {{ pp.star_pitch }}</p>
+                            <p>Bunting: {{ pp.bunting }}</p>
+                            <p>Speed: {{ pp.speed }}</p>
+                            <p>Fielding: {{ pp.fielding }}</p>
+                            <p>Curve: {{ pp.curve }}</p>
+                            <p>Trajectory: {{ pp.traj }}</p>
+                            <p>Stamina: {{ pp.stamina }}</p>
+                            <p>Fielding Ability: {{ pp.fielding_ability }}</p>
+                            <p>Star Swing: {{ pp.star_swing }}</p>
+                          </div>
 
-                      <div class="stat-half">
-                        <p>Baserunning Ability: {{ p.baserunning_ability }}</p>
-                        <p>Slap Size: {{ p.slap_size }}</p>
-                        <p>Charge Size: {{ p.charge_size }}</p>
-                        <p>Slap Power: {{ p.slap_power }}</p>
-                        <p>Charge Power: {{ p.charge_power }}</p>
-                        <p>Outfield Throwing: {{ p.outfield_throwing }}</p>
-                        <p>Displayed Pitching: {{ p.displayed_pitching }}</p>
-                        <p>Displayed Batting: {{ p.displayed_batting }}</p>
-                        <p>Displayed Fielding: {{ p.displayed_fielding }}</p>
-                        <p>Speed: {{ p.dis_speed }}</p>
-                        <p>Curveball Speed: {{ p.curveball_speed }}</p>
-                        <p>Charge Pitch Speed: {{ p.charge_pitch_speed }}</p>
-                        <p>Hit Curve: {{ p.hit_curve }}</p>
-                        <p>Star Pitch Type: {{ p.star_pitch_type }}</p>
+                          <div class="stat-half">
+                            <p>Baserunning Ability: {{ pp.baserunning_ability }}</p>
+                            <p>Slap Size: {{ pp.slap_size }}</p>
+                            <p>Charge Size: {{ pp.charge_size }}</p>
+                            <p>Slap Power: {{ pp.slap_power }}</p>
+                            <p>Charge Power: {{ pp.charge_power }}</p>
+                            <p>Outfield Throwing: {{ pp.outfield_throwing }}</p>
+                            <p>Displayed Pitching: {{ pp.displayed_pitching }}</p>
+                            <p>Displayed Batting: {{ pp.displayed_batting }}</p>
+                            <p>Displayed Fielding: {{ pp.displayed_fielding }}</p>
+                            <p>Speed: {{ pp.dis_speed }}</p>
+                            <p>Curveball Speed: {{ pp.curveball_speed }}</p>
+                            <p>Charge Pitch Speed: {{ pp.charge_pitch_speed }}</p>
+                            <p>Hit Curve: {{ pp.hit_curve }}</p>
+                            <p>Star Pitch Type: {{ pp.star_pitch_type }}</p>
+                          </div>
+                        </div>
+
+                        <button
+                          class="draft-btn"
+                          (click)="makePick(pp.id, pickOrder[draftData.current_pick_index])"
+                          [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== userId"
+                        >
+                          Draft Player
+                        </button>
                       </div>
-                    </div>
-                    <ng-container *ngIf="pickOrder$ | async as pickOrder">
-                        <ng-container *ngIf="userId$ | async as userId">
-                            <button
-                              class="draft-btn"
-                              (click)="makePick(p.id, pickOrder[draftData.current_pick_index])"
-                              [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== userId"
-                            >
-                              Draft Player
-                            </button>
-                          </ng-container>
-                    </ng-container>
-                  </div>
-                </mat-expansion-panel>
-              </mat-accordion>
-            </mat-card>
-          </div>
-        </ng-container>
-        
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </mat-card>
+              </div>
+            </ng-container>
+          </ng-container>
+
+        </div>
       </div>
     </div>
   </div>

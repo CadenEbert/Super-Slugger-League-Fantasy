@@ -290,7 +290,7 @@ exports.getAllPlayers = getAllPlayers;
       console.log(`Making draft pick for draftId: ${draftId}, characterId: ${characterId}, memberPicking: ${memberPicking}`);
       const { data, error } = await client
         .from('draft')
-        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type')
+        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type, player_pool')
         .eq('uuid', draftId)
         .single();
 
@@ -303,6 +303,16 @@ exports.getAllPlayers = getAllPlayers;
       const pickOrder = data.pick_order;
       const currentIndex = data.current_pick_index;
       const leagueId = data.league_id;
+      const playerPool = data.player_pool;
+      const draftType = data.draft_type;
+      const totalPicks = pickOrder.length;
+
+
+      if (!playerPool.includes(characterId)) {
+        throw new Error('Character already picked');
+      }
+
+      playerPool.splice(playerPool.indexOf(characterId), 1);
 
       await client
         .from('draft_players')
@@ -314,10 +324,52 @@ exports.getAllPlayers = getAllPlayers;
           pick_number: currentPick + 1
         });
 
-      await client
-        .from('draft')
-        .update({ current_pick_index: currentIndex + 1 })
-        .eq('uuid', draftId);
+        if (draftType === 'Snake') {
+          
+          if (currentIndex >= totalPicks - 1) {
+            await client
+              .from('draft')
+              .update({ reversed: true, player_pool: playerPool })
+              .eq('uuid', draftId);
+            return true;
+          } else if (currentIndex === 0) {
+            await client
+              .from('draft')
+              .update({ reversed: false, player_pool: playerPool })
+              .eq('uuid', draftId);
+            return true;
+          }
+          if (currentIndex < totalPicks - 1 && !data.reversed) {
+            const nextPick = pickOrder[currentIndex + 1];
+            await client
+              .from('draft')
+              .update({ current_pick_index: currentIndex + 1, player_pool: playerPool })
+              .eq('uuid', draftId);
+          } else if (currentIndex > 0 && data.reversed) {
+            const nextPickIndex = currentIndex - 1;
+            await client
+              .from('draft')
+              .update({ current_pick_index: nextPickIndex, player_pool: playerPool })
+              .eq('uuid', draftId);
+
+          }
+          
+        } else if (draftType === 'standard') {
+
+          if (currentIndex >= totalPicks - 1) {
+            await client
+              .from('draft')
+              .update({ current_pick_index: 0, player_pool: playerPool })
+              .eq('uuid', draftId);
+          } else {
+            await client
+              .from('draft')
+              .update({ current_pick_index: currentIndex + 1, player_pool: playerPool })
+              .eq('uuid', draftId);
+          }
+        }
+
+      
 
       return true;
     }
@@ -326,4 +378,5 @@ exports.getAllPlayers = getAllPlayers;
       throw err;
     }
   };
+
 
