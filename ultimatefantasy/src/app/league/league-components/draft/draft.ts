@@ -88,7 +88,8 @@ export class Draft {
   private pickOrderSubject = new BehaviorSubject<string[]>([]);
   pickOrder$: Observable<string[]> = this.pickOrderSubject.asObservable();
 
- 
+  private characterStatsSubject = new BehaviorSubject<CharacterStats[]>([]);
+  characterStats$: Observable<CharacterStats[]> = this.characterStatsSubject.asObservable();
 
   public memberMap: { [id: string]: string } = {};
 
@@ -119,6 +120,8 @@ export class Draft {
             next: (response) => {
               console.log('Player pool response:', response)
               this.setDraftDataPlayerList(response.playerPool);
+
+              
             },
             error: (err) => {
               console.error('Error fetching player pool:', err);
@@ -166,13 +169,19 @@ export class Draft {
         console.error('Error fetching initial draft data:', err);
       }
     });
+    
+    this.draftService.getPlayers().subscribe({
+      next: (data) => {
+        
+        this.setCharacterStats(data.players);
+       
+        
 
-
-
-
-
-
-
+       
+      }, error: (err) => {
+        console.error('Error fetching character stats:', err);
+      }
+    });
 
   }
 
@@ -180,8 +189,53 @@ export class Draft {
     this.draftDataSubject.next(data);
   }
 
+  getCharacter(id: number): CharacterStats | undefined {
+    return this.characterStatsSubject.value.find(c => c.id === id);
+  }
+
+  getAvailablePlayers(draftData: DraftState): CharacterStats[] {
+    const pool = draftData.player_pool?.map(p => p.id) ?? [];
+    return this.characterStatsSubject.value.filter(c => pool.includes(Number(c.id)));
+  }
+
   setDraftPlayers(players: DraftPick[]) {
     this.draftPlayersSubject.next(players);
+  }
+
+  setCharacterStats(players: any[]) {
+    const mapped: CharacterStats[] = players.map(player => ({
+      id: player.id,
+      character_name: player.name,
+      weight: player.weight,
+      captain: player.captain,
+      bunting: player.bunting,
+      speed: player.speed,
+      fielding: player.fielding,
+      curve: player.curve,
+      traj: player.trajectory,
+      stamina: player.stamina,
+      pitching_arm: player.pitchingArm,
+      batting_arm: player.battingArm,
+      character_class: player.characterClass,
+      star_pitch: player.starPitch,
+      fielding_ability: player.fieldingAbility,
+      star_swing: player.starSwing,
+      baserunning_ability: player.baserunningAbility,
+      slap_size: player.slapSize,
+      charge_size: player.chargeSize,
+      slap_power: player.slapPower,
+      charge_power: player.chargePower,
+      outfield_throwing: player.outfieldThrowing,
+      displayed_pitching: player.displayedPitching,
+      displayed_batting: player.displayedBatting,
+      displayed_fielding: player.displayedFielding,
+      dis_speed: player.displayedSpeed,
+      curveball_speed: player.curveball_speed,
+      charge_pitch_speed: player.chargePitchSpeed,
+      hit_curve: player.hitCurve,
+      star_pitch_type: player.starPitchType,
+    }));
+    this.characterStatsSubject.next(mapped);
   }
 
   setDraftDataPlayerList(data: any[]) {

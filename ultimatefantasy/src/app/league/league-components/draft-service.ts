@@ -99,5 +99,9 @@ export class DraftService {
   getPlayerPool(draftId: string): Observable<any> {
     return this.http.get(`/api/draft/${draftId}/playerpool`);
   }
+
+  getPlayers(): Observable<any> {
+    return this.http.get(`/api/players`);
+  }
 }
 

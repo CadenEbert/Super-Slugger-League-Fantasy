@@ -1,6 +1,5 @@
 const draftService = require('../services/draft.js');
-
-const { getAllPlayers } = require('./services/draft');
+const { getAllPlayers } = require('../services/draft');
 
 exports.getDraftState = async (req, res) => {
     try {

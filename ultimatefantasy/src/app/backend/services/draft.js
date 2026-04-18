@@ -212,18 +212,50 @@ function autoPick(draftId) {
     }
   };
 
-async function getAllPlayers() {
-  const { data, error } = await client
-    .from('characters')
-    .select('id, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type');
-
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(error.message);
+  
+  async function getAllPlayers() {
+    const { data, error } = await client
+      .from('characters')
+      .select('ID, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type');
+  
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+  
+    return data.map(player => ({
+      id: player.ID,
+      name: player.character_name,
+      weight: player.weight,
+      captain: player.captain,
+      bunting: player.bunting,
+      speed: player.speed,
+      fielding: player.fielding,
+      curve: player.curve,
+      trajectory: player.traj,
+      stamina: player.stamina,
+      pitchingArm: player.pitching_arm,
+      battingArm: player.batting_arm,
+      characterClass: player.character_class,
+      starPitch: player.star_pitch,
+      fieldingAbility: player.fielding_ability,
+      starSwing: player.star_swing,
+      baserunningAbility: player.baserunning_ability,
+      slapSize: player.slap_size,
+      chargeSize: player.charge_size,
+      slapPower: player.slap_power,
+      chargePower: player.charge_power,
+      outfieldThrowing: player.outfield_throwing,
+      displayedPitching: player.displayed_pitching,
+      displayedBatting: player.displayed_batting,
+      displayedFielding: player.displayed_fielding,
+      displayedSpeed: player.dis_speed,
+      curveball_speed: player.curveball_speed,
+      chargePitchSpeed: player.charge_pitch_speed,
+      hitCurve: player.hit_curve,
+      starPitchType: player.star_pitch_type,
+    }));
   }
-
-  return data;
-}
 
 exports.getAllPlayers = getAllPlayers;
 
