@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { LeagueCompService } from '../league-comp-service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { filter } from 'rxjs/internal/operators/filter';
+import { AuthService } from '../../../core/auth.service.js';
+
+
 
 
 @Component({
@@ -16,14 +19,19 @@ export class RosterPage {
   players: any[] = [];
   rosterName: string = '';
   username: string = '';
+  userId: string = '';
   positions: string[] = ['Bench', 'Pitcher', 'Catcher', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
   battingOrders: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  ownerId: string = '';
+  
 
   constructor(
     private cdr: ChangeDetectorRef,
     private http: HttpClient,
     private leagueService: LeagueCompService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
+
   ) { }
 
 
@@ -32,6 +40,8 @@ export class RosterPage {
       this.username = profile.username;
       console.log('Profile data in RosterPage:', profile);
     });
+
+    this.userId = this.authService.getUserId();
 
     this.leagueService.getAllPlayers(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']).subscribe(players => {
       this.players = players;

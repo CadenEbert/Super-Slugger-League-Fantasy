@@ -34,6 +34,13 @@ getUsersRosterId(leagueId: string, userId: string): Observable<string> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
   }
 
+  
+  getOwnerId(rosterId: string): Observable<string> {
+    return this.http.get<{ ownerId: string }>(`/api/rosters/${rosterId}/owner`).pipe(
+      map(res => res.ownerId)
+    );
+  }
+
   getAllRosters(leagueId: string): Observable<any[]> {
 
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters`);
