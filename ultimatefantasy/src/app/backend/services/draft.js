@@ -7,8 +7,7 @@ const activeTimers = {};
 
 
 exports.getDraftState = async (leagueId) => {
-    console.log('Fetching draft state for leagueId:', leagueId);
-
+  console.log('Fetching draft state for leagueId:', leagueId);
 
   const { data, error } = await client
     .from('draft')
@@ -16,16 +15,76 @@ exports.getDraftState = async (leagueId) => {
     .eq('league_id', leagueId)
     .single();
 
-    if (error) throw new Error(error.message);
+  const { data: poolData, error: poolError } = await client
+    .from('draft_players')
+    .select('id, draft_id, character_picked, member_picking, league_id, pick_number')
+    .eq('league_id', leagueId);
 
-    console.log('Draft state data from database:', data);
+  const { data: allPlayers, error: allPlayersError } = await client
+    .from('characters')
+    .select('ID');
 
-    return data;
+  if (poolError) {
+    console.error('Supabase error fetching draft players:', poolError);
+    throw new Error(poolError.message);
+  }
+
+  if (error) throw new Error(error.message);
+
+  updatePlayerPool(data.uuid).catch(err => {
+    console.error('Error updating player pool:', err);
+  });
+
+
+
+  console.log('Draft state data from database:', data);
+
+  return data;
 };
+
+async function updatePlayerPool(draftId) {
+  const { data: pickedData, error: pickedError } = await client
+    .from('draft_players')
+    .select('character_picked')
+    .eq('draft_id', draftId);
+
+  if (pickedError) {
+    console.error('Supabase error fetching picked characters:', pickedError);
+    throw new Error(pickedError.message);
+  }
+
+
+  const { data: allPlayers, error: allPlayersError } = await client
+    .from('characters')
+    .select('ID');
+
+  if (allPlayersError) {
+    console.error('Supabase error fetching all characters:', allPlayersError);
+    throw new Error(allPlayersError.message);
+  }
+
+
+  const pickedCharacterIds = pickedData.map(p => p.character_picked);
+  const availablePlayerIds = allPlayers
+    .filter(player => !pickedCharacterIds.includes(player.ID))
+    .map(player => player.ID);
+
+
+  const { error: updateError } = await client
+    .from('draft')
+    .update({ player_pool: availablePlayerIds })
+    .eq('uuid', draftId);
+
+  if (updateError) {
+    console.error('Supabase error updating player pool:', updateError);
+    throw new Error(updateError.message);
+  }
+}
+
 
 exports.joinDraftChannel = async (draftId, userId, io) => {
   console.log(`User ${userId} joining draft channel for draftId: ${draftId}`);
-  setupDraftChannel(io, draftId); 
+  setupDraftChannel(io, draftId);
   return true;
 };
 
@@ -40,7 +99,7 @@ exports.getDraftIdByLeagueId = async (leagueId) => {
       .eq('league_id', leagueId)
       .single();
 
-    
+
 
     if (error) {
       console.error('Supabase error:', error);
@@ -88,6 +147,10 @@ exports.updateDraftData = async (draftId, data) => {
     .from('draft')
     .update(data)
     .eq('uuid', draftId);
+
+  updatePlayerPool(draftId).catch(err => {
+    console.error('Error updating player pool:', err);
+  });
 
   if (error) {
     console.error('Supabase error:', error);
@@ -143,6 +206,8 @@ exports.startDraftTimer = async (draftId, timerSeconds) => {
 
     if (activeTimers[draftId]) clearInterval(activeTimers[draftId]);
 
+
+
     activeTimers[draftId] = setInterval(async () => {
       const { data } = await client
         .from('draft')
@@ -157,12 +222,16 @@ exports.startDraftTimer = async (draftId, timerSeconds) => {
 
       let newSeconds = data.timer_seconds - 1;
 
+      updatePlayerPool(draftId).catch(err => {
+        console.error('Error updating player pool:', err);
+      });
+
       await client
         .from('draft')
         .update({ timer_seconds: newSeconds })
         .eq('uuid', draftId);
 
-      
+
       if (io) {
         io.to(`draft_${draftId}`).emit('timer_update', { timer_seconds: newSeconds });
       }
@@ -184,199 +253,388 @@ exports.startDraftTimer = async (draftId, timerSeconds) => {
   }
 };
 
-function autoPick(draftId) {
-    try {
-      const { data, error } = client
-        .from('draft')
-        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type')
-        .eq('uuid', draftId)
-        .single();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw new Error(error.message);
-      }
-
-      const currentPick = data.current_pick_index;
-      const pickOrder = data.pick_order;
-      const currentIndex = data.current_pick_index;
-      const leagueId = data.league_id;
 
 
-      
+async function getAllPlayers() {
+  const { data, error } = await client
+    .from('characters')
+    .select('ID, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type');
 
-
-    } catch (err) {
-      console.error('Caught exception in autoPick:', err);
-      throw err;
-    }
-  };
-
-
-  async function getAllPlayers() {
-    const { data, error } = await client
-      .from('characters')
-      .select('ID, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type');
-  
-    if (error) {
-      console.error('Supabase error:', error);
-      throw new Error(error.message);
-    }
-  
-    return data.map(player => ({
-      id: player.ID,
-      name: player.character_name,
-      weight: player.weight,
-      captain: player.captain,
-      bunting: player.bunting,
-      speed: player.speed,
-      fielding: player.fielding,
-      curve: player.curve,
-      trajectory: player.traj,
-      stamina: player.stamina,
-      pitchingArm: player.pitching_arm,
-      battingArm: player.batting_arm,
-      characterClass: player.character_class,
-      starPitch: player.star_pitch,
-      fieldingAbility: player.fielding_ability,
-      starSwing: player.star_swing,
-      baserunningAbility: player.baserunning_ability,
-      slapSize: player.slap_size,
-      chargeSize: player.charge_size,
-      slapPower: player.slap_power,
-      chargePower: player.charge_power,
-      outfieldThrowing: player.outfield_throwing,
-      displayedPitching: player.displayed_pitching,
-      displayedBatting: player.displayed_batting,
-      displayedFielding: player.displayed_fielding,
-      displayedSpeed: player.dis_speed,
-      curveball_speed: player.curveball_speed,
-      chargePitchSpeed: player.charge_pitch_speed,
-      hitCurve: player.hit_curve,
-      starPitchType: player.star_pitch_type,
-    }));
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
   }
+
+  return data.map(player => ({
+    id: player.ID,
+    name: player.character_name,
+    weight: player.weight,
+    captain: player.captain,
+    bunting: player.bunting,
+    speed: player.speed,
+    fielding: player.fielding,
+    curve: player.curve,
+    trajectory: player.traj,
+    stamina: player.stamina,
+    pitchingArm: player.pitching_arm,
+    battingArm: player.batting_arm,
+    characterClass: player.character_class,
+    starPitch: player.star_pitch,
+    fieldingAbility: player.fielding_ability,
+    starSwing: player.star_swing,
+    baserunningAbility: player.baserunning_ability,
+    slapSize: player.slap_size,
+    chargeSize: player.charge_size,
+    slapPower: player.slap_power,
+    chargePower: player.charge_power,
+    outfieldThrowing: player.outfield_throwing,
+    displayedPitching: player.displayed_pitching,
+    displayedBatting: player.displayed_batting,
+    displayedFielding: player.displayed_fielding,
+    displayedSpeed: player.dis_speed,
+    curveball_speed: player.curveball_speed,
+    chargePitchSpeed: player.charge_pitch_speed,
+    hitCurve: player.hit_curve,
+    starPitchType: player.star_pitch_type,
+  }));
+}
 
 exports.getAllPlayers = getAllPlayers;
 
 
-  exports.getPlayerPool = async (draftId) => {
-    const { data, error } = await client
+exports.getPlayerPool = async (draftId) => {
+  const { data, error } = await client
     .from('draft_players')
     .select('character_picked')
     .eq('draft_id', draftId);
 
 
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
+
+  const allPlayers = await getAllPlayers();
+
+
+  const pickedCharacterIds = data.map(p => p.character_picked);
+
+
+  const availablePlayers = allPlayers.filter(player => !pickedCharacterIds.includes(player.id));
+
+  return availablePlayers;
+};
+
+exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
+  try {
+    console.log(`Making draft pick for draftId: ${draftId}, characterId: ${characterId}, memberPicking: ${memberPicking}`);
+
+    const { data, error } = await client
+      .from('draft')
+      .select('current_pick, pick_order, current_pick_index, league_id, draft_type, player_pool, time_per_pick, reversed, end_of_snake, current_round, number_of_rounds')
+      .eq('uuid', draftId)
+      .single();
+
     if (error) {
       console.error('Supabase error:', error);
       throw new Error(error.message);
     }
 
-    const allPlayers = await getAllPlayers();
+    const { current_pick, pick_order, current_pick_index, league_id, draft_type, player_pool, time_per_pick, reversed, end_of_snake, current_round, number_of_rounds } = data;
+    const totalPicks = pick_order.length;
+
+    if (!player_pool.includes(characterId)) {
+      throw new Error('Character already picked');
+    }
+
+    const newPlayerPool = player_pool.filter(id => id !== characterId);
+
+    const { error: insertError } = await client
+      .from('draft_players')
+      .insert({
+        draft_id: draftId,
+        character_picked: characterId,
+        member_picking: memberPicking,
+        league_id: league_id,
+        pick_number: current_pick + 1
+      });
+
+    if (insertError) {
+      console.error('Supabase error inserting pick:', insertError);
+      throw new Error(insertError.message);
+    }
+
+    let nextIndex = current_pick_index;
+    let nextReversed = reversed;
+    let nextSnakeEnd = end_of_snake;
+    let nextRound = current_round;
+    let finalRound = false;
 
   
-    const pickedCharacterIds = data.map(p => p.character_picked);
-
-    
-    const availablePlayers = allPlayers.filter(player => !pickedCharacterIds.includes(player.id));
-
-    return availablePlayers;
-  };
-
-
-  exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
-    try {
-
-      console.log(`Making draft pick for draftId: ${draftId}, characterId: ${characterId}, memberPicking: ${memberPicking}`);
-      const { data, error } = await client
-        .from('draft')
-        .select('current_pick_index, pick_order, current_pick_index, league_id, draft_type, player_pool')
-        .eq('uuid', draftId)
-        .single();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw new Error(error.message);
-      }
-
-      const currentPick = data.current_pick_index;
-      const pickOrder = data.pick_order;
-      const currentIndex = data.current_pick_index;
-      const leagueId = data.league_id;
-      const playerPool = data.player_pool;
-      const draftType = data.draft_type;
-      const totalPicks = pickOrder.length;
-
-
-      if (!playerPool.includes(characterId)) {
-        throw new Error('Character already picked');
-      }
-
-      playerPool.splice(playerPool.indexOf(characterId), 1);
-
-      await client
-        .from('draft_players')
-        .insert({
-          draft_id: draftId,
-          character_picked: characterId,
-          member_picking: memberPicking,
-          league_id: leagueId,
-          pick_number: currentPick + 1
-        });
-
-        if (draftType === 'Snake') {
-          
-          if (currentIndex >= totalPicks - 1) {
-            await client
-              .from('draft')
-              .update({ reversed: true, player_pool: playerPool })
-              .eq('uuid', draftId);
-            return true;
-          } else if (currentIndex === 0) {
-            await client
-              .from('draft')
-              .update({ reversed: false, player_pool: playerPool })
-              .eq('uuid', draftId);
-            return true;
-          }
-          if (currentIndex < totalPicks - 1 && !data.reversed) {
-            const nextPick = pickOrder[currentIndex + 1];
-            await client
-              .from('draft')
-              .update({ current_pick_index: currentIndex + 1, player_pool: playerPool })
-              .eq('uuid', draftId);
-          } else if (currentIndex > 0 && data.reversed) {
-            const nextPickIndex = currentIndex - 1;
-            await client
-              .from('draft')
-              .update({ current_pick_index: nextPickIndex, player_pool: playerPool })
-              .eq('uuid', draftId);
-
-          }
-          
-        } else if (draftType === 'standard') {
-
-          if (currentIndex >= totalPicks - 1) {
-            await client
-              .from('draft')
-              .update({ current_pick_index: 0, player_pool: playerPool })
-              .eq('uuid', draftId);
+    if (draft_type === 'Snake') {
+     
+      if (!reversed) {
+        if (current_pick_index === totalPicks - 1) {
+         
+          if (current_round === number_of_rounds) {
+            finalRound = true;
           } else {
-            await client
-              .from('draft')
-              .update({ current_pick_index: currentIndex + 1, player_pool: playerPool })
-              .eq('uuid', draftId);
+            nextRound = current_round + 1;
           }
+          nextReversed = true;
+          nextIndex = totalPicks - 1; 
+        } else {
+          nextIndex = current_pick_index + 1;
         }
-
-      
-
-      return true;
+      } else {
+       
+        if (current_pick_index === 0) {
+          if (current_round === number_of_rounds) {
+            finalRound = true;
+          } else {
+            nextRound = current_round + 1;
+          }
+          nextReversed = false;
+          nextIndex = 0;
+        } else {
+          nextIndex = current_pick_index - 1;
+        }
+      }
+    } else if (draft_type === 'standard') {
+      nextIndex = current_pick_index >= totalPicks - 1 ? 0 : current_pick_index + 1;
+      if (current_pick_index >= totalPicks - 1) {
+        if (current_round === number_of_rounds) {
+          finalRound = true;
+        } else {
+          nextRound = current_round + 1;
+        }
+      }
     }
-     catch (err) {
-      console.error('Caught exception in draftPlayer:', err);
-      throw err;
+
+    if (finalRound) {
+      console.log('Draft completed after this pick');
+      exports.pauseDraftTimer(draftId);
+      await finishDraft(draftId);
     }
-  };
+
+    const { error: updateError } = await client
+      .from('draft')
+      .update({
+        current_pick: current_pick + 1,
+        current_pick_index: nextIndex,
+        reversed: nextReversed,
+        end_of_snake: nextSnakeEnd,
+        player_pool: newPlayerPool,
+        current_round: nextRound,
+        status: finalRound ? 'completed' : 'in_progress'
+      })
+      .eq('uuid', draftId);
+
+    if (updateError) {
+      console.error('Supabase error updating draft:', updateError);
+      throw new Error(updateError.message);
+    }
+
+    if (finalRound) {
+      await finishDraft(draftId);
+    }
+
+    if (!finalRound) {
+      await exports.pauseDraftTimer(draftId);
+      await exports.startDraftTimer(draftId, time_per_pick);
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Caught exception in makeDraftPick:', err);
+    throw err;
+  }
+};
+
+async function autoPick(draftId) {
+  try {
+    const { data, error } = await client
+      .from('draft')
+      .select('current_pick, pick_order, current_pick_index, league_id, draft_type, player_pool, time_per_pick, reversed, end_of_snake, current_round, number_of_rounds, status')
+      .eq('uuid', draftId)
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+
+    if (data.status === 'completed') return;
+
+    const {
+      current_pick, pick_order, current_pick_index, league_id,
+      draft_type, player_pool, time_per_pick, reversed,
+      end_of_snake, current_round, number_of_rounds
+    } = data;
+    const totalPicks = pick_order.length;
+    console.log('totalPicks:', totalPicks, 'current_pick_index:', current_pick_index, 'current_round:', current_round);
+
+    if (!player_pool || player_pool.length === 0) {
+      await finishDraft(draftId);
+      await exports.pauseDraftTimer(draftId);
+      return;
+    }
+
+    const memberPicking = pick_order[current_pick_index];
+    const characterId = player_pool[0];
+
+    const { error: insertError } = await client
+      .from('draft_players')
+      .insert({
+        draft_id: draftId,
+        character_picked: characterId,
+        member_picking: memberPicking,
+        league_id: league_id,
+        pick_number: current_pick + 1
+      });
+
+    if (insertError) {
+      console.error('Supabase error inserting autopick:', insertError);
+      throw new Error(insertError.message);
+    }
+
+    let nextIndex = current_pick_index;
+    let nextReversed = reversed;
+    let nextSnakeEnd = end_of_snake;
+    let nextRound = current_round;
+    let finalRound = false;
+
+    if (draft_type === 'Snake') {
+      if (!reversed) {
+        if (current_pick_index === totalPicks - 1) {
+          if (current_round === number_of_rounds) {
+            finalRound = true;
+          } else {
+            nextRound = current_round + 1;
+          }
+          nextReversed = true;
+          nextIndex = totalPicks - 1;
+        } else {
+          nextIndex = current_pick_index + 1;
+        }
+      } else {
+        if (current_pick_index === 0) {
+          if (current_round === number_of_rounds) {
+            finalRound = true;
+          } else {
+            nextRound = current_round + 1;
+          }
+          nextReversed = false;
+          nextIndex = 0;
+        } else {
+          nextIndex = current_pick_index - 1;
+        }
+      }
+    } else if (draft_type === 'Standard') {
+      nextIndex = current_pick_index >= totalPicks - 1 ? 0 : current_pick_index + 1;
+      if (current_pick_index >= totalPicks - 1) {
+        if (current_round === number_of_rounds) {
+          finalRound = true;
+        } else {
+          nextRound = current_round + 1;
+        }
+      }
+    }
+
+    const newPlayerPool = player_pool.filter(id => id !== characterId);
+
+    const { error: updateError } = await client
+      .from('draft')
+      .update({
+        current_pick: current_pick + 1,
+        current_pick_index: nextIndex,
+        reversed: nextReversed,
+        end_of_snake: nextSnakeEnd,
+        player_pool: newPlayerPool,
+        current_round: nextRound,
+        status: finalRound ? 'completed' : 'in_progress'
+      })
+      .eq('uuid', draftId);
+
+    if (updateError) {
+      console.error('Supabase error updating draft:', updateError);
+      throw new Error(updateError.message);
+    }
+
+    if (finalRound) {
+      await finishDraft(draftId);
+      await exports.pauseDraftTimer(draftId);
+      return;
+    }
+
+    await exports.startDraftTimer(draftId, time_per_pick);
+
+  } catch (err) {
+    console.error('Caught exception in autoPick:', err);
+    throw err;
+  }
+}
+
+async function finishDraft(draftId) {
+  try {
+    const { data, error } = await client
+      .from('draft')
+      .select('league_id')
+      .eq('uuid', draftId)
+      .single();
+
+    if (error) {
+      console.error('Supabase error fetching draft for finishDraft:', error);
+      throw new Error(error.message);
+    }
+
+    const leagueId = data.league_id;
 
 
+    const { data: draftPlayers, error: draftPlayersError } = await client
+      .from('draft_players')
+      .select('member_picking, character_picked')
+      .eq('draft_id', draftId);
+
+    if (draftPlayersError) {
+      console.error('Supabase error fetching draft players:', draftPlayersError);
+      throw new Error(draftPlayersError.message);
+    }
+
+
+    const { data: rosters, error: rostersError } = await client
+      .from('rosters')
+      .select('id, owner_id')
+      .eq('league_id', leagueId);
+
+    if (rostersError) {
+      console.error('Supabase error fetching rosters:', rostersError);
+      throw new Error(rostersError.message);
+    }
+
+    const rosterMap = {};
+    rosters.forEach(r => {
+      rosterMap[r.owner_id] = r.id;
+    });
+
+
+    const rosterPlayerRows = draftPlayers.map(pick => ({
+      roster_id: rosterMap[pick.member_picking],
+      character_id: pick.character_picked,
+      position: 'Bench'
+    }));
+
+    const { error: insertError } = await client
+      .from('roster_players')
+      .insert(rosterPlayerRows);
+
+    if (insertError) {
+      console.error('Supabase error inserting roster players:', insertError);
+      throw new Error(insertError.message);
+    }
+
+  } catch (err) {
+    console.error('Caught exception in finishDraft:', err);
+    throw err;
+  }
+}

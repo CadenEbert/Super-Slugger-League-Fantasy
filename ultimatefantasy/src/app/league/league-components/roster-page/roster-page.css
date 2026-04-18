@@ -1,5 +1,7 @@
 .indiv-players {
     margin-bottom: 20px;
+    margin-right: 40px;
+    
 }
 
 .player-info {
@@ -11,6 +13,16 @@
     
 
 
+}
+
+.roster-container {
+    
+    overflow-y: auto;
+    width: 97%;
+    height: 97%;
+    padding: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .player-header {

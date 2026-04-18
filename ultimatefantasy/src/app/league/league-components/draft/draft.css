@@ -1,3 +1,5 @@
+
+
 .draft-container {
     display: flex;
     justify-content: center;
@@ -119,6 +121,13 @@
 
 }
 
+.player-header {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    
+}
+
 .player-stats {
     display: flex;
     width: 100%;
@@ -142,7 +151,7 @@
 .draft-body {
     display: flex;
     flex-direction: row;
-    align-items: center;
+   
    
 }
 
