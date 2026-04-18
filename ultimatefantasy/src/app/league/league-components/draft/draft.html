@@ -75,8 +75,11 @@
 
             </div>
 
+            <div class="draft-body">
+
 
                 <div class="draft-table">
+                    
                     
 
                     
@@ -131,14 +134,19 @@
                               <p>Star Pitch Type: {{ p.star_pitch_type }}</p>
 
                             </div>
+                            
+
                             </div>
+                            <button class="draft-btn" (click)="draftPlayer(p.character_id)" [disabled]="">
+                                Draft Player
+                              </button>
                           </div>
                         </mat-expansion-panel>
                       </mat-accordion>
                     </mat-card>
                   </div>
             
-
+            </div>  
 
             
 
