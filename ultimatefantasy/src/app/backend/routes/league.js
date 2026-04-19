@@ -25,4 +25,6 @@ router.post('/leagues/:id/roster-limit', authMiddleware, leagueController.update
 
 router.post('/leagues/:id/join', authMiddleware, leagueController.joinLeague);
 
+router.get('/leagues/:id/owner-id', authMiddleware, leagueController.getOwnerId);
+
 module.exports = router;

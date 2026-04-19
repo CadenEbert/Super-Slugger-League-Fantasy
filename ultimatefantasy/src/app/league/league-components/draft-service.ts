@@ -49,6 +49,12 @@ export class DraftService {
     });
   }
 
+  canDraft(leagueId: string): Observable<boolean> {
+    return this.http.get<{ canDraft: boolean }>(`/api/draft/${leagueId}/can-draft`).pipe(
+      map(response => response.canDraft)
+    );
+  }
+
   onDraftPlayersUpdate(draftId: string): Observable<any> {
     return new Observable(observer => {
       const eventName = `draftPlayersUpdate:${draftId}`;

@@ -25,6 +25,21 @@ exports.createLeague = async (req, res) => {
     }
 };
 
+exports.getOwnerId = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const ownerId = await leagueService.getOwnerId(leagueId);
+        if (ownerId) {
+            res.json({ ownerId });
+        }
+        else {
+            res.status(404).json({ error: 'League not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch owner ID' });
+    }
+};
+
 exports.joinLeague = async (req, res) => {
     try {
         const leagueId = req.params.id;

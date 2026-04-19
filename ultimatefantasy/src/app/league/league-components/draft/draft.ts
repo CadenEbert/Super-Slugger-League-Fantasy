@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DraftService } from '../draft-service';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, Subscription, combineLatest, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, combineLatest, distinctUntilChanged, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AuthService } from '../../../core/auth.service';
+import { LeagueService } from '../../league-service';
 
 export interface DraftState {
   id: string;
@@ -12,10 +13,12 @@ export interface DraftState {
   status: 'not_started' | 'in_progress' | 'done';
   current_pick: number;
   round: number;
+  number_of_rounds: number;
   pick_order: string[];
   current_pick_index: number;
   timer_seconds: number;
   timer_running: boolean;
+  draft_type: string;
   player_pool: number[];
 }
 
@@ -85,6 +88,10 @@ export class Draft implements OnInit, OnDestroy {
   );
   draftId: string = '';
 
+  timePerPick: number = 60;
+  draftType: string = 'Snake';
+  numberOfRounds: number = 10;
+
   private draftPlayersSubject = new BehaviorSubject<DraftPick[]>([]);
   draftPlayers$: Observable<DraftPick[]> = this.draftPlayersSubject.asObservable();
 
@@ -102,6 +109,12 @@ export class Draft implements OnInit, OnDestroy {
   private userId = new BehaviorSubject<string>('');
   userId$ = this.userId.asObservable();
 
+  private ownerIdSubject = new BehaviorSubject<string>('');
+  ownerId$ = this.ownerIdSubject.asObservable();
+
+  public canDraft$ = new BehaviorSubject<boolean>(false);
+  canDraftObservable$ = this.canDraft$.asObservable();
+
   public isMakingPick = false;
   private subscriptions: Subscription[] = [];
 
@@ -110,7 +123,7 @@ export class Draft implements OnInit, OnDestroy {
     this.characterStatsSubject
   ]).pipe(
     map(([draftData, characters]) => {
-      
+
       if (!draftData) return [];
       const pool = draftData.player_pool as unknown as number[];
       return characters.filter(c => pool.includes(Number(c.id)));
@@ -121,13 +134,13 @@ export class Draft implements OnInit, OnDestroy {
     map(([picks, characterStats]) =>
       picks
         .map(pick => {
-            console.log('combineLatest — picks:', picks.length, 'chars:', characterStats.length);
-            console.log('first pick character_picked:', picks[0]?.character_picked);
-            console.log('first character id:', characterStats[0]?.id);
+          console.log('combineLatest — picks:', picks.length, 'chars:', characterStats.length);
+          console.log('first pick character_picked:', picks[0]?.character_picked);
+          console.log('first character id:', characterStats[0]?.id);
           const character = characterStats.find(c => Number(c.id) === Number(pick.character_picked));
           if (!character) return null;
           return {
-            
+
             character,
             member_picking: pick.member_picking,
             pick_number: pick.pick_number
@@ -138,9 +151,24 @@ export class Draft implements OnInit, OnDestroy {
     )
   );
 
-  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService) { }
+  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService, private leagueService: LeagueService) { }
 
   ngOnInit() {
+
+    this.draftService.canDraft(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (canDraft) => {
+        console.log('Can draft:', canDraft);
+        this.setCanDraft(canDraft);
+        console.log('Can draft (BehaviorSubject):', this.canDraft$.value);
+      },
+      error: (err) => console.error('Error checking draft eligibility:', err)
+      });
+
+    this.leagueService.getOwnerId(this.route.parent?.snapshot.params['leagueId']).subscribe(ownerId => {
+      console.log('Owner ID in LeaguePage:', ownerId);
+      this.setOwnerId(ownerId);
+    });
+
     this.subscriptions.push(
       this.draftService.getDraftId(this.route.parent?.snapshot.params['leagueId']).subscribe({
         next: (id) => {
@@ -151,10 +179,10 @@ export class Draft implements OnInit, OnDestroy {
             this.draftService.getDraftPlayers(this.draftId).subscribe({
               next: (data) => {
                 this.setDraftPlayers(data.players)
-                    console.log('getDraftPlayers response:', data);
-                    console.log('data.players:', data.players);
+                console.log('getDraftPlayers response:', data);
+                console.log('data.players:', data.players);
               },
-              
+
             }),
 
             this.draftService.onDraftUpdate(id).subscribe(update => {
@@ -171,171 +199,184 @@ export class Draft implements OnInit, OnDestroy {
             })
           );
 
-    this.draftService.joinDraft(id);
-  },
-  error: (err) => console.error('Error fetching draft ID:', err)
-}),
-
-this.draftService.getInitialDraftData(this.route.parent?.snapshot.params['leagueId']).subscribe({
-  next: (data) => {
-    this.setDraftData(data);
-
-    this.subscriptions.push(
-      this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
-        next: (members) => {
-          console.log('Fetched league members:', members);
-          this.setMembers(members);
-          this.setUserId(this.auth.getUserId()!);
-          this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
-          console.log('League Members:', members);
-          console.log('Member Map:', this.memberMap);
+          this.draftService.joinDraft(id);
         },
-        error: (err) => console.error('Error fetching league members:', err)
-      })
-    );
-  },
-  error: (err) => console.error('Error fetching initial draft data:', err)
-}),
+        error: (err) => console.error('Error fetching draft ID:', err)
+      }),
 
-  this.draftService.getPlayers().subscribe({
-    next: (data) => this.setCharacterStats(data.players),
-    error: (err) => console.error('Error fetching character stats:', err)
-  })
-    );
-  }
+      this.draftService.getInitialDraftData(this.route.parent?.snapshot.params['leagueId']).subscribe({
+        next: (data) => {
+          this.setDraftData(data);
 
-ngOnDestroy() {
-  this.subscriptions.forEach(sub => sub.unsubscribe());
-}
+          this.subscriptions.push(
+            this.draftService.getAllLeagueMembers(this.route.parent?.snapshot.params['leagueId']).subscribe({
+              next: (members) => {
+                console.log('Fetched league members:', members);
+                this.setMembers(members);
+                this.setUserId(this.auth.getUserId()!);
+                this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
+                console.log('League Members:', members);
+                console.log('Member Map:', this.memberMap);
+              },
+              error: (err) => console.error('Error fetching league members:', err)
+            })
+          );
+        },
+        error: (err) => console.error('Error fetching initial draft data:', err)
+      }),
 
-setDraftData(data: any) {
-  this.draftDataSubject.next(data);
-}
-
-getCharacter(id: number): CharacterStats | undefined {
-  return this.characterStatsSubject.value.find(c => c.id === id);
-}
-
-getAvailablePlayers(draftData: DraftState): CharacterStats[] {
-  const pool = draftData.player_pool as unknown as number[];
-  return this.characterStatsSubject.value.filter(c => pool.includes(Number(c.id)));
-}
-
-setDraftPlayers(players: DraftPick[]) {
-  console.log('setDraftPlayers called with:', players?.length, players);
-  this.draftPlayersSubject.next(players);
-}
-
-setUserId(id: string) {
-  this.userId.next(id);
-  console.log('User ID set to:', id);
-}
-
-setCharacterStats(players: any[]) {
-  const mapped: CharacterStats[] = players.map(player => ({
-    id: player.id,
-    character_name: player.name,
-    weight: player.weight,
-    captain: player.captain,
-    bunting: player.bunting,
-    speed: player.speed,
-    fielding: player.fielding,
-    curve: player.curve,
-    traj: player.trajectory,
-    stamina: player.stamina,
-    pitching_arm: player.pitchingArm,
-    batting_arm: player.battingArm,
-    character_class: player.characterClass,
-    star_pitch: player.starPitch,
-    fielding_ability: player.fieldingAbility,
-    star_swing: player.starSwing,
-    baserunning_ability: player.baserunningAbility,
-    slap_size: player.slapSize,
-    charge_size: player.chargeSize,
-    slap_power: player.slapPower,
-    charge_power: player.chargePower,
-    outfield_throwing: player.outfieldThrowing,
-    displayed_pitching: player.displayedPitching,
-    displayed_batting: player.displayedBatting,
-    displayed_fielding: player.displayedFielding,
-    dis_speed: player.displayedSpeed,
-    curveball_speed: player.curveball_speed,
-    charge_pitch_speed: player.chargePitchSpeed,
-    hit_curve: player.hitCurve,
-    star_pitch_type: player.starPitchType,
-  }));
-  this.characterStatsSubject.next(mapped);
-}
-
-setDraftDataPlayerList(data: any[]) {
-  this.pickOrderSubject.next(data);
-}
-
-setPlayerPool(data: any[]) {
-  const mappedPool: playerPool[] = data.map((p: any) => ({
-    id: p.id,
-    name: p.name
-  }));
-  this.playerPoolSubject.next(mappedPool);
-}
-
-startDraft() {
-  const current = this.draftDataSubject.value;
-  if (current) {
-    this.subscriptions.push(
-      this.draftService.updateDraftData(this.draftId, {
-        ...current,
-        status: 'in_progress',
-        current_pick: 1,
-        current_round: 1,
-        pick_order: this.pickOrderSubject.value
-      }).subscribe({
-        next: () => console.log('Draft started'),
-        error: (err) => console.error('Error starting draft:', err)
+      this.draftService.getPlayers().subscribe({
+        next: (data) => this.setCharacterStats(data.players),
+        error: (err) => console.error('Error fetching character stats:', err)
       })
     );
   }
-}
 
-setMembers(members: any[]) {
-  members.forEach(member => {
-    this.memberMap[member.user_id] = member.username;
-  });
-}
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
 
-drop(event: CdkDragDrop<string[]>) {
-  const order = [...this.pickOrderSubject.value];
-  moveItemInArray(order, event.previousIndex, event.currentIndex);
-  this.pickOrderSubject.next(order);
-}
+  setDraftData(data: any) {
+    this.draftDataSubject.next(data);
+  }
 
-toggleTimer(data: boolean) {
-  if (data) {
-    this.draftService.pauseDraftTimer(this.draftId).subscribe();
-  } else {
-    const draftData = this.draftDataSubject.value;
-    if (draftData) {
-      this.draftService.startDraftTimer(this.draftId, draftData.timer_seconds).subscribe();
+  setCanDraft(canDraft: boolean) {
+    this.canDraft$.next(canDraft);
+  }
+
+  setOwnerId(ownerId: string) {
+    this.ownerIdSubject.next(ownerId);
+  }
+
+  getCharacter(id: number): CharacterStats | undefined {
+    return this.characterStatsSubject.value.find(c => c.id === id);
+  }
+
+  getAvailablePlayers(draftData: DraftState): CharacterStats[] {
+    const pool = draftData.player_pool as unknown as number[];
+    return this.characterStatsSubject.value.filter(c => pool.includes(Number(c.id)));
+  }
+
+  setDraftPlayers(players: DraftPick[]) {
+    console.log('setDraftPlayers called with:', players?.length, players);
+    this.draftPlayersSubject.next(players);
+  }
+
+  setUserId(id: string) {
+    this.userId.next(id);
+    console.log('User ID set to:', id);
+  }
+
+  setCharacterStats(players: any[]) {
+    const mapped: CharacterStats[] = players.map(player => ({
+      id: player.id,
+      character_name: player.name,
+      weight: player.weight,
+      captain: player.captain,
+      bunting: player.bunting,
+      speed: player.speed,
+      fielding: player.fielding,
+      curve: player.curve,
+      traj: player.trajectory,
+      stamina: player.stamina,
+      pitching_arm: player.pitchingArm,
+      batting_arm: player.battingArm,
+      character_class: player.characterClass,
+      star_pitch: player.starPitch,
+      fielding_ability: player.fieldingAbility,
+      star_swing: player.starSwing,
+      baserunning_ability: player.baserunningAbility,
+      slap_size: player.slapSize,
+      charge_size: player.chargeSize,
+      slap_power: player.slapPower,
+      charge_power: player.chargePower,
+      outfield_throwing: player.outfieldThrowing,
+      displayed_pitching: player.displayedPitching,
+      displayed_batting: player.displayedBatting,
+      displayed_fielding: player.displayedFielding,
+      dis_speed: player.displayedSpeed,
+      curveball_speed: player.curveball_speed,
+      charge_pitch_speed: player.chargePitchSpeed,
+      hit_curve: player.hitCurve,
+      star_pitch_type: player.starPitchType,
+    }));
+    this.characterStatsSubject.next(mapped);
+  }
+
+  setDraftDataPlayerList(data: any[]) {
+    this.pickOrderSubject.next(data);
+  }
+
+  setPlayerPool(data: any[]) {
+    const mappedPool: playerPool[] = data.map((p: any) => ({
+      id: p.id,
+      name: p.name
+    }));
+    this.playerPoolSubject.next(mappedPool);
+  }
+
+  startDraft(timePerPick: number, draftType: string, numberOfRounds: number) {
+    const current = this.draftDataSubject.value;
+    if (current) {
+      this.subscriptions.push(
+        this.draftService.updateDraftData(this.draftId, {
+          ...current,
+          status: 'in_progress',
+          current_pick: 1,
+          current_round: 1,
+          timer_seconds: timePerPick,
+          time_per_pick: timePerPick,
+          number_of_rounds: numberOfRounds,
+          draft_type: draftType,
+
+          pick_order: this.pickOrderSubject.value
+        }).subscribe({
+          next: () => console.log('Draft started'),
+          error: (err) => console.error('Error starting draft:', err)
+        })
+      );
     }
   }
-}
 
-makePick(characterId: number, memberPicking: string) {
-  console.log('Making pick:', { characterId, memberPicking });
-  if (this.isMakingPick) return;
-  this.isMakingPick = true;
+  setMembers(members: any[]) {
+    members.forEach(member => {
+      this.memberMap[member.user_id] = member.username;
+    });
+  }
 
-  this.subscriptions.push(
-    this.draftService.makeDraftPick(this.draftId, characterId, memberPicking).subscribe({
-      next: () => {
-        console.log('Pick made');
-        this.isMakingPick = false;
-      },
-      error: (err) => {
-        console.error('Error making pick:', err);
-        this.isMakingPick = false;
+  drop(event: CdkDragDrop<string[]>) {
+    const order = [...this.pickOrderSubject.value];
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
+    this.pickOrderSubject.next(order);
+  }
+
+  toggleTimer(data: boolean) {
+    if (data) {
+      this.draftService.pauseDraftTimer(this.draftId).subscribe();
+    } else {
+      const draftData = this.draftDataSubject.value;
+      if (draftData) {
+        this.draftService.startDraftTimer(this.draftId, draftData.timer_seconds).subscribe();
       }
-    })
-  );
-}
+    }
+  }
+
+  makePick(characterId: number, memberPicking: string) {
+    console.log('Making pick:', { characterId, memberPicking });
+    if (this.isMakingPick) return;
+    this.isMakingPick = true;
+
+    this.subscriptions.push(
+      this.draftService.makeDraftPick(this.draftId, characterId, memberPicking).subscribe({
+        next: () => {
+          console.log('Pick made');
+          this.isMakingPick = false;
+        },
+        error: (err) => {
+          console.error('Error making pick:', err);
+          this.isMakingPick = false;
+        }
+      })
+    );
+  }
 }

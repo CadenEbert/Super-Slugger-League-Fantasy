@@ -68,15 +68,17 @@ exports.createLeague = async (userId, leagueData) => {
 
   if (leagueError) throw new Error(leagueError.message);
 
-  const {  } = await supabase.client
+  const { error } = await supabase.client
     .from('draft')
     .insert({
       league_id: leagueArr[0].id,
       status: 'not_started',
-      draft_type: leagueData.draftSettings === 'snake' ? 'snake' : 'linear'
+      draft_type: leagueData.draftSettings === 'Snake' ? 'Snake' : 'Standard'
     })
     .select()
     .single();
+
+  if (error) throw new Error(error.message);
 
   const league = leagueArr?.[0];
   if (!league) throw new Error('League creation failed');
@@ -166,6 +168,17 @@ exports.getUsersRosterId = async (leagueId, userId) => {
   if (error) throw new Error(error.message);
 
   return data ? data.id : null;
+}
+
+exports.getOwnerId = async (leagueId) => {
+  const { data, error } = await supabase.client
+    .from('leagues')
+    .select('owner_id')
+    .eq('id', leagueId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data ? data.owner_id : null;
 }
 
 exports.deleteLeague = async (leagueId) => {

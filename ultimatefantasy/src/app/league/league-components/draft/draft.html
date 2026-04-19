@@ -1,8 +1,18 @@
 <div class="draft-container">
+
+  <ng-container *ngIf="!(canDraft$ | async)">
+    
+     <h2 class="not-eligible">You are not eligible to participate in the draft.</h2>
+   
+    
+  </ng-container>
+ 
+  <ng-container *ngIf="canDraft$ | async as canDraft">
   <ng-container *ngIf="draftData$ | async as draftData">
   <ng-container *ngIf="pickOrder$ | async as pickOrder">
   <ng-container *ngIf="userId$ | async as userId">
-
+  
+    <div *ngIf="canDraft" class="draft-container">
     <div *ngIf="draftData.status === 'not_started'" class="draft-content">
       <div class="content">
         <h3>DRAFT SETTINGS</h3>
@@ -17,25 +27,25 @@
           </div>
         </div>
         <div class="settings">
-          <p>Time per pick: {{ draftData.time_per_pick }} seconds</p>
-          <select class="select" [(ngModel)]="draftData.time_per_pick">
+          <p>Time per pick: {{ timePerPick }} seconds</p>
+          <select class="select" [(ngModel)]="timePerPick">
             <option *ngFor="let time of [60, 90, 120]" [value]="time">{{ time }}</option>
           </select>
         </div>
         <div class="settings">
-          <p>Draft Type: {{ draftData.draft_type }}</p>
-          <select class="select" [(ngModel)]="draftData.draft_type">
+          <p>Draft Type: {{ draftType }}</p>
+          <select class="select" [(ngModel)]="draftType">
             <option *ngFor="let type of ['Snake', 'Standard']" [value]="type">{{ type }}</option>
           </select>
         </div>
         <div class="settings">
           <p>Number of rounds:</p>
-          <select class="select" [(ngModel)]="draftData.number_of_rounds">
+          <select class="select" [(ngModel)]="numberOfRounds">
             <option *ngFor="let round of [9, 10, 11, 12, 13]" [value]="round">{{ round }}</option>
           </select>
         </div>
         <div class="content">
-          <button class="start-draft-btn" (click)="startDraft()">Start Draft</button>
+          <button class="start-draft-btn" (click)="startDraft(timePerPick, draftType, numberOfRounds)" [disabled]="(ownerId$ | async) !== (userId$ | async)">Start Draft</button>
         </div>
       </div>
     </div>
@@ -226,8 +236,10 @@
               </mat-card>
             </ng-container>
             </div>
+            </div>
+  </ng-container>
+  </ng-container>
+  </ng-container>
+   </ng-container>
 
-  </ng-container>
-  </ng-container>
-  </ng-container>
 </div>

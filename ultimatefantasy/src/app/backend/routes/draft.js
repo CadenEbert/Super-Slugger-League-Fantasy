@@ -26,4 +26,8 @@ router.get('/players', authMiddleware, draftController.getAllPlayers);
 
 router.post('/draft/:draftId/pick', authMiddleware, draftController.makeDraftPick);
 
+router.get('/draft/:leagueId/status', authMiddleware, draftController.getDraftStatus);
+
+router.get('/draft/:leagueId/can-draft', authMiddleware, draftController.getCanDraft);
+
 module.exports = router;

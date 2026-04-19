@@ -24,19 +24,26 @@ export class LeagueCompService {
     return this.http.get('/api/profile');
   }
 
-getUsersRosterId(leagueId: string, userId: string): Observable<string> {
-  return this.http
-    .get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${userId}`)
-    .pipe(map(res => res.rosterId)); 
-}
+  getUsersRosterId(leagueId: string, userId: string): Observable<string> {
+    return this.http
+      .get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${userId}`)
+      .pipe(map(res => res.rosterId)); 
+  }
 
+  
   getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
   }
 
+  getDraftStatus(leagueId: string): Observable<string> {
+    return this.http.get<{ draftStatus: string }>(`/api/draft/${leagueId}/status`).pipe(
+      map(res => res.draftStatus)
+    );
+  }
+
   
   getOwnerId(rosterId: string): Observable<string> {
-    return this.http.get<{ ownerId: string }>(`/api/rosters/${rosterId}/owner`).pipe(
+    return this.http.get<{ ownerId: string }>(`/api/rosters/${rosterId}/owner-id`).pipe(
       map(res => res.ownerId)
     );
   }

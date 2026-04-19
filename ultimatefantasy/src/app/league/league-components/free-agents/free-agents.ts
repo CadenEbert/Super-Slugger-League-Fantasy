@@ -16,6 +16,7 @@ export class FreeAgents {
   players: any[] = [];
 
   rosterId: string = '';
+  draftStatus: string = 'not_started';
 
   constructor(
     private leagueService: LeagueCompService,
@@ -26,6 +27,12 @@ export class FreeAgents {
 
   ngOnInit(): void {
     const leagueId = this.route.parent?.snapshot.paramMap.get('leagueId');
+
+    this.leagueService.getDraftStatus(this.route.parent?.snapshot.params['leagueId']).subscribe(status => {
+      this.draftStatus = status;
+      console.log('Draft status in Rosters:', this.draftStatus);
+      this.cdRef.detectChanges();
+    });
 
 
     this.authService.session$.subscribe(session => {

@@ -19,7 +19,7 @@ export class Leagecreate {
     leagueName: new FormControl('', Validators.required),
     roster_size: new FormControl(9, [Validators.required, Validators.min(9), Validators.max(13)]),
     leagueSize: new FormControl(8, Validators.required),
-    draftSettings: new FormControl('standard', Validators.required),
+    draftSettings: new FormControl('Standard', Validators.required),
   });
 
   constructor(private leagueService: LeagueService) { }
@@ -40,7 +40,7 @@ export class Leagecreate {
       leagueName: leagueName ?? '',
       roster_size: Number(roster_size ?? 9),
       leagueSize: Number(leagueSize ?? 8),
-      draftSettings: draftSettings ?? 'standard',
+      draftSettings: draftSettings ?? 'Standard',
 
       userName: this.profile?.username ?? ''
      }).subscribe({

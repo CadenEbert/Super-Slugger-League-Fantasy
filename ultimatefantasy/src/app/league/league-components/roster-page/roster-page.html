@@ -7,6 +7,50 @@
             <p>No players on this roster yet.</p>
         </div>
 
+        <div class="roster-container" *ngIf="(ownerId$ | async) != (userId$ | async)">
+        <mat-card *ngFor="let p of players" class="indiv-players">
+            <mat-accordion>
+                <mat-expansion-panel class="player-info">
+                    <mat-expansion-panel-header class="player-header">
+                        <mat-panel-title class="player-header">
+                            Name: {{ p.character.characterName }}
+                        </mat-panel-title>
+                        <mat-content class="player-header">
+                            Position: {{ p.position }} 
+                            
+                        </mat-content>
+                        <mat-content class="player-header">
+                            Batting Order: {{ p.batting_order }}
+                            
+                        </mat-content>
+                    </mat-expansion-panel-header>
+
+                  <div class="drop-down">
+                    <div class="player-stats">
+                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
+                        <p>Batting Arm: {{ p.character.battingArm }}</p>
+                        <p>Character Class: {{ p.character.characterClass }}</p>
+                        <p>Weight: {{ p.character.weight }}</p>
+                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
+                        <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
+                    </div>
+
+                 
+                        
+                        
+                 
+                    
+                    
+                    
+                </div>
+                    
+
+                </mat-expansion-panel>
+            </mat-accordion>
+        </mat-card>
+        </div>
+
+        <div class="roster-container" *ngIf="(ownerId$ | async) == (userId$ | async)">
         <mat-card *ngFor="let p of players" class="indiv-players">
             <mat-accordion>
                 <mat-expansion-panel class="player-info">
@@ -51,7 +95,7 @@
                         <button (click)="changeBattingOrder(p.character.id, p.batting_order)" class="position-btn">Update</button>
                         </div>
                         <div class="position-change">
-                            <button (click)="removePlayer(p.character.id)" class="remove-btn" [disabled]="ownerId != userId">Remove Player</button>
+                            <button (click)="removePlayer(p.character.id)" class="remove-btn" >Remove Player</button>
                         </div>
                         
                         
@@ -65,6 +109,8 @@
                 </mat-expansion-panel>
             </mat-accordion>
         </mat-card>
+
+        </div>
 
     </div>
 

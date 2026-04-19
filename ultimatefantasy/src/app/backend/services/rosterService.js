@@ -24,6 +24,20 @@ exports.getRoster = async (leagueId) => {
     }));
 };
 
+exports.getOwnerId = async (rosterId) => {
+    const { data, error } = await supabase.client
+        .from('rosters')
+        .select('owner_id')
+        .eq('id', rosterId)
+        .single();
+
+    if (error) throw new Error(error.message);
+
+    return data.owner_id;
+};
+
+
+
 exports.getRosterById = async (rosterId) => {
     const { data, error } = await supabase.client
         .from('roster_players')

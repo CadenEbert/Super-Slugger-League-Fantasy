@@ -50,6 +50,16 @@ exports.createRoster = async (req, res) => {
 
 }
 
+exports.getOwnerId = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const ownerId = await rosterService.getOwnerId(rosterId);
+        res.json({ ownerId });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch owner ID' });
+    }
+}
+
 exports.changePlayerPosition = async (req, res) => {
     try {
         const rosterId = req.params.rosterId;

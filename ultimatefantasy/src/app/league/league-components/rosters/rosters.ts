@@ -39,6 +39,8 @@ export class Rosters {
   isLoading: boolean = false;
 
 
+
+
   ngOnInit(): void {
     this.isLoading = true;
     this.route.parent?.params.pipe(
@@ -53,6 +55,8 @@ export class Rosters {
       this.isLoading = false;
       this.cdr.detectChanges();
     });
+
+
 
     this.leagueService.getProfile().subscribe((profile: any) => {
       this.profile = profile;

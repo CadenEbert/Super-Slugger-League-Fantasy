@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeagueService } from '../league-service';
-import { isPlatformBrowser } from '@angular/common';
-import { LeagueCompService } from '../league-components/league-comp-service';
-import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { map } from 'rxjs/internal/operators/map';
+import { AuthService } from '../../core/auth.service.js';
 
 
 @Component({
@@ -16,17 +16,41 @@ export class LeaguePage {
   league: any = null;
   @Input() leagueId: string | null = null;
 
+  private ownerIdSubject = new BehaviorSubject<string>('');
+  ownerId$ = this.ownerIdSubject.asObservable();
+
+  private userIdSubject = new BehaviorSubject<string>('');
+  userId$ = this.userIdSubject.asObservable();
+
   constructor(
     private route: ActivatedRoute,
     private leagueService: LeagueService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+
+  ) {
+    this.userId$ = this.authService.user$.pipe(map(user => user?.id ?? ''));
+    this.userId$.subscribe(userId => {
+      console.log('Actual user ID:', userId);
+    });
+  }
 
   ngOnInit() {
+
+
+
+
+    console.log('User ID in RosterPage:', this.userId$);
+
+    this.leagueService.getOwnerId(this.route.snapshot.params['leagueId']).subscribe(ownerId => {
+      console.log('Owner ID in LeaguePage:', ownerId);
+      this.setOwnerId(ownerId);
+    });
+
     if (this.leagueId) {
       this.fetchLeague(this.leagueId);
     } else {
-      
+
       this.route.paramMap.subscribe(params => {
         const leagueId = params.get('leagueId');
         if (leagueId) {
@@ -38,6 +62,8 @@ export class LeaguePage {
     }
   }
 
+
+
   private fetchLeague(leagueId: string) {
     this.leagueService.fetchLeagueDetails(leagueId).subscribe({
       next: data => {
@@ -47,4 +73,13 @@ export class LeaguePage {
       error: err => console.error('Failed to fetch league:', err)
     });
   }
+
+  setOwnerId(ownerId: string) {
+    this.ownerIdSubject.next(ownerId);
+  }
+
+
+
 }
+
+

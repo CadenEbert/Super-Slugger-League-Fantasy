@@ -1,9 +1,13 @@
 <div class="roster-container">
-  <div class="my-leagues">
+    <div class="not_started" *ngIf="draftStatus === 'not_started'">
+      <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
+    </div>
+
+  <div class="my-leagues" *ngIf="draftStatus === 'completed'">
 
 
 
-
+    
 
     <mat-card *ngFor="let p of players" class="indiv-players">
       <mat-accordion>

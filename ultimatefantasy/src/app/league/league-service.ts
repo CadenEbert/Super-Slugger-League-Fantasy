@@ -35,6 +35,12 @@ export class LeagueService {
     );
   }
 
+  getOwnerId(leagueId: string): Observable<string> {
+    return this.http.get<{ ownerId: string }>(`/api/leagues/${leagueId}/owner-id`).pipe(
+      map(res => res.ownerId)
+    );
+  }
+
   joinLeague(leagueId: string, userId: string): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/join`, { userId });
   }

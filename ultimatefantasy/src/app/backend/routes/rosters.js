@@ -18,5 +18,8 @@ router.post('/leagues/:leagueId/rosters/:rosterId/players/:characterId/batting-o
 
 router.delete('/leagues/:leagueId/rosters/:rosterId/players/:characterId', authMiddleware, rosterController.removePlayer);
 
+router.get('/rosters/:rosterId/owner-id', authMiddleware, rosterController.getOwnerId);
+
+
 
 module.exports = router;

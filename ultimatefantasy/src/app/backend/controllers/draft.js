@@ -114,4 +114,25 @@ exports.makeDraftPick = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to make draft pick' });
     }
-}
+};
+
+exports.getDraftStatus = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const draftStatus = await draftService.getDraftStatus(leagueId);
+        res.json({ draftStatus });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch draft status' });
+    }
+};
+
+exports.getCanDraft = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const userId = req.user.id;
+        const canDraft = await draftService.getCanDraft(leagueId);
+        res.json({ canDraft });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to check if user can draft' });
+    }
+};

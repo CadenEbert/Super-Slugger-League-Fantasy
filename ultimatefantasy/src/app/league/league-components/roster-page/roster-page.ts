@@ -5,6 +5,8 @@ import { LeagueCompService } from '../league-comp-service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { filter } from 'rxjs/internal/operators/filter';
 import { AuthService } from '../../../core/auth.service.js';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { map } from 'rxjs/internal/operators/map';
 
 
 
@@ -19,29 +21,44 @@ export class RosterPage {
   players: any[] = [];
   rosterName: string = '';
   username: string = '';
-  userId: string = '';
   positions: string[] = ['Bench', 'Pitcher', 'Catcher', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
   battingOrders: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  ownerId: string = '';
+
+  private ownerIdSubject = new BehaviorSubject<string>('');
+  ownerId$ = this.ownerIdSubject.asObservable();
+
+  private userIdSubject = new BehaviorSubject<string>('');
+  userId$ = this.userIdSubject.asObservable();
   
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private http: HttpClient,
     private leagueService: LeagueCompService,
     private route: ActivatedRoute,
     private authService: AuthService
 
-  ) { }
+  ) {
+        this.userId$ = this.authService.user$.pipe(map(user => user?.id ?? ''));
+
+   }
+
+
 
 
   ngOnInit(): void {
     this.leagueService.getProfile().subscribe((profile: any) => {
       this.username = profile.username;
+      this.cdr.detectChanges();
       console.log('Profile data in RosterPage:', profile);
     });
 
-    this.userId = this.authService.getUserId();
+    this.setUserId(this.authService.getUserId() ?? '');
+
+    console.log('User ID in RosterPage:', this.userId$);
+
+    this.leagueService.getOwnerId(this.route.snapshot.params['rosterId']).subscribe(ownerId => {
+      this.setOwnerId(ownerId);
+    });
 
     this.leagueService.getAllPlayers(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']).subscribe(players => {
       this.players = players;
@@ -49,6 +66,15 @@ export class RosterPage {
 
     });
 
+  }
+
+  setOwnerId(ownerId: string) {
+    this.ownerIdSubject.next(ownerId);
+  }
+
+  setUserId(userId: string) {
+   
+    this.userIdSubject.next(userId);
   }
 
   changePosition(characterId: string, newPosition: string) {

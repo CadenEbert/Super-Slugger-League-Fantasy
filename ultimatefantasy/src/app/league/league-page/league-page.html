@@ -1,6 +1,7 @@
 
     <app-sidebar></app-sidebar>
-    <app-settings></app-settings>
+
+    <app-settings *ngIf="(ownerId$ | async) === (userId$ | async)"></app-settings>
 
 
 

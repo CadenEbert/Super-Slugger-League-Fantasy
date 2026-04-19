@@ -11,7 +11,7 @@ exports.getDraftState = async (leagueId) => {
 
   const { data, error } = await client
     .from('draft')
-    .select('uuid, league_id, status, current_pick, current_round, number_of_players, draft_type, timer_seconds,  number_of_rounds, time_per_pick, pick_order, current_pick_index, timer_running, player_pool')
+    .select('uuid, league_id, status, current_pick, current_round,  draft_type, timer_seconds,  number_of_rounds, time_per_pick, pick_order, current_pick_index, timer_running, player_pool')
     .eq('league_id', leagueId)
     .single();
 
@@ -139,6 +139,46 @@ exports.getAllLeagueMembers = async (leagueId) => {
   }));
 
   return members;
+};
+
+exports.getDraftStatus = async (leagueId) => {
+    console.log('Fetching draft status for leagueId:', leagueId);
+    const { data, error } = await client
+        .from('draft')
+        .select('status')
+        .eq('league_id', leagueId)
+        .single();
+
+    console.log('Draft status data from database:', data, 'error:', error);
+    if (error) throw new Error(error.message);
+
+    return data.status;
+};
+
+exports.getCanDraft = async (leagueId) => {
+
+    console.log('Checking if user can draft for leagueId:', leagueId);
+    const { data: rostersData, error } = await client
+        .from('rosters')
+        .select('*')
+        .eq('league_id', leagueId);
+
+    if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message);
+    }
+
+    const { data: membersData, error: membersError } = await client
+        .from('league_members')
+        .select('user_id')
+        .eq('league_id', leagueId);
+
+    if (membersError) {
+        console.error('Supabase error fetching league members:', membersError);
+        throw new Error(membersError.message);
+    }
+
+   return membersData.length === rostersData.length;
 };
 
 exports.updateDraftData = async (draftId, data) => {
@@ -324,6 +364,8 @@ exports.getPlayerPool = async (draftId) => {
 
   return availablePlayers;
 };
+
+
 
 exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
   try {
