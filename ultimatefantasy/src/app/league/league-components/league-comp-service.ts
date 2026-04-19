@@ -30,6 +30,10 @@ export class LeagueCompService {
       .pipe(map(res => res.rosterId)); 
   }
 
+  getSchedule(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/schedule`);
+  }
+
   
   getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);

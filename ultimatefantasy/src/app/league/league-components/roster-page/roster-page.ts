@@ -62,6 +62,7 @@ export class RosterPage {
 
     this.leagueService.getAllPlayers(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']).subscribe(players => {
       this.players = players;
+      console.log('Players in RosterPage:', players);
       this.cdr.detectChanges();
 
     });

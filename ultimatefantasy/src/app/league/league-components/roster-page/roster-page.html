@@ -26,15 +26,54 @@
                     </mat-expansion-panel-header>
 
                   <div class="drop-down">
-                    <div class="player-stats">
-                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
-                        <p>Batting Arm: {{ p.character.battingArm }}</p>
-                        <p>Character Class: {{ p.character.characterClass }}</p>
-                        <p>Weight: {{ p.character.weight }}</p>
-                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
-                        <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
-                    </div>
+                    <div class="stats">
 
+                 
+                    
+                        <div class="stat-half">
+                            <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
+                            <p>Batting Arm: {{ p.character.battingArm }}</p>
+                            <p>Character Class: {{ p.character.characterClass }}</p>
+                            <p>Weight: {{ p.character.weight }}</p>
+                            <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
+                            <p>Star Pitch: {{ p.character.starPitch }}</p>
+                            <p>Bunting: {{ p.character.bunting }}</p>
+                            </div>
+    
+                        <div class="stat-half">
+                            <p>Speed: {{ p.character.speed }}</p>
+                            <p>Fielding: {{ p.character.fielding }}</p>
+                            <p>Curve: {{ p.character.curve }}</p>
+                            <p>Trajectory: {{ p.character.trajectory }}</p>
+                            <p>Stamina: {{ p.character.stamina }}</p>
+                            <p>Fielding Ability: {{ p.character.fieldingAbility }}</p>
+                            <p>Star Swing: {{ p.character.starSwing }}</p>
+                        </div>
+                          <div class="stat-half">
+                            <p>Baserunning Ability: {{ p.character.baserunningAbility }}</p>
+                            <p>Slap Size: {{ p.character.slapSize }}</p>
+                            <p>Charge Size: {{ p.character.chargeSize }}</p>
+                            <p>Slap Power: {{ p.character.slapPower }}</p>
+                            <p>Charge Power: {{ p.character.chargePower }}</p>
+                            <p>Outfield Throwing: {{ p.character.outfieldThrowing }}</p>
+                            <p>Displayed Pitching: {{ p.character.displayedPitching }}</p>
+                            </div>
+                            <div class="stat-half">
+                            <p>Displayed Batting: {{ p.character.displayedBatting }}</p>
+                            <p>Displayed Fielding: {{ p.character.displayedFielding }}</p>
+                            <p>Displayed Speed: {{ p.character.displayedSpeed }}</p>
+                            <p>Curveball Speed: {{ p.character.curveball_speed }}</p>
+                            <p>Charge Pitch Speed: {{ p.character.chargePitchSpeed }}</p>
+                            <p>Hit Curve: {{ p.character.hitCurve }}</p>
+                            <p>Star Pitch Type: {{ p.character.starPitchType }}</p>
+                          </div>
+    
+                        </div>
+    
+                        
+                        
+                        
+                    
                  
                         
                         
@@ -56,7 +95,7 @@
                 <mat-expansion-panel class="player-info">
                     <mat-expansion-panel-header class="player-header">
                         <mat-panel-title class="player-header">
-                            Name: {{ p.character.characterName }}
+                            {{ p.character.characterName }}
                         </mat-panel-title>
                         <mat-content class="player-header">
                             Position: {{ p.position }} 
@@ -69,14 +108,6 @@
                     </mat-expansion-panel-header>
 
                   <div class="drop-down">
-                    <div class="player-stats">
-                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
-                        <p>Batting Arm: {{ p.character.battingArm }}</p>
-                        <p>Character Class: {{ p.character.characterClass }}</p>
-                        <p>Weight: {{ p.character.weight }}</p>
-                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
-                        <p>Star Pitch: {{ p.character.starPitch ? 'Yes' : 'No' }}</p>
-                    </div>
 
                     <div class="change">
                         <div class="position-change">
@@ -100,6 +131,51 @@
                         
                         
                     </div>
+
+                    <div class="stats">
+
+                 
+                    
+                    <div class="stat-half">
+                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
+                        <p>Batting Arm: {{ p.character.battingArm }}</p>
+                        <p>Character Class: {{ p.character.characterClass }}</p>
+                        <p>Weight: {{ p.character.weight }}</p>
+                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
+                        <p>Star Pitch: {{ p.character.starPitch }}</p>
+                        <p>Bunting: {{ p.character.bunting }}</p>
+                        </div>
+
+                    <div class="stat-half">
+                        <p>Speed: {{ p.character.speed }}</p>
+                        <p>Fielding: {{ p.character.fielding }}</p>
+                        <p>Curve: {{ p.character.curve }}</p>
+                        <p>Trajectory: {{ p.character.trajectory }}</p>
+                        <p>Stamina: {{ p.character.stamina }}</p>
+                        <p>Fielding Ability: {{ p.character.fieldingAbility }}</p>
+                        <p>Star Swing: {{ p.character.starSwing }}</p>
+                    </div>
+                      <div class="stat-half">
+                        <p>Baserunning Ability: {{ p.character.baserunningAbility }}</p>
+                        <p>Slap Size: {{ p.character.slapSize }}</p>
+                        <p>Charge Size: {{ p.character.chargeSize }}</p>
+                        <p>Slap Power: {{ p.character.slapPower }}</p>
+                        <p>Charge Power: {{ p.character.chargePower }}</p>
+                        <p>Outfield Throwing: {{ p.character.outfieldThrowing }}</p>
+                        <p>Displayed Pitching: {{ p.character.displayedPitching }}</p>
+                        </div>
+                        <div class="stat-half">
+                        <p>Displayed Batting: {{ p.character.displayedBatting }}</p>
+                        <p>Displayed Fielding: {{ p.character.displayedFielding }}</p>
+                        <p>Displayed Speed: {{ p.character.displayedSpeed }}</p>
+                        <p>Curveball Speed: {{ p.character.curveball_speed }}</p>
+                        <p>Charge Pitch Speed: {{ p.character.chargePitchSpeed }}</p>
+                        <p>Hit Curve: {{ p.character.hitCurve }}</p>
+                        <p>Star Pitch Type: {{ p.character.starPitchType }}</p>
+                      </div>
+
+                    </div>
+
                     
                     
                     

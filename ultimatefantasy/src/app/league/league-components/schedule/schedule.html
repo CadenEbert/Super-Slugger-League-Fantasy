@@ -1,1 +1,54 @@
-<p>schedule works!</p>
+<div class="schedule-container" *ngIf="isLoading">
+    <div class="schedule-header">
+        <h1>Schedule</h1>
+    </div>
+
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>
+
+
+<ng-container *ngIf="schedule$ | async as schedule">
+    <ng-container *ngIf="userId$ | async as userId">
+      <ng-container *ngIf="(ownerId$ | async) !== null as ownerId">
+
+<div class="schedule-container" *ngIf="schedule.status === 'not_started' && userId === ownerId && !isLoading">
+    <div class="schedule-header">
+        <h1>Schedule</h1>
+
+            <div class="schedule-settings">
+            <p>Week: {{ schedule.current_week }} / {{ schedule.total_weeks }}</p>
+            <p>Status: {{ schedule.status }}</p>
+            </div>
+         
+    </div>
+
+    <div class="not-started">
+        <p>The season has not started yet. Please check back later for the schedule.</p>
+    </div>
+</div>
+
+
+<div class="schedule-container" *ngIf="!isLoading && schedule.status === 'in_progress'">
+
+    <div class="schedule-header">
+        <h1>Schedule</h1>
+
+            <div class="schedule-settings">
+            <p>Week: {{ schedule.current_week }} / {{ schedule.total_weeks }}</p>
+            <p>Status: {{ schedule.status }}</p>
+            </div>
+         
+    </div>
+
+
+
+    <mat-card *ngFor="let g of games" class="indiv-games">
+       
+    </mat-card>
+
+</div>
+</ng-container>
+</ng-container>
+</ng-container>   

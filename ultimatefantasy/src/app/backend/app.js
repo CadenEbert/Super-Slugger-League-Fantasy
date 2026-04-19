@@ -8,5 +8,6 @@ app.use('/api', require('./routes/rosters'));
 app.use('/api', require('./routes/profile'));
 app.use('/api', require('./routes/freeagents'));
 app.use('/api', require('./routes/draft'));
+app.use('/api', require('./routes/schedule'));
 
 module.exports = app;

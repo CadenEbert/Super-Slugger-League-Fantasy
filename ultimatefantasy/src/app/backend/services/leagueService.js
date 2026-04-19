@@ -77,8 +77,19 @@ exports.createLeague = async (userId, leagueData) => {
     })
     .select()
     .single();
+    if (error) throw new Error(error.message);
 
-  if (error) throw new Error(error.message);
+    const { error: scheduleErr } = await supabase.client
+    .from('schedule')
+    .insert({
+      league_id: leagueArr[0].id,
+      owner_id: userId,
+      status: 'not_started'
+    });
+
+    if (scheduleErr) throw new Error(scheduleErr.message);
+
+ 
 
   const league = leagueArr?.[0];
   if (!league) throw new Error('League creation failed');

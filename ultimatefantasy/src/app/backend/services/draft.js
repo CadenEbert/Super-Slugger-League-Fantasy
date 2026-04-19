@@ -442,7 +442,7 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
           nextIndex = current_pick_index - 1;
         }
       }
-    } else if (draft_type === 'standard') {
+    } else if (draft_type === 'Standard') {
       nextIndex = current_pick_index >= totalPicks - 1 ? 0 : current_pick_index + 1;
       if (current_pick_index >= totalPicks - 1) {
         if (current_round === number_of_rounds) {
@@ -477,14 +477,7 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
       throw new Error(updateError.message);
     }
 
-    if (finalRound) {
-      await finishDraft(draftId);
-    }
 
-    if (!finalRound) {
-      await exports.pauseDraftTimer(draftId);
-      await exports.startDraftTimer(draftId, time_per_pick);
-    }
 
     return true;
   } catch (err) {
@@ -546,6 +539,7 @@ async function autoPick(draftId) {
     let nextRound = current_round;
     let finalRound = false;
 
+
     if (draft_type === 'Snake') {
       if (!reversed) {
         if (current_pick_index === totalPicks - 1) {
@@ -603,11 +597,7 @@ async function autoPick(draftId) {
       throw new Error(updateError.message);
     }
 
-    if (finalRound) {
-      await finishDraft(draftId);
-      await exports.pauseDraftTimer(draftId);
-      return;
-    }
+
 
     await exports.startDraftTimer(draftId, time_per_pick);
 

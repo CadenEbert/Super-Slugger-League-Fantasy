@@ -26,6 +26,7 @@
   border-radius: 10px;
   min-height: 80%;
   
+  
   overflow: hidden;
 }
 
@@ -69,6 +70,7 @@
 .tab-nav {
   display: flex;
   flex-direction: row;
+ 
   
   margin-top: 20px;
 }
@@ -114,6 +116,7 @@
   overflow: hidden;
   background-color: #6caafc;
   border-radius: 10px;
+  
 }
 
 
