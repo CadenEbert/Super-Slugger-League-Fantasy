@@ -35,6 +35,10 @@ export class LeagueService {
     );
   }
 
+  joinLeague(leagueId: string, userId: string): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/join`, { userId });
+  }
+
   fetchLeagueDetails(leagueId: string): Observable<any> {
     return this.http.get(`/api/leagues/${leagueId}`);
   }

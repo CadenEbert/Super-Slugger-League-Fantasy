@@ -6,6 +6,7 @@ import { take } from 'rxjs/internal/operators/take';
 import { filter } from 'rxjs/internal/operators/filter';
 import { AuthService } from '../../core/auth.service';
 
+
 @Component({
   selector: 'app-myleagues',
   standalone: false,
@@ -14,17 +15,21 @@ import { AuthService } from '../../core/auth.service';
 })
 export class Myleagues {
   leagues: any[] = [];
-
+  userId: string = '';
+  leagueId: string = '';
   
 
   constructor(
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+
   ) { }
 
   ngOnInit() {
+
+    this.userId = this.authService.getUserId();
 
     this.authService.session$.pipe(
       filter(session => {
@@ -42,7 +47,14 @@ export class Myleagues {
     
   }
 
-  
+  joinLeague(leagueId: string) {
+    this.leagueService.joinLeague(leagueId, this.userId).subscribe(() => {
+      console.log(`Joined league ${leagueId} successfully`);
+      this.router.navigate(['/league-page', leagueId]);
+    }, error => {
+      console.error('Error joining league:', error);
+    });
+  }
 
   selectLeague(league: any) {
     console.log('Navigating with league:', league);

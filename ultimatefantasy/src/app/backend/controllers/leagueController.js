@@ -25,6 +25,22 @@ exports.createLeague = async (req, res) => {
     }
 };
 
+exports.joinLeague = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const userId = req.user.id;
+        const joined = await leagueService.joinLeague(leagueId, userId);
+        if (joined) {
+            res.json({ message: 'Joined league successfully' });
+        }
+        else {
+            res.status(404).json({ error: 'League not found or already joined' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to join league' });
+    }
+};
+
 exports.getLeagueById = async (req, res) => {
     try {
         const leagueId = req.params.id;

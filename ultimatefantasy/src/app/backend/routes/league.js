@@ -23,4 +23,6 @@ router.post('/leagues/:id/draft-settings', authMiddleware, leagueController.upda
 
 router.post('/leagues/:id/roster-limit', authMiddleware, leagueController.updateRosterLimit);
 
+router.post('/leagues/:id/join', authMiddleware, leagueController.joinLeague);
+
 module.exports = router;

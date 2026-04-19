@@ -42,6 +42,16 @@ exports.getLeaguesForUser = async (userId) => {
 exports.createLeague = async (userId, leagueData) => {
   console.log('Creating league with data:', leagueData, 'for userId:', userId);
 
+
+  const { data: profile, error: profileerr } = await supabase.client
+  .from('profiles')
+  .select('id')
+  .eq('id', userId)
+  .single();
+
+  if (profileerr) throw new Error(profileerr.message);
+  console.log('Fetched user profile:', profile);
+
   const { data: leagueArr, error: leagueError } = await supabase.client
     .from('leagues')
     .insert({
@@ -54,7 +64,7 @@ exports.createLeague = async (userId, leagueData) => {
     })
     .select();
 
-
+    console.log('Inserted league, received data:', leagueArr, 'and error:', leagueError);
 
   if (leagueError) throw new Error(leagueError.message);
 
@@ -77,7 +87,8 @@ exports.createLeague = async (userId, leagueData) => {
     .insert({
       league_id: league.id,
       user_id: userId,
-      role: 'owner'
+      role: 'owner',
+      profile_id: userId
     });
 
   if (memberError) throw new Error(memberError.message);
@@ -117,6 +128,31 @@ exports.fetchLeagueDetails = async (leagueId) => {
       role: m.role,
     }))
   };
+};
+
+exports.joinLeague = async (leagueId, userId) => {
+  console.log('User', userId, 'is attempting to join league with ID:', leagueId);
+  const { data: profile, error: profileerr } = await supabase.client
+    .from('profiles')
+    .select('id')
+    .eq('id', userId)
+    .single();
+
+  if (profileerr) throw new Error(profileerr.message);
+
+  const { data, error } = await supabase.client
+    .from('league_members')
+    .insert({
+      league_id: leagueId,
+      user_id: userId,
+      role: 'member',
+      profile_id: userId
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
 };
 
 exports.getUsersRosterId = async (leagueId, userId) => {

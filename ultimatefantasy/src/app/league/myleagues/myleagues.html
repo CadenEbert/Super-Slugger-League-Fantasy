@@ -12,8 +12,8 @@
                 </div>
                 
                 <div class="leaguejoin-form">
-                    <input type="text" class="form-control" placeholder="Enter League Code">
-                    <button class="join-button">Join</button>
+                    <input type="text" class="form-control" [(ngModel)]="leagueId" placeholder="Enter League Code">
+                    <button class="join-button" (click)="joinLeague(leagueId)">Join</button>
                    
 
                 </div>

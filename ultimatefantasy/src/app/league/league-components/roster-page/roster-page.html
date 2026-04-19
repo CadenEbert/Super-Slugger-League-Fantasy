@@ -51,7 +51,7 @@
                         <button (click)="changeBattingOrder(p.character.id, p.batting_order)" class="position-btn">Update</button>
                         </div>
                         <div class="position-change">
-                            <button (click)="removePlayer(p.character.id)" class="remove-btn">Remove Player</button>
+                            <button (click)="removePlayer(p.character.id)" class="remove-btn" [disabled]="ownerId != userId">Remove Player</button>
                         </div>
                         
                         
