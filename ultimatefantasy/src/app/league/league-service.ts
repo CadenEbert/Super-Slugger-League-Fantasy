@@ -41,6 +41,13 @@ export class LeagueService {
     );
   }
 
+  
+  canDraft(leagueId: string): Observable<boolean> {
+    return this.http.get<{ canDraft: boolean }>(`/api/draft/${leagueId}/can-draft`).pipe(
+      map(response => response.canDraft)
+    );
+  }
+
   joinLeague(leagueId: string, userId: string): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/join`, { userId });
   }

@@ -9,46 +9,57 @@
 </div>
 
 
+
+
 <ng-container *ngIf="schedule$ | async as schedule">
     <ng-container *ngIf="userId$ | async as userId">
-      <ng-container *ngIf="(ownerId$ | async) !== null as ownerId">
+        <ng-container *ngIf="ownerId$ | async as ownerId">
 
-<div class="schedule-container" *ngIf="schedule.status === 'not_started' && userId === ownerId && !isLoading">
-    <div class="schedule-header">
-        <h1>Schedule</h1>
+            <div class="schedule-container" *ngIf="!isLoading && isOwner">
+                <div class="schedule-header">
+                    <div class="title">
+                        <h1>Schedule Settings</h1>
 
-            <div class="schedule-settings">
-            <p>Week: {{ schedule.current_week }} / {{ schedule.total_weeks }}</p>
-            <p>Status: {{ schedule.status }}</p>
+                    </div>
+
+                    <div class="schedule-settings">
+
+                        <div class="setting">
+                            <p>Number of Matchups: </p>
+                            <select [(ngModel)]="number_of_matchups" class="setting-select">
+                                <option
+                                    *ngFor="let num of ['Everyone plays each other once', 'Everyone plays each other twice']"
+                                    [value]="num">{{ num }}</option>
+                            </select>
+                        </div>
+
+                        <div class="setting">
+                            <p>How many players in playoffs: </p>
+                            <select [(ngModel)]="number_of_playoffs" class="setting-select">
+                                <option *ngFor="let number of ['4', '6']" [value]="number">{{ number }}</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <p>DO NOT GENERATE SCHEDULE UNTIL ALL MEMBERS HAVE JOINED</p>
+
+                    <div class="schedule-body">
+
+                        <button (click)="generateSchedule(number_of_matchups)" class="generate-btn"
+                            [disabled]="!(canDraft$ | async)">
+                            Generate Schedule
+                        </button>
+                    </div>
+                </div>
+
+
+
+
+
+
             </div>
-         
-    </div>
 
-    <div class="not-started">
-        <p>The season has not started yet. Please check back later for the schedule.</p>
-    </div>
-</div>
-
-
-<div class="schedule-container" *ngIf="!isLoading && schedule.status === 'in_progress'">
-
-    <div class="schedule-header">
-        <h1>Schedule</h1>
-
-            <div class="schedule-settings">
-            <p>Week: {{ schedule.current_week }} / {{ schedule.total_weeks }}</p>
-            <p>Status: {{ schedule.status }}</p>
-            </div>
-         
-    </div>
-
-
-
-    <mat-card *ngFor="let g of games" class="indiv-games">
-       
-    </mat-card>
-
-</div>
+        </ng-container>
+    </ng-container>
 </ng-container>
-</ng-container>
-</ng-container>   
