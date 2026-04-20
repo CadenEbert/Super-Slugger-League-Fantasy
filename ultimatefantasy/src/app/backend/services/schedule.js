@@ -63,7 +63,8 @@ async function get_all_rosters(leagueId) {
 const matchup  = {
     homeTeam: 'home',
     awayTeam: 'away',
-    week: 1
+    week: 1,
+    bye: false
 }
 
 const testMembers = [
@@ -101,22 +102,19 @@ const testMembers = [
         uuid: '6789',
         league_id: '5678',
         user_id: 'user7',
-    },
-    {
-        uuid: '9876',
-        league_id: '5678',
-        user_id: 'user8',
     }
 ]
 
-async function generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs) {
+async function generateScheduleForLeague(members, weeks, numberInPlayoffs) {
     const schedule = [];
     const totalTeams = testMembers.length;
-    const totalWeeks = 2 * (totalTeams);
+    const totalWeeks = weeks - 1;
+    
 
-    console.log('Generating schedule with parameters:', { totalTeams, numberOfMatchups, numberOfPlayoffs, totalWeeks });
    
 
+
+    if (totalTeams % 2 === 0) {
     for (let week = 0; week <= totalWeeks; week++) {
         const matchups = [];
         const shuffledMembers = [...testMembers].sort(() => Math.random() - 0.5);
@@ -126,10 +124,54 @@ async function generateScheduleForLeague(members, numberOfMatchups, numberOfPlay
             const homeTeam = shuffledMembers[i];
             const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-            matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week });
+            matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week, bye: false });
         }
         schedule.push(...matchups);
         
+    }
+    } else {
+        let byeIndex = 0;
+        for (let week = 0; week <= totalWeeks; week++) {
+            const matchups = [];
+
+            if (byeIndex >= totalTeams) {
+                byeIndex = 0;
+            }
+
+            const playerOnBye = testMembers[byeIndex];
+            const shuffledMembers = [...testMembers].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
+
+            const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week, bye: true };
+            console.log('Adding bye matchup:', byeMatchup);
+            matchups.push(byeMatchup);
+            for (let i = 0; i < (totalTeams-1) /2; i++) {
+                const homeTeam = shuffledMembers[i];
+                const awayTeam = shuffledMembers[totalTeams - 2 - i];
+
+                
+    
+                matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week, bye: false });
+            }
+            byeIndex++;
+            
+            schedule.push(...matchups);
+        }
+
+        const { data, error } = await client
+            .from('schedule_games')
+            .insert(schedule.map(game => ({
+                league_id: game.league_id,
+                home_team: game.homeTeam,
+                away_team: game.awayTeam,
+                week: game.week,
+                bye: game.bye
+            })));
+
+        if (error) {
+            console.error('Error inserting schedule into database:', error);
+            throw new Error('Failed to save schedule');
+        }
+
     }
 
     console.log('Generated schedule:', schedule);
@@ -152,7 +194,11 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
         const schedule = await generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs);
 
         
-        console.log('Final schedule to be saved:', schedule);
+
+       
+
+        
+        return schedule;
 
     }    catch (error) {
         console.error('generateSchedule error:', error.message);

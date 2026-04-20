@@ -25,10 +25,10 @@
                     <div class="schedule-settings">
 
                         <div class="setting">
-                            <p>Number of Matchups: </p>
-                            <select [(ngModel)]="number_of_matchups" class="setting-select">
+                            <p>Total Weeks: </p>
+                            <select [(ngModel)]="totalWeeks" class="setting-select">
                                 <option
-                                    *ngFor="let num of ['Everyone plays each other once', 'Everyone plays each other twice']"
+                                    *ngFor="let num of ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']"
                                     [value]="num">{{ num }}</option>
                             </select>
                         </div>
@@ -46,7 +46,7 @@
 
                     <div class="schedule-body">
 
-                        <button (click)="generateSchedule(number_of_matchups)" class="generate-btn"
+                        <button (click)="generateSchedule(totalWeeks, number_of_playoffs)" class="generate-btn"
                             [disabled]="!(canDraft$ | async)">
                             Generate Schedule
                         </button>

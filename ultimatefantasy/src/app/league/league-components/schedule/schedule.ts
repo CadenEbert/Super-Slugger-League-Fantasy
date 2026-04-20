@@ -6,13 +6,11 @@ import { LeagueService } from '../../league-service.js';
 import { LeagueCompService } from '../league-comp-service.js';
 
 
-
-
 export interface Game {
-  id: number;
   homeTeam: string;
   awayTeam: string;
-  stadium: string;
+  week: number;
+  bye: boolean;
 }
 
 @Component({
@@ -37,7 +35,7 @@ export class Schedule {
 
   games: any[] = [];
 
-  number_of_matchups: string = '';
+  totalWeeks: number = 0;
   number_of_playoffs: number = 0;
 
   isLoading: boolean = false;
@@ -109,13 +107,16 @@ export class Schedule {
     this.canDraft$.next(canDraft);
   }
 
-  generateSchedule() {
-    this.leagueCompService.generateSchedule(this.route.parent?.snapshot.params['leagueId'], this.number_of_matchups, this.number_of_playoffs).subscribe({
+  generateSchedule(totalWeeks: number, number_of_playoffs: number) {
+    
+    this.leagueCompService.generateSchedule(this.route.parent?.snapshot.params['leagueId'], this.totalWeeks, this.number_of_playoffs).subscribe({
       next: (response) => {
-        console.log('Schedule generated successfully:', response);
+        this.games = response.schedule;
+        console.log('Generated schedule:', this.games);
       },
       error: (err) => console.error('Error generating schedule:', err)
     });
+
   }
 
 }

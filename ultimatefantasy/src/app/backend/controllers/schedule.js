@@ -13,9 +13,10 @@ exports.getSchedule = async (req, res) => {
 exports.generateSchedule = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
-        const number_of_playoff = req.body.number_of_playoff;
-        const number_of_matchups = req.body.number_of_matchups;
-        const schedule = await scheduleService.generateSchedule(leagueId, number_of_playoff, number_of_matchups);
+        const totalWeeks = req.body.total_weeks;
+        const numberInPlayoffs = req.body.number_in_playoffs;
+        console.log('Received generate schedule request with:', { leagueId, totalWeeks, numberInPlayoffs });
+        const schedule = await scheduleService.generateSchedule(leagueId, totalWeeks, numberInPlayoffs);
     } catch (error) {
         res.status(500).json({ error: 'Failed to generate schedule' });
     }
