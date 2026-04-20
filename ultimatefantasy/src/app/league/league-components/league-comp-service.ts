@@ -34,6 +34,10 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/schedule`);
   }
 
+  generateSchedule(leagueId: string, number_of_matchups: string, number_of_playoffs: number): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/schedule`, {number_of_matchups, number_of_playoffs});
+  }
+
   
   getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);

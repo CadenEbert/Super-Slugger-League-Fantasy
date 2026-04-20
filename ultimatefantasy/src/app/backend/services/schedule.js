@@ -60,14 +60,83 @@ async function get_all_rosters(leagueId) {
     }
 }
 
-async function generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs) {
-    // Placeholder logic for schedule generation
-    // In a real implementation, this would involve complex logic to create a balanced schedule
-    const schedule = [];
-    for (let i = 0; i < numberOfMatchups; i++) {
-        const matchups = [];
-        
+const matchup  = {
+    homeTeam: 'home',
+    awayTeam: 'away',
+    week: 1
+}
 
+const testMembers = [
+    {
+    uuid: '1234',
+    league_id: '5678',
+    user_id: 'user1',
+    },
+    {
+        uuid: '5467',
+        league_id: '5678',
+        user_id: 'user2',
+    },
+    {
+        uuid: '7890',
+        league_id: '5678',
+        user_id: 'user3',
+    },
+    {
+        uuid: '0987',
+        league_id: '5678',
+        user_id: 'user4',
+    },
+    {
+        uuid: '5432',
+        league_id: '5678',
+        user_id: 'user5',
+    },
+    {
+        uuid: '4321',
+        league_id: '5678',
+        user_id: 'user6',
+    },
+    {
+        uuid: '6789',
+        league_id: '5678',
+        user_id: 'user7',
+    },
+    {
+        uuid: '9876',
+        league_id: '5678',
+        user_id: 'user8',
+    }
+]
+
+async function generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs) {
+    const schedule = [];
+    const totalTeams = testMembers.length;
+    const totalWeeks = 2 * (totalTeams);
+
+    console.log('Generating schedule with parameters:', { totalTeams, numberOfMatchups, numberOfPlayoffs, totalWeeks });
+   
+
+    for (let week = 0; week <= totalWeeks; week++) {
+        const matchups = [];
+        const shuffledMembers = [...testMembers].sort(() => Math.random() - 0.5);
+
+        for (let i = 0; i < totalTeams / 2; i++) {
+
+            const homeTeam = shuffledMembers[i];
+            const awayTeam = shuffledMembers[totalTeams - 1 - i];
+
+            matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week });
+        }
+        schedule.push(...matchups);
+        
+    }
+
+    console.log('Generated schedule:', schedule);
+
+    return schedule;
+        
+}
 
 
 exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) => {
@@ -80,9 +149,13 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
             memberRosterMap[member.user_id] = roster;
         });
 
-        const schedule = generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs);
+        const schedule = await generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs);
 
         
+        console.log('Final schedule to be saved:', schedule);
 
-
-
+    }    catch (error) {
+        console.error('generateSchedule error:', error.message);
+        throw error;
+    }
+}

@@ -5,4 +5,6 @@ const authMiddleware = require('../middleware/auth.js');
 
 router.get('/leagues/:leagueId/schedule', authMiddleware, scheduleController.getSchedule);
 
+router.post('/leagues/:leagueId/schedule', authMiddleware, scheduleController.generateSchedule);
+
 module.exports = router;

@@ -109,5 +109,13 @@ export class Schedule {
     this.canDraft$.next(canDraft);
   }
 
+  generateSchedule() {
+    this.leagueCompService.generateSchedule(this.route.parent?.snapshot.params['leagueId'], this.number_of_matchups, this.number_of_playoffs).subscribe({
+      next: (response) => {
+        console.log('Schedule generated successfully:', response);
+      },
+      error: (err) => console.error('Error generating schedule:', err)
+    });
+  }
 
 }
