@@ -43,14 +43,48 @@
 
             <div class="schedule-body">
 
+                <div class="schedule-grid">
+                    <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames">
+                  
+                    <ng-container  *ngIf="game.bye; else regularGame">
+                        <div class="game">
+                            <p>Week : {{game.week}} </p>
+                        <div class="game-teams">
+                            <div class="home">
+                                <p class="game-text">Home Team</p>
+                            </div>
 
-                <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames">
-                    <ng-container *ngIf="game.bye; else regularGame">
-                        <p>Week {{ game.week }}: {{ game.home_team }} — BYE</p>
+                        <div class="versus">
+                            <p class="game-text">{{game.home_team}}</p>
+                            <p class="game-text">VS</p>
+                            <p class="game-text">BYE</p>
+                        </div>
+                        <div class="away">
+                            <p class="game-text">Away Team</p>
+                        </div>
+                    </div>
+                    </div>
                     </ng-container>
                     <ng-template #regularGame>
-                        <p>Week {{ game.week }}: {{ game.home_team }} vs {{ game.away_team }}</p>
+                    <div class="game">
+                            <p>Week : {{game.week}} </p>
+                        <div class="game-teams">
+                            <div class="home">
+                                <p class="game-text">Home Team</p>
+                            </div>
+
+                        <div class="versus">
+                            <p class="game-text">{{game.home_team}}</p>
+                            <p class="game-text">VS</p>
+                            <p class="game-text">{{game.away_team}}</p>
+                        </div>
+                        <div class="away">
+                            <p class="game-text">Away Team</p>
+                        </div>
+                    </div>
+                    </div>
                     </ng-template>
+                    </div>
                 </div>
 
                 <div class="buttons">
@@ -61,6 +95,10 @@
 
                     <button (click)="clearSchedule()" class="generate-btn" [disabled]="!(canDraft$ | async)">
                         Clear Schedule
+                    </button>
+
+                    <button (click)="startSeason()" class="generate-btn" [disabled]="!(canDraft$ | async)">
+                        Start Season
                     </button>
                 </div>
             </div>
