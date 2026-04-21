@@ -105,7 +105,7 @@ const testMembers = [
     }
 ]
 
-async function generateScheduleForLeague(members, weeks, numberInPlayoffs) {
+async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagueId) {
     const schedule = [];
     const totalTeams = testMembers.length;
     const totalWeeks = weeks - 1;
@@ -164,7 +164,8 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs) {
                 home_team: game.homeTeam,
                 away_team: game.awayTeam,
                 week: game.week,
-                bye: game.bye
+                bye: game.bye,
+                league_id: leagueId
             })));
 
         if (error) {
@@ -191,7 +192,7 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
             memberRosterMap[member.user_id] = roster;
         });
 
-        const schedule = await generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs);
+        const schedule = await generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs, leagueId);
 
         
 
@@ -202,6 +203,63 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
 
     }    catch (error) {
         console.error('generateSchedule error:', error.message);
+        throw error;
+    }
+}
+
+exports.clearSchedule = async (leagueId) => {
+    try {
+        const { data, error } = await client
+            .from('schedule_games')
+            .delete('*')
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error clearing schedule:', error);
+            throw new Error('Failed to clear schedule');
+        }
+
+    } catch (error) {
+        console.error('clearSchedule error:', error.message);
+        throw error;
+    }
+}
+
+exports.getScheduleMetadata = async (leagueId) => {
+    try {
+        const { data: scheduleMetadata, error } = await client
+            .from('schedule')
+            .select('*')
+            .eq('league_id', leagueId)
+            .single();
+
+        if (error) {
+            console.error('Error fetching schedule metadata:', error);
+            throw new Error('Failed to fetch schedule metadata');
+        }
+
+        return scheduleMetadata;
+    } catch (error) {
+        console.error('getScheduleMetadata error:', error.message);
+        throw error;
+    }
+}
+
+exports.getScheduleGames = async (leagueId) => {
+    try {
+        const { data: scheduleGames, error } = await client
+            .from('schedule_games')
+            .select('*')
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error fetching schedule games:', error);
+            throw new Error('Failed to fetch schedule games');
+        }
+
+        return scheduleGames;
+    } catch (error) {
+        console.error('getScheduleGames error:', error.message);
         throw error;
     }
 }

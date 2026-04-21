@@ -3,7 +3,7 @@ const http = require("http");
 const URL = require("url").URL;
 const crypto = require("crypto");
 const { Server } = require('socket.io');
-const { setupDraftChannel } = require('./src/app/backend/supabase');
+const { setupDraftChannel, setUpScheduleChannel } = require('./src/app/backend/supabase');
 const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
 
@@ -192,6 +192,12 @@ io.on('connection', (socket) => {
     setupDraftChannel(io, draftId);
     
     socket.join(`draft_${draftId}`);
+  });
+
+  socket.on('joinSchedule', (leagueId) => {
+    setUpScheduleChannel(io, leagueId);
+    socket.join(`schedule_${leagueId}`);
+    console.log(`Socket ${socket.id} joined schedule channel for league ${leagueId}`);
   });
 
   socket.on('disconnect', () => {

@@ -11,55 +11,66 @@
 
 
 
-<ng-container *ngIf="schedule$ | async as schedule">
-    <ng-container *ngIf="userId$ | async as userId">
-        <ng-container *ngIf="ownerId$ | async as ownerId">
+<ng-container *ngIf="vm$ | async as vm">
 
-            <div class="schedule-container" *ngIf="!isLoading && isOwner">
-                <div class="schedule-header">
-                    <div class="title">
-                        <h1>Schedule Settings</h1>
+    <div class="schedule-container" *ngIf="vm.isOwner">
+        <div class="schedule-header">
+            <div class="title">
+                <h1>Schedule Settings</h1>
 
-                    </div>
+            </div>
 
-                    <div class="schedule-settings">
+            <div class="schedule-settings">
 
-                        <div class="setting">
-                            <p>Total Weeks: </p>
-                            <select [(ngModel)]="totalWeeks" class="setting-select">
-                                <option
-                                    *ngFor="let num of ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']"
-                                    [value]="num">{{ num }}</option>
-                            </select>
-                        </div>
-
-                        <div class="setting">
-                            <p>How many players in playoffs: </p>
-                            <select [(ngModel)]="number_of_playoffs" class="setting-select">
-                                <option *ngFor="let number of ['4', '6']" [value]="number">{{ number }}</option>
-                            </select>
-                        </div>
-
-
-                    </div>
-                    <p>DO NOT GENERATE SCHEDULE UNTIL ALL MEMBERS HAVE JOINED</p>
-
-                    <div class="schedule-body">
-
-                        <button (click)="generateSchedule(totalWeeks, number_of_playoffs)" class="generate-btn"
-                            [disabled]="!(canDraft$ | async)">
-                            Generate Schedule
-                        </button>
-                    </div>
+                <div class="setting">
+                    <p>Total Weeks: </p>
+                    <select [(ngModel)]="totalWeeks" class="setting-select">
+                        <option
+                            *ngFor="let num of ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']"
+                            [value]="num">{{ num }}</option>
+                    </select>
                 </div>
 
-
-
-
+                <div class="setting">
+                    <p>How many players in playoffs: </p>
+                    <select [(ngModel)]="number_of_playoffs" class="setting-select">
+                        <option *ngFor="let number of ['4', '6']" [value]="number">{{ number }}</option>
+                    </select>
+                </div>
 
 
             </div>
 
-        </ng-container>
-    </ng-container>
+            <div class="schedule-body">
+
+
+                <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames">
+                    <ng-container *ngIf="game.bye; else regularGame">
+                        <p>Week {{ game.week }}: {{ game.home_team }} — BYE</p>
+                    </ng-container>
+                    <ng-template #regularGame>
+                        <p>Week {{ game.week }}: {{ game.home_team }} vs {{ game.away_team }}</p>
+                    </ng-template>
+                </div>
+
+                <div class="buttons">
+                    <button (click)="generateSchedule(totalWeeks, number_of_playoffs)" class="generate-btn"
+                        [disabled]="!(canDraft$ | async)">
+                        Generate Schedule
+                    </button>
+
+                    <button (click)="clearSchedule()" class="generate-btn" [disabled]="!(canDraft$ | async)">
+                        Clear Schedule
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+    </div>
+
 </ng-container>

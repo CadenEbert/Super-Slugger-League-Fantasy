@@ -7,4 +7,10 @@ router.get('/leagues/:leagueId/schedule', authMiddleware, scheduleController.get
 
 router.post('/leagues/:leagueId/schedule', authMiddleware, scheduleController.generateSchedule);
 
+router.delete('/leagues/:leagueId/schedule', authMiddleware, scheduleController.clearSchedule);
+
+router.get('/leagues/:leagueId/schedule/metadata', authMiddleware, scheduleController.getScheduleMetadata);
+
+router.get('/leagues/:leagueId/schedule/games', authMiddleware, scheduleController.getScheduleGames);
+
 module.exports = router;

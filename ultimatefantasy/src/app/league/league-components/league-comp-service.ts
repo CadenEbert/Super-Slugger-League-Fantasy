@@ -2,17 +2,20 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeagueCompService {
-
+  private socket: Socket;
 
   
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute, ) {
+    this.socket = io('http://localhost:3000');
+   }
 
   ngOnInit(): void {
     
@@ -34,8 +37,50 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/schedule`);
   }
 
+  joinScheduleChannel(leagueId: string) {
+    this.socket.emit('joinSchedule', leagueId);
+  }
+
+  onScheduleUpdate(leagueId: string): Observable<any> {
+    return new Observable(observer => {
+      const eventName = `scheduleUpdate:${leagueId}`;
+      this.socket.on(eventName, (data) => {
+        observer.next(data);
+      });
+
+      return () => {
+        this.socket.off(eventName);
+      };
+    });
+  }
+
+  onScheduleMetadataUpdate(leagueId: string): Observable<any> {
+    return new Observable(observer => {
+      const eventName = `scheduleMetadataUpdate:${leagueId}`;
+      this.socket.on(eventName, (data) => {
+        observer.next(data);
+      });
+
+      return () => {
+        this.socket.off(eventName);
+      };
+    });
+  }
+
+  getScheduleMetadata(leagueId: string): Observable<any> {
+    return this.http.get<any>(`/api/leagues/${leagueId}/schedule/metadata`);
+  }
+
+  getScheduleGames(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/schedule/games`);
+  }
+
   generateSchedule(leagueId: string, total_weeks: number, number_in_playoffs: number): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/schedule`, {total_weeks, number_in_playoffs});
+  }
+
+  clearSchedule(leagueId: string): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}/schedule`);
   }
 
   

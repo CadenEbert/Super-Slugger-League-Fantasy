@@ -17,7 +17,39 @@ exports.generateSchedule = async (req, res) => {
         const numberInPlayoffs = req.body.number_in_playoffs;
         console.log('Received generate schedule request with:', { leagueId, totalWeeks, numberInPlayoffs });
         const schedule = await scheduleService.generateSchedule(leagueId, totalWeeks, numberInPlayoffs);
+        res.json({ games: schedule });
     } catch (error) {
         res.status(500).json({ error: 'Failed to generate schedule' });
+    }
+}
+
+exports.clearSchedule = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        await scheduleService.clearSchedule(leagueId);
+        res.json({ message: 'Schedule cleared successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to clear schedule' });
+    }
+}
+
+exports.getScheduleMetadata = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const metadata = await scheduleService.getScheduleMetadata(leagueId);
+        res.json(metadata);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch schedule metadata' });
+    }
+}
+
+exports.getScheduleGames = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const games = await scheduleService.getScheduleGames(leagueId);
+        res.json(games);
+
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch schedule games' });
     }
 }
