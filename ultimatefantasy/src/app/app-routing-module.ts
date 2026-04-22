@@ -13,6 +13,7 @@ import { Rosters } from './league/league-components/rosters/rosters';
 import { Schedule } from './league/league-components/schedule/schedule';
 import { Standings } from './league/league-components/standings/standings';
 import { RosterPage } from './league/league-components/roster-page/roster-page';
+import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
 
 const routes: Routes = [
   { path: '', redirectTo: '/homepage', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const routes: Routes = [
       { path: 'free-agents', component: FreeAgents },
       { path: 'player-stats', component: PlayerStats },
       { path: 'draft-board', component: Draft },
+      { path: 'update-schedule', component: UpdateSchedule }
     ]
   },
   { path: 'create-league', component: Leagecreate },

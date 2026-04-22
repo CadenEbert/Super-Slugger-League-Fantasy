@@ -311,3 +311,46 @@ exports.startSeason = async (leagueId) => {
         throw error;
     }
 }
+
+exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, stadium) => {
+
+    try {
+        const { error } = await client
+            .from('schedule_games')
+            .update({
+                home_team: homeTeam,
+                away_team: awayTeam,
+                home_score: homeScore,
+                away_score: awayScore,
+                stadium
+            })
+            .eq('id', gameId);
+
+        if (error) {
+            console.error('Error updating game:', error);
+            throw new Error('Failed to update game');
+        }
+    } catch (error) {
+        console.error('updateGame error:', error.message);
+        throw error;
+    }
+}
+
+exports.getMembers = async (leagueId) => {
+    try {
+        const { data: members, error } = await client
+            .from('league_members')
+            .select('*, profiles(username)')
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error fetching league members:', error);
+            throw new Error('Failed to fetch league members');
+        }
+
+        return members;
+    } catch (error) {
+        console.error('getMembers error:', error.message);
+        throw error;
+    }
+}

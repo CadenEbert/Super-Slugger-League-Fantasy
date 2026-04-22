@@ -5,6 +5,7 @@ import { BehaviorSubject, combineLatest, distinct, distinctUntilChanged, map, Ob
 import { LeagueService } from '../../league-service.js';
 import { LeagueCompService } from '../league-comp-service.js';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Router } from '@angular/router';
 
 
 
@@ -99,7 +100,8 @@ export class Schedule {
     private route: ActivatedRoute,
     private authService: AuthService,
     private leagueService: LeagueService,
-    private leagueCompService: LeagueCompService
+    private leagueCompService: LeagueCompService,
+    private router: Router
   ) {
 
 
@@ -251,6 +253,10 @@ export class Schedule {
     });
   }
 
+  updateGame(game: Game) {
+    this.router.navigate([`/league-page/${this.route.parent?.snapshot.params['leagueId']}/update-schedule`], { state: { game } });
+
+  }
 
 
 }

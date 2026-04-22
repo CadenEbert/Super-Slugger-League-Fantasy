@@ -1,0 +1,72 @@
+.schedule-update-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 95%;
+    padding: 20px;
+    background-color: white;
+}
+
+.edit-game {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 80%;
+    padding: 20px;
+    gap: 40px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+   
+}
+
+.game-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    
+ 
+}
+
+.edit-stadium {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 20px;
+    gap: 10px;
+}
+
+.update-btn {
+    background-color: #4ca0af;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+
+}
+
+.header {
+    color: #555;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.score-input {
+    width: 30px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.update-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

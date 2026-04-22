@@ -63,3 +63,29 @@ exports.startSeason = async (req, res) => {
         res.status(500).json({ error: 'Failed to start season' });
     }
 }
+
+exports.updateGame = async (req, res) => {
+    try {
+        const gameId = req.params.gameId;
+        const homeScore = req.body.home_score;
+        const awayScore = req.body.away_score;
+        const stadium = req.body.stadium;
+        const homeTeam = req.body.home_team;
+        const awayTeam = req.body.away_team;
+
+        await scheduleService.updateGame(gameId, homeTeam, awayTeam, homeScore, awayScore, stadium);
+        res.json({ message: 'Game updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update game' });
+    }
+}
+
+exports.getMembers = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const members = await scheduleService.getMembers(leagueId);
+        res.json(members);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch members' });
+    }
+}

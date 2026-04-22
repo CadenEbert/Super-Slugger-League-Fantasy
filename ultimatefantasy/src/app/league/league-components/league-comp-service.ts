@@ -83,6 +83,10 @@ export class LeagueCompService {
     return this.http.post(`/api/leagues/${leagueId}/schedule`, {total_weeks, number_in_playoffs});
   }
 
+  updateGame(leagueId: string, gameId: string, updatedData: any): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/schedule/game/${gameId}`, updatedData);
+  }
+
   clearSchedule(leagueId: string): Observable<any> {
     return this.http.delete(`/api/leagues/${leagueId}/schedule`);
   }
@@ -153,6 +157,10 @@ export class LeagueCompService {
 
   deleteLeague(leagueId: string): Observable<any> {
     return this.http.delete(`/api/leagues/${leagueId}`);
+  }
+
+  getAllMembers(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/members`);
   }
 
   updateDraftSettings(leagueId: string, newSetting: string): Observable<any> {

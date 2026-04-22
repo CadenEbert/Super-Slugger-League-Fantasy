@@ -30,6 +30,28 @@
 
 }
 
+.schedule-header-owner {
+    width: 95%;
+    height: 100%;
+    display: flex;
+    justify-content: top;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+
+
+    
+    background-color: white;
+    margin-right: 40px;
+    margin-left: 40px;
+    border-radius: 10px;
+    
+    
+    
+
+}
+
+
 .schedule-grid-progress {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -163,8 +185,29 @@
     justify-content: center;
 }
 
+.game-bye {
+    padding: 10px 10px;
+    background-color: #429dfd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .game-text {
-    font-size: 1em;
+    font-size: 1.2em;
+    margin-right: 20px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: black;
+
+}
+
+.score-text {
+    font-size: 1.5em;
     font-weight: bold;
     color: black;
 }
@@ -176,9 +219,24 @@
     align-items: center;
     padding: 5px;
     width: 100%;
-    gap: 30px;
+    gap: 40px;
     background-color: white;
     border-radius: 20px;
+}
+
+.game-header {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin-bottom: 10px;
+    
+}
+
+.head-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    text-wrap: nowrap;
 }
 
 .home {

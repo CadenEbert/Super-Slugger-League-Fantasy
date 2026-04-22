@@ -31,6 +31,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FilterByWeekPipe } from './league/league-components/schedule/schedule';
+import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
 
 @NgModule({
   declarations: [
@@ -50,10 +51,20 @@ import { FilterByWeekPipe } from './league/league-components/schedule/schedule';
     FreeAgents,
     PlayerStats,
     Settings,
-    RosterPage
-
+    RosterPage,
+    UpdateSchedule,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, CommonModule, MatCardModule, MatExpansionModule, DragDropModule, FilterByWeekPipe],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+    MatCardModule,
+    MatExpansionModule,
+    DragDropModule,
+    FilterByWeekPipe,
+  ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),

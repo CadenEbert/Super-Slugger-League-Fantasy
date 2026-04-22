@@ -33,6 +33,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'league-page/:leagueId/update-schedule',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'my-leagues',
     renderMode: RenderMode.Server
   },

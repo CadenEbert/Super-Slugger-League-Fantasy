@@ -15,4 +15,8 @@ router.get('/leagues/:leagueId/schedule/games', authMiddleware, scheduleControll
 
 router.put('/leagues/:leagueId/schedule/start', authMiddleware, scheduleController.startSeason);
 
+router.put('/leagues/:leagueId/schedule/game/:gameId', authMiddleware, scheduleController.updateGame);
+
+router.get('/leagues/:leagueId/members', authMiddleware, scheduleController.getMembers);
+
 module.exports = router;
