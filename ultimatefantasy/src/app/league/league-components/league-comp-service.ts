@@ -91,6 +91,10 @@ export class LeagueCompService {
     return this.http.delete(`/api/leagues/${leagueId}/schedule`);
   }
 
+  completeWeek(league_id: string, week_number: number): Observable<any> {
+    return this.http.put(`/api/leagues/${league_id}/week/${week_number}`, {});
+  }
+
   
   getAllPlayers(leagueId: string, rosterId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);

@@ -72,8 +72,10 @@ exports.updateGame = async (req, res) => {
         const stadium = req.body.stadium;
         const homeTeam = req.body.home_team;
         const awayTeam = req.body.away_team;
+        const homeTeamuuid = req.body.home_team_uuid;
+        const awayTeamuuid = req.body.away_team_uuid;
 
-        await scheduleService.updateGame(gameId, homeTeam, awayTeam, homeScore, awayScore, stadium);
+        await scheduleService.updateGame(gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid);
         res.json({ message: 'Game updated successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update game' });
@@ -87,5 +89,17 @@ exports.getMembers = async (req, res) => {
         res.json(members);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch members' });
+    }
+}
+
+exports.completeWeek = async (req, res) => {
+    try {
+        console.log('Received complete week request with:', { leagueId: req.params.leagueId, weekNumber: req.params.weekNumber });
+        const leagueId = req.params.leagueId;
+        const weekNumber = req.params.weekNumber;
+        await scheduleService.completeWeek(leagueId, weekNumber);
+        res.json({ message: `Week ${weekNumber} completed successfully` });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to complete week' });
     }
 }

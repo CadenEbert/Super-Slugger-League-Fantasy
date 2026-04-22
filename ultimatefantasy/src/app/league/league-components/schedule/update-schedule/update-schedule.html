@@ -10,7 +10,8 @@
     <div class="edit-game">
         <p>{{game.home_team}}</p>
         
-        <select type="text" [(ngModel)]="game.home_team">
+        <select type="text" [(ngModel)]="game.home_team" (ngModelChange)="onHomeTeamChange($event)">
+            <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
             <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
         </select>
 
@@ -18,7 +19,7 @@
 
         <p>VS</p>
 
-        <select type="text" [(ngModel)]="game.away_team">
+        <select type="text" [(ngModel)]="game.away_team" (ngModelChange)="onAwayTeamChange($event)">
             <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
         </select>
 

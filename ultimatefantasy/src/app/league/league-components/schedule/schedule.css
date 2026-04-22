@@ -53,8 +53,8 @@
 
 
 .schedule-grid-progress {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     height: auto;
     width: 100%;
     min-height: 400px;
@@ -63,8 +63,8 @@
     background-color: rgb(233, 233, 233);
     border-radius: 10px;
   
-
 }
+
 .title {
     display: flex;
     justify-content: center;
@@ -262,14 +262,16 @@
 }
 
 .schedule-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    
+    display: flex;
+    flex-direction: column;
+    height: auto;
     width: 100%;
-    max-height: 400px;
+    min-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
     background-color: rgb(233, 233, 233);
     border-radius: 10px;
+  
   }
   
   .schedule-metadata {

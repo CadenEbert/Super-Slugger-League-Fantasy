@@ -20,6 +20,8 @@ export interface Game {
   playoff_game: boolean;
   league_id: string;
   created_at: string;
+  home_team_uuid: string | null;
+  away_team_uuid: string | null;
 }
 export interface Schedule {
   leagueId: string;
@@ -258,5 +260,13 @@ export class Schedule {
 
   }
 
+  completeWeek() {
+    this.leagueCompService.completeWeek(this.route.parent?.snapshot.params['leagueId'], this.scheduleMetadataSubject.getValue()?.current_week).subscribe({
+      next: (response) => {
+        console.log('Week completed successfully');
+      },
+      error: (err) => console.error('Error completing week:', err)
+    });
+  }
 
 }

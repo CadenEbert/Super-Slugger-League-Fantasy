@@ -6,4 +6,12 @@ import { Component } from '@angular/core';
   templateUrl: './standings.html',
   styleUrl: './standings.css',
 })
-export class Standings {}
+export class Standings {
+  standings: any[] = [];
+
+  constructor() {}
+
+
+
+
+}

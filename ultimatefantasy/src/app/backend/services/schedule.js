@@ -26,7 +26,7 @@ async function get_league_members(leagueId) {
     try {
         const { data: members, error } = await client
             .from('league_members')
-            .select('*')
+            .select('*, profiles(username)')
             .eq('league_id', leagueId);
 
         if (error) {
@@ -64,7 +64,9 @@ const matchup  = {
     homeTeam: 'home',
     awayTeam: 'away',
     week: 1,
-    bye: false
+    bye: false,
+    homeTeamUuid: 'home-uuid',
+    awayTeamUuid: 'away-uuid'
 }
 
 const testMembers = [
@@ -72,34 +74,35 @@ const testMembers = [
     uuid: '1234',
     league_id: '5678',
     user_id: 'user1',
+
     },
     {
-        uuid: '5467',
+        username: '5467',
         league_id: '5678',
         user_id: 'user2',
     },
     {
-        uuid: '7890',
+        username: '7890',
         league_id: '5678',
         user_id: 'user3',
     },
     {
-        uuid: '0987',
+        username: '0987',
         league_id: '5678',
         user_id: 'user4',
     },
     {
-        uuid: '5432',
+        username: '5432',
         league_id: '5678',
         user_id: 'user5',
     },
     {
-        uuid: '4321',
+        username: '4321',
         league_id: '5678',
         user_id: 'user6',
     },
     {
-        uuid: '6789',
+        username: '6789',
         league_id: '5678',
         user_id: 'user7',
     }
@@ -107,7 +110,7 @@ const testMembers = [
 
 async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagueId) {
     const schedule = [];
-    const totalTeams = testMembers.length;
+    const totalTeams = members.length;
     
     const totalWeeks = weeks - 1;
     
@@ -125,7 +128,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             const homeTeam = shuffledMembers[i];
             const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-            matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week, bye: false });
+            matchups.push({ homeTeam: homeTeam.profiles.username, awayTeam: awayTeam.profiles.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
         }
         schedule.push(...matchups);
         
@@ -151,7 +154,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
 
                 
     
-                matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week: week + 1, bye: false });
+                matchups.push({ homeTeam: homeTeam.username, awayTeam: awayTeam.username, week: week + 1, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             byeIndex++;
             
@@ -166,7 +169,9 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 away_team: game.awayTeam,
                 week: game.week,
                 bye: game.bye,
-                league_id: leagueId
+                league_id: leagueId,
+                home_team_uuid: game.homeTeamUuid,
+                away_team_uuid: game.awayTeamUuid
             })));
 
         if (error) {
@@ -312,7 +317,7 @@ exports.startSeason = async (leagueId) => {
     }
 }
 
-exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, stadium) => {
+exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid) => {
 
     try {
         const { error } = await client
@@ -322,7 +327,11 @@ exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, st
                 away_team: awayTeam,
                 home_score: homeScore,
                 away_score: awayScore,
-                stadium
+                home_team_uuid: homeTeamuuid,
+                away_team_uuid: awayTeamuuid,
+                stadium,
+                home_team_uuid: homeTeamuuid,
+                away_team_uuid: awayTeamuuid
             })
             .eq('id', gameId);
 
@@ -353,4 +362,58 @@ exports.getMembers = async (leagueId) => {
         console.error('getMembers error:', error.message);
         throw error;
     }
+}
+
+
+exports.updateStandings = async (leagueId) => {
+    try {
+        const { data: standings, error } = await client
+            .from('standings')
+            .select('*')
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error fetching standings:', error);
+            throw new Error('Failed to fetch standings');
+        }
+
+        const {data: scheduleGames, error: gamesError} = await client
+            .from('schedule_games')
+            .select('*')
+            .eq('league_id', leagueId);
+
+        if (gamesError) {
+            console.error('Error fetching schedule games for standings update:', gamesError);
+            throw new Error('Failed to fetch schedule games for standings update');
+        }
+
+        
+
+        return standings;
+    } catch (error) {
+        console.error('updateStandings error:', error.message);
+        throw error;
+    }
+}
+
+completeWeek = async (leagueId, current_week) => {
+    try {
+        console.log(`Completing week ${current_week} for league ${leagueId}`);
+        const {data, error} = await client
+            .from('schedule')
+            .update({
+                current_week: parseInt(weekNumber) + 1
+            })
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error updating current week:', error);
+            throw new Error('Failed to update current week');
+        }
+
+    } catch (error) {
+        console.error('completeWeek error:', error.message);
+        throw error;
+    }
+
 }

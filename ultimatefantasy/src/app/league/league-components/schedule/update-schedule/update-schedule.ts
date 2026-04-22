@@ -34,9 +34,22 @@ export class UpdateSchedule {
     console.log(this.game);
   }
 
+  onHomeTeamChange(username: string) {
+    const member = this.members.find(m => m.profiles.username === username);
+    this.game.home_team_uuid = member.user_id;
+    console.log('Selected home team:', username, 'with UUID:', this.game.home_team_uuid);
+  }
+
+  onAwayTeamChange(teamName: string) {
+    const member = this.members.find(m => m.team_name === teamName);
+    this.game.away_team_uuid = member.user_id;
+    console.log('Selected away team:', teamName, 'with UUID:', this.game.away_team_uuid);
+  }
+
 
   updateGame() {
     this.leagueService.updateGame(this.activeroute.parent?.snapshot.params['leagueId'], this.game.id, this.game).subscribe({
+
       next: (updatedGame) => {
         console.log('Game updated:', updatedGame);
         this.router.navigate(['../schedule'], { relativeTo: this.activeroute });

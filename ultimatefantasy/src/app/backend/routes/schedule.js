@@ -19,4 +19,6 @@ router.put('/leagues/:leagueId/schedule/game/:gameId', authMiddleware, scheduleC
 
 router.get('/leagues/:leagueId/members', authMiddleware, scheduleController.getMembers);
 
+router.put('/leagues/:leagueId/week/:weekNumber', authMiddleware, scheduleController.completeWeek);
+
 module.exports = router;
