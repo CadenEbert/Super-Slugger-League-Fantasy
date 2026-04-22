@@ -1,4 +1,4 @@
-<div class="standings">
+<div class="standings-container">
     <div class="header">
         <h1>Team</h1>
         <h1>Wins</h1>
@@ -6,8 +6,8 @@
     </div>
 
     <div class="team-standings" *ngFor="let team of standings">
-        <p>{{team.team}}</p>
-        <p>{{team.wins}}</p>
-        <p>{{team.losses}}</p>
+        <p>{{team.username}}</p>
+        <p>Wins: {{team.wins}}</p>
+        <p>Loses: {{team.losses}}</p>
     </div>
 </div>

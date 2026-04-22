@@ -21,4 +21,6 @@ router.get('/leagues/:leagueId/members', authMiddleware, scheduleController.getM
 
 router.put('/leagues/:leagueId/week/:weekNumber', authMiddleware, scheduleController.completeWeek);
 
+router.put('/leagues/:leagueId/standings/update', authMiddleware, scheduleController.updateStandings);
+
 module.exports = router;

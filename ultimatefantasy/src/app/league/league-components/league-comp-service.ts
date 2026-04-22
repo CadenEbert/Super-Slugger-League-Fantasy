@@ -100,6 +100,10 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
   }
 
+  updateStandings(leagueId: string): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/standings/update`, {});
+  }
+
   getDraftStatus(leagueId: string): Observable<string> {
     return this.http.get<{ draftStatus: string }>(`/api/draft/${leagueId}/status`).pipe(
       map(res => res.draftStatus)

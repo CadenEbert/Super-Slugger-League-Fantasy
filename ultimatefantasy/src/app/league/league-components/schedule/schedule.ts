@@ -260,13 +260,19 @@ export class Schedule {
 
   }
 
-  completeWeek() {
+  completeWeek(game: Game) { {
+    
+
     this.leagueCompService.completeWeek(this.route.parent?.snapshot.params['leagueId'], this.scheduleMetadataSubject.getValue()?.current_week).subscribe({
       next: (response) => {
         console.log('Week completed successfully');
       },
       error: (err) => console.error('Error completing week:', err)
     });
-  }
+    window.location.reload();
+    
 
+    }
+
+  }
 }

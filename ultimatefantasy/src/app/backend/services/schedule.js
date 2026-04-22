@@ -367,10 +367,11 @@ exports.getMembers = async (leagueId) => {
 
 exports.updateStandings = async (leagueId) => {
     try {
-        const { data: standings, error } = await client
-            .from('standings')
+        const { data: schedule, error } = await client
+            .from('schedule')
             .select('*')
-            .eq('league_id', leagueId);
+            .eq('league_id', leagueId)
+            .single();
 
         if (error) {
             console.error('Error fetching standings:', error);
@@ -387,7 +388,105 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch schedule games for standings update');
         }
 
-        
+        const {data: members, error: membersError} = await client
+            .from('league_members')
+            .select('*, profiles(username)')
+            .eq('league_id', leagueId);
+
+        if (membersError) {
+            console.error('Error fetching league members for standings update:', membersError);
+            throw new Error('Failed to fetch league members for standings update');
+        }
+
+        const membersMapp = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
+        const membersMap = [
+            {
+                user_id: 'user1',
+                username: 'Player 1'
+            },
+            {
+                user_id: 'user2',
+                username: 'Player 2'
+            },
+            {
+                user_id: 'user3',
+                username: 'Player 3'
+            },
+            {
+                user_id: 'user4',
+                username: 'Player 4'
+            },
+            {
+                user_id: 'user5',
+                username: 'Player 5'
+            },
+            {
+                user_id: 'user6',
+                username: 'Player 6'
+            },
+            {
+                user_id: 'user7',
+                username: 'Player 7'
+            }
+        ];
+
+        const scheduleGamesTest = [
+            {
+                week: 1,
+                home_team_uuid: 'user1',
+                away_team_uuid: 'user2',
+                home_score: 100,
+                away_score: 90,
+                bye: false,
+            },
+            {
+                week: 1,
+                home_team_uuid: 'user3',
+                away_team_uuid: 'user4',
+                home_score: 80,
+                away_score: 110,
+                bye: false,
+            },
+            {
+                week: 1,
+                home_team_uuid: 'user5',
+                away_team_uuid: null,
+                home_score: null,
+                away_score: null,
+                bye: true,
+            }
+        ];
+        const standings = {};
+
+        const curr_week = 1;
+
+
+        for (let i = 1; i <= curr_week; i++) {
+            //const gamesForWeek = scheduleGames.filter(game => game.week === i && !game.bye);
+            const gamesForWeek = scheduleGamesTest.filter(game => game.week === i && !game.bye);
+            console.log('Processing standings for week', i, 'with games:', gamesForWeek);
+            for (let j = 0; j < gamesForWeek.length; j++ ) {
+                if (gamesForWeek[j].home_score > gamesForWeek[j].away_score) {
+
+                    console.log('Updating standings for week', i, 'game', j, 'home team win');
+                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].home_team_uuid].wins += 1;
+
+                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].away_team_uuid].losses += 1;
+
+                } else if (gamesForWeek[j].home_score < gamesForWeek[j].away_score) {
+                    console.log('Updating standings for week', i, 'game', j, 'home team win');
+                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].home_team_uuid].losses += 1;
+
+                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].away_team_uuid].wins += 1;
+                }
+
+
+            }
+        }
 
         return standings;
     } catch (error) {
@@ -396,13 +495,13 @@ exports.updateStandings = async (leagueId) => {
     }
 }
 
-completeWeek = async (leagueId, current_week) => {
+exports.completeWeek = async (leagueId, current_week) => {
     try {
         console.log(`Completing week ${current_week} for league ${leagueId}`);
         const {data, error} = await client
             .from('schedule')
             .update({
-                current_week: parseInt(weekNumber) + 1
+                current_week: parseInt(current_week) + 1
             })
             .eq('league_id', leagueId);
 

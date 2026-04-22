@@ -149,9 +149,19 @@
        
 
             <div class="schedule-info">
-                
-                    <p>Current Week: </p>
-                    <p>{{vm.scheduleMetadata.current_week}}</p>
+                    <div class="current-week">
+                        <p>Current Week: </p>
+                        <p>{{vm.scheduleMetadata.current_week}}</p>
+
+                    </div>
+                    
+                    <div class="buttons">
+                        <button (click)="completeWeek(game)" class="complete-btn"
+                            [disabled]="">
+                            Complete Week
+                        </button>
+    
+                    </div>
                 
             </div>
 
@@ -227,13 +237,7 @@
                     </div>
                
                 </div>
-                 <div class="buttons">
-                    <button (click)="completeWeek()" class="complete-btn"
-                        [disabled]="">
-                        Complete Week
-                    </button>
-
-                </div>
+                 
 
 
          </div>

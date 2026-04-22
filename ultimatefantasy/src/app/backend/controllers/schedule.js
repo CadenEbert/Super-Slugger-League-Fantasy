@@ -103,3 +103,13 @@ exports.completeWeek = async (req, res) => {
         res.status(500).json({ error: 'Failed to complete week' });
     }
 }
+
+exports.updateStandings = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const response = await scheduleService.updateStandings(leagueId);
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update standings' });
+    }
+}
