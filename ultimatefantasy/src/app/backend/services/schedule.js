@@ -108,6 +108,7 @@ const testMembers = [
 async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagueId) {
     const schedule = [];
     const totalTeams = testMembers.length;
+    
     const totalWeeks = weeks - 1;
     
 
@@ -141,7 +142,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             const playerOnBye = testMembers[byeIndex];
             const shuffledMembers = [...testMembers].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
 
-            const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week, bye: true };
+            const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week: week + 1, bye: true };
             console.log('Adding bye matchup:', byeMatchup);
             matchups.push(byeMatchup);
             for (let i = 0; i < (totalTeams-1) /2; i++) {
@@ -150,7 +151,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
 
                 
     
-                matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week, bye: false });
+                matchups.push({ homeTeam: homeTeam.user_id, awayTeam: awayTeam.user_id, week: week + 1, bye: false });
             }
             byeIndex++;
             
@@ -194,7 +195,19 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
 
         const schedule = await generateScheduleForLeague(members, numberOfMatchups, numberOfPlayoffs, leagueId);
 
-        
+        const { error } = await client
+            .from('schedule')
+            .update({
+                generated: true,
+                playoff_spots: numberOfPlayoffs,
+                total_weeks: numberOfMatchups
+            })
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error updating schedule metadata:', error);
+            throw new Error('Failed to update schedule metadata');
+        }
 
        
 
@@ -214,9 +227,24 @@ exports.clearSchedule = async (leagueId) => {
             .delete('*')
             .eq('league_id', leagueId);
 
+
+
+        
         if (error) {
             console.error('Error clearing schedule:', error);
             throw new Error('Failed to clear schedule');
+        }
+
+        const { error: metadataError } = await client
+            .from('schedule')
+            .update({
+                generated: false
+            })
+            .eq('league_id', leagueId);
+
+        if (metadataError) {
+            console.error('Error resetting schedule metadata:', metadataError);
+            throw new Error('Failed to reset schedule metadata');
         }
 
     } catch (error) {
@@ -260,6 +288,26 @@ exports.getScheduleGames = async (leagueId) => {
         return scheduleGames;
     } catch (error) {
         console.error('getScheduleGames error:', error.message);
+        throw error;
+    }
+}
+
+exports.startSeason = async (leagueId) => {
+    try {
+        const { error } = await client
+            .from('schedule')
+            .update({
+                status: 'in_progress'
+            })
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error starting season:', error);
+            throw new Error('Failed to start season');
+        }
+
+    } catch (error) {
+        console.error('startSeason error:', error.message);
         throw error;
     }
 }

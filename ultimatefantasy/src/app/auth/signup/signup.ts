@@ -24,13 +24,16 @@ export class Signup {
 
   onSubmit() {
     const rawFormData = this.form.getRawValue();
-    this.authService.signUp(rawFormData.email, rawFormData.password, rawFormData.username).subscribe(response => {
+    this.authService.signUp(
+      rawFormData.email ?? '',
+      rawFormData.password ?? '',
+      rawFormData.username ?? ''
+    ).then(response => {
       if (response.error) {
         console.error('Error during registration:', response.error);
       } else {
         console.log('Registration successful:', response);
         this.router.navigate(['login']);
-       
       }
     });
   }

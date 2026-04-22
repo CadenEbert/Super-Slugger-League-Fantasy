@@ -13,7 +13,7 @@
 
 <ng-container *ngIf="vm$ | async as vm">
 
-    <div class="schedule-container" *ngIf="vm.isOwner">
+    <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'not_started'">
         <div class="schedule-header">
             <div class="title">
                 <h1>Schedule Settings</h1>
@@ -45,69 +45,171 @@
 
                 <div class="schedule-grid">
                     <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames">
-                  
-                    <ng-container  *ngIf="game.bye; else regularGame">
-                        <div class="game">
-                            <p>Week : {{game.week}} </p>
-                        <div class="game-teams">
-                            <div class="home">
-                                <p class="game-text">Home Team</p>
-                            </div>
 
-                        <div class="versus">
-                            <p class="game-text">{{game.home_team}}</p>
-                            <p class="game-text">VS</p>
-                            <p class="game-text">BYE</p>
-                        </div>
-                        <div class="away">
-                            <p class="game-text">Away Team</p>
-                        </div>
-                    </div>
-                    </div>
-                    </ng-container>
-                    <ng-template #regularGame>
-                    <div class="game">
-                            <p>Week : {{game.week}} </p>
-                        <div class="game-teams">
-                            <div class="home">
-                                <p class="game-text">Home Team</p>
-                            </div>
+                        <ng-container *ngIf="game.bye; else regularGame">
+                            <div class="game">
+                                <p>Week : {{game.week}} </p>
+                                <div class="game-teams">
+                                    <div class="home">
+                                        <p class="game-text">Home Team</p>
+                                    </div>
 
-                        <div class="versus">
-                            <p class="game-text">{{game.home_team}}</p>
-                            <p class="game-text">VS</p>
-                            <p class="game-text">{{game.away_team}}</p>
-                        </div>
-                        <div class="away">
-                            <p class="game-text">Away Team</p>
-                        </div>
-                    </div>
-                    </div>
-                    </ng-template>
+                                    <div class="versus">
+                                        <p class="game-text">{{game.home_team}}</p>
+                                        <p class="game-text">VS</p>
+                                        <p class="game-text">BYE</p>
+                                    </div>
+                                    <div class="away">
+                                        <p class="game-text">Away Team</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #regularGame>
+                            <div class="game">
+                                <p>Week : {{game.week}} </p>
+                                <div class="game-teams">
+                                    <div class="home">
+                                        <p class="game-text">Home Team</p>
+                                    </div>
+
+                                    <div class="versus">
+                                        <p class="game-text">{{game.home_team}}</p>
+                                        <p class="game-text">VS</p>
+                                        <p class="game-text">{{game.away_team}}</p>
+                                    </div>
+                                    <div class="away">
+                                        <p class="game-text">Away Team</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
                     </div>
                 </div>
 
                 <div class="buttons">
                     <button (click)="generateSchedule(totalWeeks, number_of_playoffs)" class="generate-btn"
-                        [disabled]="!(canDraft$ | async)">
+                        [disabled]="!(canDraft$ | async) || (vm.scheduleMetadata.generated) || generating || !totalWeeks || !number_of_playoffs">
                         Generate Schedule
                     </button>
 
-                    <button (click)="clearSchedule()" class="generate-btn" [disabled]="!(canDraft$ | async)">
+                    <button (click)="clearSchedule()" class="generate-btn"
+                        [disabled]="!(canDraft$ | async) || !(vm.scheduleMetadata.generated) || generating">
                         Clear Schedule
                     </button>
 
-                    <button (click)="startSeason()" class="generate-btn" [disabled]="!(canDraft$ | async)">
+                    <button (click)="startSeason()" class="generate-btn"
+                        [disabled]="!(canDraft$ | async) || !(vm.scheduleMetadata.generated) || generating">
                         Start Season
                     </button>
                 </div>
             </div>
         </div>
 
+    </div>
 
 
+    <div class="schedule-container" *ngIf="!vm.scheduleMetadata?.status === 'in_progress'">
+        <div class="schedule-header">
+            <h1>Schedule</h1>
 
 
+            <div class="schedule-body">
+
+                <div class="schedule-grid">
+                    <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
+                        <p>Week : {{game.week}} </p>
+
+                        <div class="game-teams">
+                            <div class="home">
+                                <p class="game-text">Home Team</p>
+                            </div>
+
+                            <div class="versus">
+                                <p class="game-text">{{game.home_team}}</p>
+                                <p class="game-text">VS</p>
+                                <p class="game-text">{{game.away_team}}</p>
+                            </div>
+                            <div class="away">
+                                <p class="game-text">Away Team</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'">
+
+        <div class="schedule-header">
+            <h1>Schedule</h1>
+       
+
+            <div class="schedule-info">
+                
+                    <p>Current Week: </p>
+                    <p>{{vm.scheduleMetadata.current_week}}</p>
+                
+            </div>
+
+
+                <div class="schedule-grid-progress">
+                    <div class="schedule-metadata" *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
+
+                        <ng-container *ngIf="game.bye; else regularGame">
+                            <div class="game">
+                                <p>Week : {{game.week}} </p>
+                                <div class="game-teams">
+                                    <div class="home">
+                                        <p class="game-text">Home Team</p>
+                                    </div>
+
+                                    <div class="versus">
+                                        <p class="game-text">{{game.home_team}}</p>
+                                        <p class="game-text">VS</p>
+                                        <p class="game-text">BYE</p>
+                                    </div>
+                                    <div class="away">
+                                        <p class="game-text">Away Team</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #regularGame>
+                            <div class="game">
+                                <p>Week : {{game.week}} </p>
+                                <div class="game-teams">
+                                    <div class="home">
+                                        <p class="game-text">Home Team</p>
+                                    </div>
+
+                                    <div class="versus">
+                                        <p class="game-text">{{game.home_team}}</p>
+                                        <p class="game-text">VS</p>
+                                        <p class="game-text">{{game.away_team}}</p>
+                                    </div>
+                                    <div class="away">
+                                        <p class="game-text">Away Team</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+               
+                </div>
+                 <div class="buttons">
+                    <button (click)="completeWeek()" class="complete-btn"
+                        [disabled]="">
+                        Complete Week
+                    </button>
+
+                </div>
+
+
+         </div>
 
     </div>
 

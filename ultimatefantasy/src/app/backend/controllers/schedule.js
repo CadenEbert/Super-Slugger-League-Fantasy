@@ -53,3 +53,13 @@ exports.getScheduleGames = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch schedule games' });
     }
 }
+
+exports.startSeason = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        await scheduleService.startSeason(leagueId);
+        res.json({ message: 'Season started successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to start season' });
+    }
+}

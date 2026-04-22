@@ -46,7 +46,7 @@ exports.createLeague = async (userId, leagueData) => {
   const { data: profile, error: profileerr } = await supabase.client
   .from('profiles')
   .select('id')
-  .eq('id', userId)
+  .eq('user_id', userId)
   .single();
 
   if (profileerr) throw new Error(profileerr.message);
@@ -101,7 +101,7 @@ exports.createLeague = async (userId, leagueData) => {
       league_id: league.id,
       user_id: userId,
       role: 'owner',
-      profile_id: userId
+      profile_id: profile.id
     });
 
   if (memberError) throw new Error(memberError.message);
@@ -148,8 +148,9 @@ exports.joinLeague = async (leagueId, userId) => {
   const { data: profile, error: profileerr } = await supabase.client
     .from('profiles')
     .select('id')
-    .eq('id', userId)
+    .eq('user_id', userId)
     .single();
+
 
   if (profileerr) throw new Error(profileerr.message);
 
@@ -159,7 +160,7 @@ exports.joinLeague = async (leagueId, userId) => {
       league_id: leagueId,
       user_id: userId,
       role: 'member',
-      profile_id: userId
+      profile_id: profile.id
     })
     .select()
     .single();
@@ -194,6 +195,18 @@ exports.getOwnerId = async (leagueId) => {
 
 exports.deleteLeague = async (leagueId) => {
   console.log('Deleting league with ID:', leagueId);
+
+  const { error: scheduleGamesError } = await supabase.client
+    .from('schedule_games')
+    .delete()
+    .eq('league_id', leagueId);
+  if (scheduleGamesError) throw new Error(scheduleGamesError.message);
+
+  const { error: scheduleError } = await supabase.client
+    .from('schedule')
+    .delete()
+    .eq('league_id', leagueId);
+  if (scheduleError) throw new Error(scheduleError.message);
 
 
   const { error: draftPlayersError } = await supabase.client

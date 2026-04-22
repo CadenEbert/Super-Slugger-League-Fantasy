@@ -19,7 +19,7 @@ exports.addPlayerToRoster = async (req, res) => {
         const rosterId = req.params.rosterId;
         const characterId = req.params.characterId;
         const result = await freeagentService.addPlayerToRoster(leagueId, rosterId, characterId);
-        res.status(201).json(result);
+        res.json(result);
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to add player to roster' });

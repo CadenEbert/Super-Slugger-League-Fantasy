@@ -4,6 +4,8 @@ import { AuthService } from '../../../core/auth.service';
 import { BehaviorSubject, combineLatest, distinct, distinctUntilChanged, map, Observable } from 'rxjs';
 import { LeagueService } from '../../league-service.js';
 import { LeagueCompService } from '../league-comp-service.js';
+import { Pipe, PipeTransform } from '@angular/core';
+
 
 
 export interface Game {
@@ -24,6 +26,16 @@ export interface Schedule {
   current_week: number;
   total_weeks: number;
   status: string;
+}
+
+@Pipe({ name: 'filterByWeek' })
+export class FilterByWeekPipe implements PipeTransform {
+  transform(games: any[], week: number | string | null): any[] {
+    if (!games) return [];
+    if (!week) return games;
+    const weekNum = typeof week === 'string' ? parseInt(week, 10) : week;
+    return games.filter(game => game.week === weekNum);
+  }
 }
 
 @Component({
@@ -59,6 +71,8 @@ export class Schedule {
 
   totalWeeks: number = 0;
   number_of_playoffs: number = 0;
+
+  generating: boolean = false;
 
   isLoading: boolean = false;
 
@@ -202,12 +216,18 @@ export class Schedule {
 
   generateSchedule(totalWeeks: number, number_of_playoffs: number) {
 
+    this.generating = true;
+
     this.leagueCompService.generateSchedule(this.route.parent?.snapshot.params['leagueId'], this.totalWeeks, this.number_of_playoffs).subscribe({
       next: (response) => {
-        this.setScheduleGames(Array.isArray(response) ? response : response.games ?? []);
         console.log('Generated schedule:', this.scheduleGames$);
+        this.generating = false;
       },
-      error: (err) => console.error('Error generating schedule:', err)
+      error: (err) => {
+        console.error('Error generating schedule:', err);
+        this.generating = false;
+      }
+
     });
 
   }
@@ -221,5 +241,16 @@ export class Schedule {
       error: (err) => console.error('Error clearing schedule:', err)
     });
   }
+
+  startSeason() {
+    this.leagueCompService.startSeason(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (response) => {
+        console.log('Season started successfully');
+      },
+      error: (err) => console.error('Error starting season:', err)
+    });
+  }
+
+
 
 }

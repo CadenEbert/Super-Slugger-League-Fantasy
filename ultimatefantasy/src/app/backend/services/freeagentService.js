@@ -7,7 +7,7 @@ exports.getFreeAgents = async (leagueId) => {
 
     if (playersError) throw new Error(playersError.message);
 
-    // First get roster IDs that belong to this league
+  
     const { data: leagueRosters, error: rostersError } = await supabase.client
         .from('rosters')
         .select('id')
@@ -41,13 +41,54 @@ exports.getFreeAgents = async (leagueId) => {
 };
 
 exports.addPlayerToRoster = async (leagueId, rosterId, characterId) => {
+
+    const { data: player, error: playerError } = await supabase.client
+        .from('roster_players')
+        .select()
+        .eq('league_id', leagueId)
+        .eq('character_id', characterId);
+
+    if (playerError) {
+        console.error('Error checking existing player:', playerError);
+    } else if (player && player.length > 0) {
+        return { exists: true, message: 'Player is already on the roster' };
+        
+    }
+
+    const { data: roster, error: rosterError } = await supabase.client
+        .from('roster_players')
+        .select('*')
+        .eq('league_id', leagueId)
+        .eq('roster_id', rosterId);
+
+    if (rosterError) {
+        console.error('Error fetching roster players:', rosterError);
+        throw new Error('Failed to fetch roster players');
+    }
+
+    const { data: league, error: leagueError } = await supabase.client
+        .from('leagues')
+        .select('roster_size')
+        .eq('id', leagueId)
+        .single();
+
+    if (leagueError) {
+        console.error('Error fetching league info:', leagueError);
+        throw new Error('Failed to fetch league information');
+    }
+
+    if (roster.length >= league.roster_size) {
+        return { full: true, message: 'Roster is already at maximum capacity' };
+    }
+
     const { data, error } = await supabase.client
         .from('roster_players')
         .insert({
             roster_id: rosterId,
             character_id: characterId,
             position: 'Bench',
-            batting_order: null
+            batting_order: null,
+            league_id: leagueId
         })
         .select()
         .single();

@@ -456,7 +456,7 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
     if (finalRound) {
       console.log('Draft completed after this pick');
       exports.pauseDraftTimer(draftId);
-      await finishDraft(draftId);
+      await finishDraft(draftId, league_id);
     }
 
     const { error: updateError } = await client
@@ -468,7 +468,8 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
         end_of_snake: nextSnakeEnd,
         player_pool: newPlayerPool,
         current_round: nextRound,
-        status: finalRound ? 'completed' : 'in_progress'
+        status: finalRound ? 'completed' : 'in_progress',
+        timer_seconds: time_per_pick,
       })
       .eq('uuid', draftId);
 
@@ -510,7 +511,7 @@ async function autoPick(draftId) {
     console.log('totalPicks:', totalPicks, 'current_pick_index:', current_pick_index, 'current_round:', current_round);
 
     if (!player_pool || player_pool.length === 0) {
-      await finishDraft(draftId);
+      await finishDraft(draftId, league_id);
       await exports.pauseDraftTimer(draftId);
       return;
     }
@@ -588,7 +589,8 @@ async function autoPick(draftId) {
         end_of_snake: nextSnakeEnd,
         player_pool: newPlayerPool,
         current_round: nextRound,
-        status: finalRound ? 'completed' : 'in_progress'
+        status: finalRound ? 'completed' : 'in_progress',
+        timer_seconds: time_per_pick
       })
       .eq('uuid', draftId);
 
@@ -607,7 +609,7 @@ async function autoPick(draftId) {
   }
 }
 
-async function finishDraft(draftId) {
+async function finishDraft(draftId, leagueId) {
   try {
     const { data, error } = await client
       .from('draft')
@@ -653,7 +655,8 @@ async function finishDraft(draftId) {
     const rosterPlayerRows = draftPlayers.map(pick => ({
       roster_id: rosterMap[pick.member_picking],
       character_id: pick.character_picked,
-      position: 'Bench'
+      position: 'Bench',
+      league_id: leagueId
     }));
 
     const { error: insertError } = await client

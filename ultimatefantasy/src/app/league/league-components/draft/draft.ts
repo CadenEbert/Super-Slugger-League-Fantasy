@@ -162,7 +162,7 @@ export class Draft implements OnInit, OnDestroy {
         console.log('Can draft (BehaviorSubject):', this.canDraft$.value);
       },
       error: (err) => console.error('Error checking draft eligibility:', err)
-      });
+    });
 
     this.leagueService.getOwnerId(this.route.parent?.snapshot.params['leagueId']).subscribe(ownerId => {
       console.log('Owner ID in LeaguePage:', ownerId);
@@ -235,9 +235,11 @@ export class Draft implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
-
   setDraftData(data: any) {
     this.draftDataSubject.next(data);
+    if (data?.pick_order?.length) {
+      this.pickOrderSubject.next(data.pick_order); 
+    }
   }
 
   setCanDraft(canDraft: boolean) {
@@ -328,8 +330,9 @@ export class Draft implements OnInit, OnDestroy {
           time_per_pick: timePerPick,
           number_of_rounds: numberOfRounds,
           draft_type: draftType,
-
           pick_order: this.pickOrderSubject.value
+
+
         }).subscribe({
           next: () => console.log('Draft started'),
           error: (err) => console.error('Error starting draft:', err)

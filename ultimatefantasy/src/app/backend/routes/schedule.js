@@ -13,4 +13,6 @@ router.get('/leagues/:leagueId/schedule/metadata', authMiddleware, scheduleContr
 
 router.get('/leagues/:leagueId/schedule/games', authMiddleware, scheduleController.getScheduleGames);
 
+router.put('/leagues/:leagueId/schedule/start', authMiddleware, scheduleController.startSeason);
+
 module.exports = router;

@@ -29,6 +29,20 @@
     
 
 }
+
+.schedule-grid-progress {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+    width: 100%;
+    min-height: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: rgb(233, 233, 233);
+    border-radius: 10px;
+  
+
+}
 .title {
     display: flex;
     justify-content: center;
@@ -39,6 +53,17 @@
     color: black;
     border-bottom: 1px solid #000000;
   
+}
+
+.schedule-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    gap: 10px;
+    font-size: large;
+    font-weight: bold;
 }
 
 .schedule-settings {
@@ -81,9 +106,27 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 .generate-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
+.complete-btn {
+    align-self: flex-end;
+    padding: 10px 20px;
+    background-color: #429dfd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.complete-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }

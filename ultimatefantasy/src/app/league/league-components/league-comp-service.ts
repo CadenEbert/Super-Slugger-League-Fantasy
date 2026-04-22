@@ -75,6 +75,10 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/schedule/games`);
   }
 
+  startSeason(leagueId: string): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/schedule/start`, {});
+  }
+
   generateSchedule(leagueId: string, total_weeks: number, number_in_playoffs: number): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/schedule`, {total_weeks, number_in_playoffs});
   }

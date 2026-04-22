@@ -67,11 +67,22 @@ export class FreeAgents {
     if (leagueId && this.rosterId) {
       this.leagueService.addPlayerToRoster(leagueId, this.rosterId, characterId).subscribe({
 
-        next: () => {
+        next: (result: any) => {
+        if (result?.exists) {
+         
+          alert(result.message || 'Player is already on the roster');
+        } else if (result?.error) {
+        
+          console.error('Error adding player to roster:', result.error);
+        } else if (result?.full) {
+          alert(result.message || 'Roster is already at maximum capacity');
+
+        } else {
+        
           console.log('Player added to roster successfully');
           this.players = this.players.filter(p => p.id !== characterId);
           this.cdRef.detectChanges();
-
+        }
         },
         error: (err) => {
           console.error('Error adding player to roster:', err);

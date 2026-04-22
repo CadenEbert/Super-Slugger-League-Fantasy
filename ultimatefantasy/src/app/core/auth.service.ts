@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthResponse, createClient, Session } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { SupabaseService } from '../backend/supabase';  
+import { SupabaseService } from '../backend/supabase';
 
 
 @Injectable({
-  providedIn: 'root',   
+    providedIn: 'root',
 })
 
 export class AuthService {
 
-    
+
     private sessionSubject = new BehaviorSubject<Session | null | undefined>(undefined);
     private userSubject = new BehaviorSubject<any>(null);
 
@@ -40,20 +40,31 @@ export class AuthService {
         return !!this.userSubject.value;
     }
 
-    signUp(email: string, password: string, username: string): Observable<AuthResponse> {
+    async signUp(email: string, password: string, username: string): Promise<AuthResponse> {
 
-        
-            const promise = this.supabase.client.auth.signUp({
+
+        const authResponse = await this.supabase.client.auth.signUp({
             email,
             password,
             options: {
-                data: {
-                    username,
-                },
+                data: { username },
             },
         });
-        return from(promise);
-        
+
+
+        const { data, error } = await this.supabase.client
+            .from('profiles')
+            .insert({ username, email })
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error inserting profile:', error);
+        }
+
+
+        return authResponse;
+
     }
 
     login(email: string, password: string): Observable<AuthResponse> {

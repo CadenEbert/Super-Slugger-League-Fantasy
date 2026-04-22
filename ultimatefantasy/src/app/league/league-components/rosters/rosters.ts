@@ -22,6 +22,8 @@ export class Rosters {
   rosters: any[] = [];
   canCreateRoster: boolean = false;
 
+  creatingRoster: boolean = false;
+
   profile: {
     username: string;
   } | null = null;
@@ -84,9 +86,7 @@ export class Rosters {
   }
 
   createRoster() {
-    console.log('Creating roster with name:', this.newRosterName);
-    console.log('Current leagueId:', this.leagueId);
-    console.log('Current userId:', this.currentUserId);
+    this.creatingRoster = true;
     if (!this.leagueId || !this.currentUserId) {
       console.error('Missing leagueId or userId');
       return;
@@ -96,6 +96,9 @@ export class Rosters {
         console.log('Roster created:', roster);
         this.rosters.push(roster);
         this.newRosterName = '';
+        this.creatingRoster = false;
+        this.canCreateRoster = false;
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error('Error creating roster:', err);
