@@ -32,7 +32,9 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets/images",
+                "output": "/assets/images"
+                
               }
             ],
             "styles": ["src/material-theme.scss", "src/styles.css"],

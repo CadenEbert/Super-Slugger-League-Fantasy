@@ -32,6 +32,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FilterByWeekPipe } from './league/league-components/schedule/schedule';
 import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { UpdateSchedule } from './league/league-components/schedule/update-sched
     MatExpansionModule,
     DragDropModule,
     FilterByWeekPipe,
+    MatProgressSpinnerModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

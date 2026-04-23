@@ -50,7 +50,7 @@
 
 .league-description-header {
   font-size: 1.5rem;
-  color: #555;
+  color: white;
   margin-left: 1rem;
 }
 .league-description {
@@ -60,7 +60,7 @@
 }
 
 .league-title {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #333;
   

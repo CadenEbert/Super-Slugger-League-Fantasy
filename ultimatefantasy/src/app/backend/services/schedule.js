@@ -402,31 +402,38 @@ exports.updateStandings = async (leagueId) => {
         const membersMap = [
             {
                 user_id: 'user1',
-                username: 'Player 1'
+                username: 'Player 1',
+                team_image: 'MarioFireballs',
             },
             {
                 user_id: 'user2',
-                username: 'Player 2'
+                username: 'Player 2',
+                team_image: 'BirdoBows',
             },
             {
                 user_id: 'user3',
-                username: 'Player 3'
+                username: 'Player 3',
+                team_image: 'DaisyFlowers',
             },
             {
                 user_id: 'user4',
-                username: 'Player 4'
+                username: 'Player 4',
+                team_image: 'LuigiKnights',
             },
             {
                 user_id: 'user5',
-                username: 'Player 5'
+                username: 'Player 5',
+                team_image: 'BowserMonsters',
             },
             {
                 user_id: 'user6',
-                username: 'Player 6'
+                username: 'Player 6',
+                team_image: 'LuigiKnights',
             },
             {
                 user_id: 'user7',
-                username: 'Player 7'
+                username: 'Player 7',
+                team_image: 'BowserMonsters',
             }
         ];
 
@@ -437,6 +444,7 @@ exports.updateStandings = async (leagueId) => {
                 away_team_uuid: 'user2',
                 home_score: 100,
                 away_score: 90,
+                
                 bye: false,
             },
             {
@@ -454,6 +462,14 @@ exports.updateStandings = async (leagueId) => {
                 home_score: null,
                 away_score: null,
                 bye: true,
+            },
+            {
+                week: 1,
+                home_team_uuid: 'user6',
+                away_team_uuid: 'user7',
+                home_score: 95,
+                away_score: 105,
+                bye: false,
             }
         ];
         const standings = {};
@@ -469,18 +485,18 @@ exports.updateStandings = async (leagueId) => {
                 if (gamesForWeek[j].home_score > gamesForWeek[j].away_score) {
 
                     console.log('Updating standings for week', i, 'game', j, 'home team win');
-                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown', team_image: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.team_image || null };
                     standings[gamesForWeek[j].home_team_uuid].wins += 1;
 
-                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown', team_image: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.team_image || null };
                     standings[gamesForWeek[j].away_team_uuid].losses += 1;
 
                 } else if (gamesForWeek[j].home_score < gamesForWeek[j].away_score) {
                     console.log('Updating standings for week', i, 'game', j, 'home team win');
-                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].home_team_uuid] = standings[gamesForWeek[j].home_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.username || 'Unknown', team_image: membersMap.find(m => m.user_id === gamesForWeek[j].home_team_uuid)?.team_image || null };
                     standings[gamesForWeek[j].home_team_uuid].losses += 1;
 
-                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown' };
+                    standings[gamesForWeek[j].away_team_uuid] = standings[gamesForWeek[j].away_team_uuid] || { wins: 0, losses: 0, username: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.username || 'Unknown', team_image: membersMap.find(m => m.user_id === gamesForWeek[j].away_team_uuid)?.team_image || null };
                     standings[gamesForWeek[j].away_team_uuid].wins += 1;
                 }
 
@@ -497,8 +513,16 @@ exports.updateStandings = async (leagueId) => {
 
 exports.completeWeek = async (leagueId, current_week) => {
     try {
-        console.log(`Completing week ${current_week} for league ${leagueId}`);
-        const {data, error} = await client
+
+        const { data, errorsch } = await client
+            .from('schedule')
+            .select('current_week')
+            .eq('league_id', leagueId)
+            .eq('week', current_week);
+
+
+        
+        const { error } = await client
             .from('schedule')
             .update({
                 current_week: parseInt(current_week) + 1

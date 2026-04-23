@@ -10,6 +10,7 @@ export interface Standing {
   wins: number;
   losses: number;
   username: string;
+  team_image: string;
 }
 
 
@@ -21,6 +22,7 @@ export interface Standing {
 })
 export class Standings {
   standings: any[] = [];
+  isLoading: boolean = true;
 
   constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
@@ -31,7 +33,9 @@ export class Standings {
         this.standings = Object.values(data);
         this.standings = this.sortByWins(this.standings);
         console.log('Fetched standings:', this.standings);
+        this.isLoading = false;
         this.cdr.detectChanges();
+        
       },
       error: (error) => {
         console.error('Error fetching standings:', error);
@@ -48,6 +52,10 @@ export class Standings {
       }
     }
     return standings;
+  }
+
+  positive(team: any) {
+    return team.wins > team.losses;
   }
 
 
