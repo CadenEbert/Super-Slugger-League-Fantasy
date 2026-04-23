@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/auth.service';
 })
 export class FreeAgents {
   players: any[] = [];
+  isLoading: boolean = true;
 
   rosterId: string = '';
   draftStatus: string = 'not_started';
@@ -31,6 +32,7 @@ export class FreeAgents {
     this.leagueService.getDraftStatus(this.route.parent?.snapshot.params['leagueId']).subscribe(status => {
       this.draftStatus = status;
       console.log('Draft status in Rosters:', this.draftStatus);
+      this.isLoading = false;
       this.cdRef.detectChanges();
     });
 
@@ -42,6 +44,7 @@ export class FreeAgents {
       if (leagueId) {
         this.leagueService.getFreeAgents(leagueId).subscribe(freeAgents => {
           this.players = freeAgents;
+          this.isLoading = false;
           this.cdRef.detectChanges();
         });
 
@@ -49,6 +52,8 @@ export class FreeAgents {
           console.log('Fetching roster ID for leagueId:', leagueId, 'and userId:', userId);
           this.leagueService.getUsersRosterId(leagueId, userId).subscribe(id => {
             this.rosterId = id;
+            this.isLoading = false;
+            this.cdRef.detectChanges();
             console.log('Fetched roster ID:', this.rosterId);
           });
         }

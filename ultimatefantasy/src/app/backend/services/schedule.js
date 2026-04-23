@@ -516,9 +516,32 @@ exports.completeWeek = async (leagueId, current_week) => {
 
         const { data, errorsch } = await client
             .from('schedule')
-            .select('current_week')
-            .eq('league_id', leagueId)
-            .eq('week', current_week);
+            .select('total_weeks')
+            .eq('league_id', leagueId);
+
+        console.log('Completing week', current_week, 'for league', leagueId, 'with total weeks:', data[0].total_weeks);
+
+        if (errorsch) {
+            console.error('Error fetching current week:', errorsch);
+            throw new Error('Failed to fetch current week');
+        }
+
+        if (parseInt(current_week) == data[0].total_weeks) {
+            const { error } = await client
+                .from('schedule')
+                .update({
+                    status: 'playoffs_not_started'
+                })
+                .eq('league_id', leagueId);
+
+            if (error) {
+                console.error('Error marking season as completed:', error);
+                throw new Error('Failed to mark season as completed');
+            }
+            return;
+        }
+
+
 
 
         
@@ -539,4 +562,18 @@ exports.completeWeek = async (leagueId, current_week) => {
         throw error;
     }
 
+}
+
+
+
+exports.getPlayoffTeams = async (leagueId) => {
+    try {
+        const standings = await this.updateStandings(leagueId);
+        const sortedTeams = Object.entries(standings).sort((a, b) => b[1].wins - a[1].wins);
+        const topTeams = sortedTeams.slice(0, 4).map(entry => ({ user_id: entry[0], ...entry[1] }));
+        return topTeams;
+    } catch (error) {
+        console.error('getPlayoffTeams error:', error.message);
+        throw error;
+    }
 }

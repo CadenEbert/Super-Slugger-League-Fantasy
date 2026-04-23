@@ -1,11 +1,12 @@
 <div class="schedule-container" *ngIf="isLoading">
   <div class="schedule-header">
     <h1>Schedule</h1>
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
   </div>
 
-  <div class="loading-container">
-    <mat-spinner></mat-spinner>
-  </div>
+  
 </div>
 
 <ng-container *ngIf="vm$ | async as vm">
@@ -157,7 +158,11 @@
     *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'"
   >
     <div class="schedule-header-owner">
-      <h1>Schedule</h1>
+    <div class="header">
+        <h1>Schedule</h1>
+        
+    </div>
+     
 
       <div class="schedule-info">
         <div class="current-week">
@@ -201,7 +206,7 @@
 
                   <p class="score-text">{{ game.away_score }}</p>
                 </div>
-                <p class="game-text-neutral">bye</p>
+                <p class="game-text-right-neutral">bye</p>
               </div>
             </div>
           </ng-container>
@@ -231,7 +236,7 @@
 
                   <p class="score-text">{{ game.away_score }}</p>
                 </div>
-                <p [ngClass]="game.home_score < game.away_score ? 'game-text-right-green': game.home_score > game.away_score ? 'game-text-right-red' : 'game-text-neutral'">
+                <p [ngClass]="game.home_score < game.away_score ? 'game-text-right-green': game.home_score > game.away_score ? 'game-text-right-red' : 'game-text-right-neutral'">
                     {{ game.away_team }} </p>
               </div>
             </div>
@@ -239,5 +244,36 @@
         </div>
       </div>
     </div>
+
+
   </div>
+
+
+  <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_not_started'">
+    <div class="schedule-header">
+        <div class="title">
+          <h1>Playoff Settings</h1>
+        </div>
+  
+        <div class="schedule-settings">
+         
+       
+  
+        </div>
+  
+     
+  
+          <div class="buttons">
+  
+            <button
+              (click)="startPlayoffs()"
+              class="generate-btn"
+              [disabled]="gen_playoffs"
+            >
+              Start Playoffs
+            </button>
+          </div>
+        </div>
+      </div>
+   
 </ng-container>

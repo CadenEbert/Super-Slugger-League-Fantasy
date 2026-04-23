@@ -77,6 +77,10 @@ export class Schedule {
 
   generating: boolean = false;
 
+  gen_playoffs: boolean = false;
+
+  playoffTeams: any[] = [];
+
   isLoading: boolean = false;
 
   public vm$ = combineLatest([
@@ -274,5 +278,20 @@ export class Schedule {
 
     }
 
+  }
+
+  getPlayoffTeams() {
+    this.leagueCompService.getPlayoffTeams(this.route.parent?.snapshot.params['leagueId']).subscribe({
+      next: (teams) => {
+        console.log('Fetched playoff teams:', teams);
+      },
+      error: (err) => console.error('Error fetching playoff teams:', err)
+    });
+  }
+
+  startPlayoffs() {
+    console.log('Starting playoffs for league:', this.route.parent?.snapshot.params['leagueId']);
+    this.gen_playoffs = true;
+    this.gen_playoffs = false;
   }
 }

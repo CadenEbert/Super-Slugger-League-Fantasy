@@ -113,3 +113,13 @@ exports.updateStandings = async (req, res) => {
         res.status(500).json({ error: 'Failed to update standings' });
     }
 }
+
+exports.getPlayoffTeams = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const playoffTeams = await scheduleService.getPlayoffTeams(leagueId);
+        res.json(playoffTeams);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch playoff teams' });
+    }
+}

@@ -1,4 +1,9 @@
-<div class="roster-container">
+<div class="loading-container" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+
+
+<div class="roster-container" *ngIf="!isLoading">
     <div class="not_started" *ngIf="draftStatus === 'not_started'">
       <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
     </div>

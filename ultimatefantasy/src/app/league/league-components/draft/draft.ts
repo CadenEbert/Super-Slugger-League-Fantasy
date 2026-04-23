@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AuthService } from '../../../core/auth.service';
 import { LeagueService } from '../../league-service';
+import { ChangeDetectorRef } from '@angular/core';
 
 export interface DraftState {
   id: string;
@@ -87,6 +88,7 @@ export class Draft implements OnInit, OnDestroy {
     distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
   );
   draftId: string = '';
+  isLoading: boolean = true;
 
   timePerPick: number = 60;
   draftType: string = 'Snake';
@@ -151,7 +153,7 @@ export class Draft implements OnInit, OnDestroy {
     )
   );
 
-  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService, private leagueService: LeagueService) { }
+  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService, private leagueService: LeagueService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
 
@@ -181,6 +183,8 @@ export class Draft implements OnInit, OnDestroy {
                 this.setDraftPlayers(data.players)
                 console.log('getDraftPlayers response:', data);
                 console.log('data.players:', data.players);
+                this.isLoading = false;
+                this.cdr.detectChanges();
               },
 
             }),
@@ -188,12 +192,17 @@ export class Draft implements OnInit, OnDestroy {
             this.draftService.onDraftUpdate(id).subscribe(update => {
               console.log('Live update:', update);
               this.setDraftData(update.new);
+              this.isLoading = false;
             }),
 
             this.draftService.onDraftPlayersUpdate(this.draftId).subscribe(() => {
               setTimeout(() => {
                 this.draftService.getDraftPlayers(this.draftId).subscribe({
-                  next: (data) => this.setDraftPlayers(data.players)
+                  next: (data) =>  {
+                    this.setDraftPlayers(data.players)
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                  },
                 });
               }, 500);
             })
@@ -217,6 +226,8 @@ export class Draft implements OnInit, OnDestroy {
                 this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
                 console.log('League Members:', members);
                 console.log('Member Map:', this.memberMap);
+                this.isLoading = false;
+                this.cdr.detectChanges();
               },
               error: (err) => console.error('Error fetching league members:', err)
             })
@@ -230,6 +241,7 @@ export class Draft implements OnInit, OnDestroy {
         error: (err) => console.error('Error fetching character stats:', err)
       })
     );
+    
   }
 
   ngOnDestroy() {

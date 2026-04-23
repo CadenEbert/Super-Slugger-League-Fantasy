@@ -100,6 +100,10 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/rosters/${rosterId}`);
   }
 
+  getPlayoffTeams(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/playoffs/teams`);
+  }
+
   updateStandings(leagueId: string): Observable<any> {
     return this.http.put(`/api/leagues/${leagueId}/standings/update`, {});
   }
