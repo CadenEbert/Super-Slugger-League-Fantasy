@@ -2,18 +2,15 @@
   <div class="schedule-header">
     <h1>Schedule</h1>
     <div class="loading-container">
-        <mat-spinner></mat-spinner>
-      </div>
+      <mat-spinner></mat-spinner>
+    </div>
   </div>
 
-  
+
 </div>
 
 <ng-container *ngIf="vm$ | async as vm">
-  <div
-    class="schedule-container"
-    *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'not_started'"
-  >
+  <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'not_started'">
     <div class="schedule-header">
       <div class="title">
         <h1>Schedule Settings</h1>
@@ -23,12 +20,9 @@
         <div class="setting">
           <p>Total Weeks:</p>
           <select [(ngModel)]="totalWeeks" class="setting-select">
-            <option
-              *ngFor="
+            <option *ngFor="
                 let num of ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
-              "
-              [value]="num"
-            >
+              " [value]="num">
               {{ num }}
             </option>
           </select>
@@ -87,33 +81,23 @@
         </div>
 
         <div class="buttons">
-          <button
-            (click)="generateSchedule(totalWeeks, number_of_playoffs)"
-            class="generate-btn"
-            [disabled]="
+          <button (click)="generateSchedule(totalWeeks, number_of_playoffs)" class="generate-btn" [disabled]="
               !(canDraft$ | async) ||
               vm.scheduleMetadata.generated ||
               generating ||
               !totalWeeks ||
               !number_of_playoffs
-            "
-          >
+            ">
             Generate Schedule
           </button>
 
-          <button
-            (click)="clearSchedule()"
-            class="generate-btn"
-            [disabled]="!(canDraft$ | async) || !vm.scheduleMetadata.generated || generating"
-          >
+          <button (click)="clearSchedule()" class="generate-btn"
+            [disabled]="!(canDraft$ | async) || !vm.scheduleMetadata.generated || generating">
             Clear Schedule
           </button>
 
-          <button
-            (click)="startSeason()"
-            class="generate-btn"
-            [disabled]="!(canDraft$ | async) || !vm.scheduleMetadata.generated || generating"
-          >
+          <button (click)="startSeason()" class="generate-btn"
+            [disabled]="!(canDraft$ | async) || !vm.scheduleMetadata.generated || generating">
             Start Season
           </button>
         </div>
@@ -127,10 +111,8 @@
 
       <div class="schedule-body">
         <div class="schedule-grid">
-          <div
-            class="schedule-metadata"
-            *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week"
-          >
+          <div class="schedule-metadata"
+            *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
             <p>Week : {{ game.week }}</p>
 
             <div class="game-teams">
@@ -153,16 +135,13 @@
     </div>
   </div>
 
-  <div
-    class="schedule-container"
-    *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'"
-  >
+  <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'">
     <div class="schedule-header-owner">
-    <div class="header">
+      <div class="header">
         <h1>Schedule</h1>
-        
-    </div>
-     
+
+      </div>
+
 
       <div class="schedule-info">
         <div class="current-week">
@@ -178,10 +157,8 @@
       </div>
 
       <div class="schedule-grid-progress">
-        <div
-          class="schedule-metadata"
-          *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week"
-        >
+        <div class="schedule-metadata"
+          *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
           <ng-container *ngIf="game.bye; else regularGame">
             <div class="game-bye" (click)="updateGame(game)">
               <div class="game-header">
@@ -196,8 +173,8 @@
               </div>
               <div class="game-teams">
                 <p class="game-text-neutral">
-                    {{ game.home_team }}
-                  </p>
+                  {{ game.home_team }}
+                </p>
 
                 <div class="versus">
                   <p class="score-text">{{ game.home_score }}</p>
@@ -225,7 +202,8 @@
 
               <div class="game-teams">
 
-                <p [ngClass]="game.home_score > game.away_score ? 'game-text-green': game.home_score < game.away_score ? 'game-text-red' : 'game-text-neutral'">
+                <p
+                  [ngClass]="game.home_score > game.away_score ? 'game-text-green': game.home_score < game.away_score ? 'game-text-red' : 'game-text-neutral'">
                   {{ game.home_team }}
                 </p>
 
@@ -236,8 +214,9 @@
 
                   <p class="score-text">{{ game.away_score }}</p>
                 </div>
-                <p [ngClass]="game.home_score < game.away_score ? 'game-text-right-green': game.home_score > game.away_score ? 'game-text-right-red' : 'game-text-right-neutral'">
-                    {{ game.away_team }} </p>
+                <p
+                  [ngClass]="game.home_score < game.away_score ? 'game-text-right-green': game.home_score > game.away_score ? 'game-text-right-red' : 'game-text-right-neutral'">
+                  {{ game.away_team }} </p>
               </div>
             </div>
           </ng-template>
@@ -251,29 +230,48 @@
 
   <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_not_started'">
     <div class="schedule-header">
-        <div class="title">
-          <h1>Playoff Settings</h1>
+      <div class="title">
+        <h1>Playoff Settings</h1>
+      </div>
+
+      <div class="playoff-body">
+
+        <div class="playoff-info">
+          <div class="playoff-spots">
+            <p>How many players in playoffs:</p>
+            <select [(ngModel)]="number_of_playoffs" class="setting-select">
+              <option *ngFor="let number of ['4', '6']" [value]="number">{{ number }}</option>
+            </select>
+          </div>
+          <div class="standing" *ngFor="let spot of number_of_playoffs | createArray">
+            <p>Number {{ spot }} Seed: </p>
+            <select [(ngModel)]="playoffTeamsFinal[spot - 1]" class="setting-select">
+              <option *ngFor="let team of playoffTeams" [ngValue]="team">{{ team.username }}</option>
+            </select>
+
+          </div>
+
+
         </div>
-  
-        <div class="schedule-settings">
-         
-       
-  
-        </div>
-  
-     
-  
-          <div class="buttons">
-  
-            <button
-              (click)="startPlayoffs()"
-              class="generate-btn"
-              [disabled]="gen_playoffs"
-            >
-              Start Playoffs
-            </button>
+
+        <div class="standings">
+          <h2>Current Standings</h2>
+          <div class="standing" *ngFor="let team of playoffTeams || []">
+            <p>{{ team.username }}</p>
+            <p>{{ team.wins }} - {{ team.losses }}</p>
           </div>
         </div>
       </div>
-   
+
+
+
+      <div class="buttons">
+
+        <button (click)="startPlayoffs(playoffTeamsFinal)" class="generate-btn" [disabled]="gen_playoffs || playoffTeamsFinal.length < +number_of_playoffs || playoffTeamsFinal.includes(undefined)">
+          Start Playoffs
+        </button>
+      </div>
+    </div>
+  </div>
+
 </ng-container>

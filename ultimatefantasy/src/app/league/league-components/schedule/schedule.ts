@@ -6,6 +6,7 @@ import { LeagueService } from '../../league-service.js';
 import { LeagueCompService } from '../league-comp-service.js';
 import { Pipe, PipeTransform } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 
@@ -41,6 +42,13 @@ export class FilterByWeekPipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'createArray' })
+export class CreateArrayPipe implements PipeTransform {
+  transform(value: number): number[] {
+    return Array.from({ length: Number(value) }, (_, i) => i + 1);
+  }
+}
+
 @Component({
   selector: 'app-schedule',
   standalone: false,
@@ -73,15 +81,18 @@ export class Schedule {
 
 
   totalWeeks: number = 0;
-  number_of_playoffs: number = 0;
+  number_of_playoffs: number = 4;
 
   generating: boolean = false;
 
   gen_playoffs: boolean = false;
 
   playoffTeams: any[] = [];
+  playoffTeamsFinal: any[] = [];
 
   isLoading: boolean = false;
+
+
 
   public vm$ = combineLatest([
     this.schedule$,
@@ -107,7 +118,8 @@ export class Schedule {
     private authService: AuthService,
     private leagueService: LeagueService,
     private leagueCompService: LeagueCompService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
 
 
@@ -138,17 +150,17 @@ export class Schedule {
       next: (game) => {
         console.log('Received schedule game update:', game);
 
-      
+
         const currentGames = this.scheduleGamesSubject.getValue();
         const existingIndex = currentGames.findIndex(g => g.id === game.id);
 
         if (existingIndex > -1) {
-        
+
           const updated = [...currentGames];
           updated[existingIndex] = game;
           this.setScheduleGames(updated);
         } else {
-       
+
           this.setScheduleGames([...currentGames, game]);
         }
       },
@@ -167,6 +179,43 @@ export class Schedule {
       next: (metadata) => {
         console.log('Fetched schedule metadata:', metadata);
         this.setScheduleMetadata(metadata);
+
+        if (metadata.status === 'in_progress') {
+          this.leagueCompService.getScheduleGames(this.route.parent?.snapshot.params['leagueId'] || '').subscribe({
+            next: (games) => {
+              console.log('Fetched schedule games:', games);
+              this.setScheduleGames(games);
+            },
+            error: (err) => console.error('Error fetching schedule games:', err)
+          });
+
+        }
+
+        if (metadata.status === 'playoffs_not_started') {
+          this.number_of_playoffs = metadata.number_of_playoffs || 4;
+          this.leagueCompService.updateStandings(this.route.parent?.snapshot.params['leagueId'] || '').subscribe({
+            next: (response) => {
+              console.log('Standings updated successfully');
+              this.playoffTeams = Array.isArray(response) ? response : Object.values(response);
+              this.playoffTeams = this.sortByWins(this.playoffTeams);
+              console.log('Fetched playoff teams after standings update:', this.playoffTeams);
+              this.cdr.detectChanges();
+            },
+            error: (err) => console.error('Error updating standings:', err)
+          });
+        }
+
+        if (metadata.status === 'playoffs_in_progress' || metadata.status === 'playoffs_completed') {
+          this.leagueCompService.getPlayoffGames(this.route.parent?.snapshot.params['leagueId'] || '').subscribe({
+            next: (games) => {
+              console.log('Fetched playoff games:', games);
+              this.setScheduleGames(games);
+              this.cdr.detectChanges();
+            }
+          });
+        }
+
+
       },
       error: (err) => console.error('Error fetching schedule metadata:', err)
     });
@@ -214,6 +263,18 @@ export class Schedule {
     this.userId.next(userId);
   }
 
+  sortByWins(standings: any[]) {
+    for (let i = 0; i < standings.length - 1; i++) {
+      for (let j = 0; j < standings.length - i - 1; j++) {
+        if (standings[j].wins < standings[j + 1].wins) {
+          [standings[j], standings[j + 1]] = [standings[j + 1], standings[j]];
+        }
+      }
+    }
+    return standings;
+  }
+
+
   setCanDraft(canDraft: boolean) {
     this.canDraft$.next(canDraft);
   }
@@ -222,7 +283,7 @@ export class Schedule {
     this.scheduleGamesSubject.next(games);
   }
 
-  generateSchedule(totalWeeks: number, number_of_playoffs: number) {
+  generateSchedule() {
 
     this.generating = true;
 
@@ -264,20 +325,19 @@ export class Schedule {
 
   }
 
-  completeWeek(game: Game) { {
-    
-
-    this.leagueCompService.completeWeek(this.route.parent?.snapshot.params['leagueId'], this.scheduleMetadataSubject.getValue()?.current_week).subscribe({
-      next: (response) => {
-        console.log('Week completed successfully');
-      },
-      error: (err) => console.error('Error completing week:', err)
-    });
-    window.location.reload();
-    
-
-    }
-
+  completeWeek(game: Game) {
+    this.leagueCompService
+      .completeWeek(
+        this.route.parent?.snapshot.params['leagueId'],
+        this.scheduleMetadataSubject.getValue()?.current_week
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Week completed successfully');
+          window.location.reload();
+        },
+        error: (err) => console.error('Error completing week:', err)
+      });
   }
 
   getPlayoffTeams() {
@@ -289,9 +349,20 @@ export class Schedule {
     });
   }
 
-  startPlayoffs() {
-    console.log('Starting playoffs for league:', this.route.parent?.snapshot.params['leagueId']);
+  startPlayoffs(finalPlayoffTeams: any[]) {
+
     this.gen_playoffs = true;
-    this.gen_playoffs = false;
+
+    this.leagueCompService.startPlayoffs(this.route.parent?.snapshot.params['leagueId'], finalPlayoffTeams).subscribe({
+      next: (response) => {
+        console.log('Playoffs started successfully');
+        this.gen_playoffs = false;
+        this.cdr.detectChanges();
+      }, error: (err) => {
+        console.error('Error starting playoffs:', err);
+        this.gen_playoffs = false;
+      }
+    });
+    
   }
 }

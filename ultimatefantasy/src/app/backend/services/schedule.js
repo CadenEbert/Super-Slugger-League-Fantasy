@@ -504,11 +504,19 @@ exports.updateStandings = async (leagueId) => {
             }
         }
 
-        return standings;
+        const sortedTeams = await sortTeamsByStandings(standings);
+
+        return sortedTeams;
     } catch (error) {
         console.error('updateStandings error:', error.message);
         throw error;
     }
+}
+
+async function sortTeamsByStandings(standings) {
+    return Object.entries(standings)
+        .sort((a, b) => b[1].wins - a[1].wins)
+        .map(([user_id, team]) => ({ user_id, ...team }));
 }
 
 exports.completeWeek = async (leagueId, current_week) => {
@@ -566,14 +574,77 @@ exports.completeWeek = async (leagueId, current_week) => {
 
 
 
-exports.getPlayoffTeams = async (leagueId) => {
+
+
+exports.startPlayoffs = async (leagueId, playoffTeams) => {
     try {
-        const standings = await this.updateStandings(leagueId);
-        const sortedTeams = Object.entries(standings).sort((a, b) => b[1].wins - a[1].wins);
-        const topTeams = sortedTeams.slice(0, 4).map(entry => ({ user_id: entry[0], ...entry[1] }));
-        return topTeams;
+        console.log('Starting playoffs for league:', leagueId);
+        console.log('Playoff teams:', playoffTeams);
+
+        const { error } = await client
+            .from('schedule')
+            .update({
+                status: 'playoffs_in_progress'
+            })
+            .eq('league_id', leagueId);
+
+        if (error) {
+            console.error('Error starting playoffs:', error);
+            throw new Error('Failed to start playoffs');
+        }
+
+        const playoffMatchups = [];
+
+        for (let i = 0; i < playoffTeams.length / 2; i ++) {
+            const homeTeam = playoffTeams[i];
+            const awayTeam = playoffTeams[playoffTeams.length - 1 - i];
+
+            const matchup = {
+                league_id: leagueId,
+                home_team: homeTeam.username,
+                away_team: awayTeam.username,
+                week: 1,
+                bye: false,
+                home_team_uuid: homeTeam.user_id,
+                away_team_uuid: awayTeam.user_id,
+                playoff_game: true
+            };
+            playoffMatchups.push(matchup);
+        }
+
+        const { data, insertError } = await client
+            .from('schedule_games')
+            .insert(playoffMatchups);
+
+        if (insertError) {
+            console.error('Error inserting playoff matchups:', insertError);
+            throw new Error('Failed to insert playoff matchups');
+        }
+
     } catch (error) {
-        console.error('getPlayoffTeams error:', error.message);
+        console.error('startPlayoffs error:', error.message);
+        throw error;
+    }
+}
+
+
+exports.getPlayoffGames = async (leagueId) => {
+    try {
+        console.log('Fetching playoff matchups for league:', leagueId);
+        const { data: playoffMatchups, error } = await client
+            .from('schedule_games')
+            .select('*')
+            .eq('league_id', leagueId)
+            .eq('playoff_game', true);
+
+        if (error) {
+            console.error('Error fetching playoff matchups:', error);
+            throw new Error('Failed to fetch playoff matchups');
+        }
+
+        return playoffMatchups;
+    } catch (error) {
+        console.error('getPlayoffMatchups error:', error.message);
         throw error;
     }
 }

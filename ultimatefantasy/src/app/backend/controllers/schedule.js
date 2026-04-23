@@ -123,3 +123,27 @@ exports.getPlayoffTeams = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch playoff teams' });
     }
 }
+
+exports.startPlayoffs = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const playoffTeams = req.body.playoffTeams;
+        console.log('Received start playoffs request with:', { leagueId, playoffTeams });
+        await scheduleService.startPlayoffs(leagueId, playoffTeams);
+        res.json({ message: 'Playoffs started successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to start playoffs' });
+    }
+}
+
+exports.getPlayoffGames = async (req, res) => {
+    try {
+
+        console.log('Received get playoff games request with leagueId:', req.params.leagueId);
+        const leagueId = req.params.leagueId;
+        const playoffGames = await scheduleService.getPlayoffGames(leagueId);
+        res.json(playoffGames);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch playoff games' });
+    }
+}

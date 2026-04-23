@@ -25,4 +25,8 @@ router.put('/leagues/:leagueId/standings/update', authMiddleware, scheduleContro
 
 router.get('/leagues/:leagueId/playoffs/teams', authMiddleware, scheduleController.getPlayoffTeams);
 
+router.post('/leagues/:leagueId/playoffs/start', authMiddleware, scheduleController.startPlayoffs);
+
+router.get('/leagues/:leagueId/playoffs/games', authMiddleware, scheduleController.getPlayoffGames);
+
 module.exports = router;

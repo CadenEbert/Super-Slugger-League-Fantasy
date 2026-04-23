@@ -183,5 +183,13 @@ export class LeagueCompService {
   updateRosterLimit(leagueId: string, newLimit: number): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/roster-limit`, { rosterLimit: newLimit });
   }
+
+  startPlayoffs(leagueId: string, playoffTeams: any[]): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/playoffs/start`, { playoffTeams });
+  }
+
+  getPlayoffGames(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/playoffs/games`);
+  }
 }
 
