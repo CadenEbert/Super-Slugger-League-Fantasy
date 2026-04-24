@@ -1,7 +1,9 @@
-<div class="roster-container" *ngIf="!isLoading; else loading">
+<ng-container *ngIf="!isLoading; else loading">
+
+<div class="roster-container" *ngIf="!canCreateRoster">
 
 
-    <div class="my-leagues" *ngIf="!canCreateRoster">
+    <div class="my-leagues">
 
 
 
@@ -15,10 +17,10 @@
 
 </div>
 
-<div class="roster-create-container" *ngIf="!isLoading; else loading">
+<div class="roster-create-container" *ngIf="canCreateRoster">
 
 
-    <div class="roster-create" *ngIf="canCreateRoster">
+    <div class="roster-create">
         
         <h3>Create New Roster</h3>
 
@@ -46,12 +48,13 @@
                 </div>
             </div>
     
-            <button class="create-btn" (click)="createRoster()">Create</button>
+            <button class="create-btn" (click)="createRoster()" [disabled]="!selectedTeamPicture || !newRosterName">Create</button>
 
         </div>
 
     </div>
 </div>
+</ng-container>
 
 <ng-template #loading>
     <div class="loading-container">
