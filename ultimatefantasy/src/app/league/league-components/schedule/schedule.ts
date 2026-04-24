@@ -92,6 +92,8 @@ export class Schedule {
 
   isLoading: boolean = false;
 
+  playoffGames: Game[] = [];
+
 
 
   public vm$ = combineLatest([
@@ -364,5 +366,16 @@ export class Schedule {
       }
     });
     
+  }
+
+  completeRound(playoffGames: Game[]) {
+    this.leagueCompService.completeRound(this.route.parent?.snapshot.params['leagueId'], playoffGames).subscribe({
+      next: (response) => {
+        console.log('Round completed successfully');
+        window.location.reload();
+      },
+      error: (err) => console.error('Error completing round:', err)
+    });
+
   }
 }

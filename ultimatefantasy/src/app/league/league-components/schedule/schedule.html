@@ -105,7 +105,7 @@
     </div>
   </div>
 
-  <div class="schedule-container" *ngIf="!vm.scheduleMetadata?.status === 'in_progress'">
+  <div class="schedule-container" *ngIf="!vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'">
     <div class="schedule-header">
       <h1>Schedule</h1>
 
@@ -227,6 +227,13 @@
 
   </div>
 
+  <div class="schedule-container" *ngIf="!vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_not_started'">
+    <div class="schedule-header">
+      <h1>Playoffs</h1>
+      <p>Playoffs have not started yet. Check back after the regular season is complete!</p>
+    </div>
+</div>
+
 
   <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_not_started'">
     <div class="schedule-header">
@@ -273,5 +280,117 @@
       </div>
     </div>
   </div>
+
+  <div class="schedule-container" *ngIf="!vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_in_progress'">
+    <div class="schedule-header">
+      <h1>Playoffs</h1>
+
+      <div class="schedule-body">
+        <div class="schedule-grid">
+          <div class="schedule-metadata"
+            *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
+            <p>Week : {{ game.week }}</p>
+
+            <div class="game-teams">
+              <div class="home">
+                <p class="game-text">Home Team</p>
+              </div>
+
+              <div class="versus">
+                <p class="game-text">{{ game.home_team }}</p>
+                <p class="game-text">VS</p>
+                <p class="game-text">{{ game.away_team }}</p>
+              </div>
+              <div class="away">
+                <p class="game-text">Away Team</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_in_progress'">
+        <div class="schedule-header">
+          <h1>Playoffs</h1>
+          <button (click)="completeRound(vm.scheduleGames)" class="btn">
+            Complete Round
+            </button>
+    
+          <div class="schedule-grid-progress">
+            <div class="schedule-metadata"
+              *ngFor="let game of vm.scheduleGames">
+              <ng-container *ngIf="game.bye; else regularGame">
+                <div class="game-bye" (click)="updateGame(game)">
+                  <div class="game-header">
+                    <div class="home">
+                      <p class="head-text">Home Team</p>
+                    </div>
+    
+                    <p class="head-text">Week : {{ game.week }}</p>
+                    <div class="away">
+                      <p class="head-text">Away Team</p>
+                    </div>
+                  </div>
+                  <div class="game-teams">
+                    <p class="game-text-neutral">
+                      {{ game.home_team }}
+                    </p>
+    
+                    <div class="versus">
+                      <p class="score-text">{{ game.home_score }}</p>
+    
+                      <p class="vs">VS</p>
+    
+                      <p class="score-text">{{ game.away_score }}</p>
+                    </div>
+                    <p class="game-text-right-neutral">bye</p>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #regularGame>
+                <div class="game" (click)="updateGame(game)">
+                  <div class="game-header">
+                    <div class="home">
+                      <p class="head-text">Home Team</p>
+                    </div>
+    
+                    <p class="head-text">Week : {{ game.week }}</p>
+                    <div class="away">
+                      <p class="head-text">Away Team</p>
+                    </div>
+                  </div>
+    
+                  <div class="game-teams">
+    
+                    <p
+                      [ngClass]="game.home_score > game.away_score ? 'game-text-green': game.home_score < game.away_score ? 'game-text-red' : 'game-text-neutral'">
+                      {{ game.home_team }}
+                    </p>
+    
+                    <div class="versus">
+                      <p class="score-text">{{ game.home_score }}</p>
+    
+                      <p class="vs">VS</p>
+    
+                      <p class="score-text">{{ game.away_score }}</p>
+                    </div>
+                    <p
+                      [ngClass]="game.home_score < game.away_score ? 'game-text-right-green': game.home_score > game.away_score ? 'game-text-right-red' : 'game-text-right-neutral'">
+                      {{ game.away_team }} </p>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+
+                
+        
+        </div>
+      
+        </div>
+
+        
+    </div>
 
 </ng-container>

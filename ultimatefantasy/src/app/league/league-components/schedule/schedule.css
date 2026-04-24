@@ -445,3 +445,14 @@
     margin-bottom: 10px;
   
 }
+
+.btn {
+
+    padding: 10px 20px;
+    background-color: #429dfd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}

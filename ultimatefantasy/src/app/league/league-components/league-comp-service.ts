@@ -114,6 +114,10 @@ export class LeagueCompService {
     );
   }
 
+  completeRound(leagueId: string, games: any[]): Observable<any> {
+    return this.http.put(`/api/draft/${leagueId}/round/complete`, {games});
+  }
+
   
   getOwnerId(rosterId: string): Observable<string> {
     return this.http.get<{ ownerId: string }>(`/api/rosters/${rosterId}/owner-id`).pipe(
