@@ -1,31 +1,55 @@
 <div class="roster-container" *ngIf="!isLoading; else loading">
-    <div class="my-leagues" *ngIf="rosters.length > 0">
+
+
+    <div class="my-leagues" *ngIf="!canCreateRoster">
 
 
 
         <div class="indiv-leagues" *ngFor="let roster of rosters" (click)="onRosterClick(roster)">
             <h2>{{ roster.teamName }}</h2>
             <p>General Manager: {{ roster.owner_username }}</p>
-            <p>Stadium: {{ roster.stadium }}</p>
-            <img [src]="teamPictures[roster.teamName]" [alt]="roster.teamName" />
+            <img  [src]='"/assets/images/" + roster.team_image' alt="Selected team" />
         </div>
 
     </div>
-    <div class="roster-create" *ngIf="canCreateRoster">
-        <h3>Create New Roster</h3>
-        <input type="text" placeholder="Team Name" [(ngModel)]="newRosterName" />
-        <div class="team-picture">
-            <label for="teamPicture">Choose a team picture:</label>
-            <select id="teamPicture" [(ngModel)]="selectedTeamPicture">
-                <option *ngFor="let entry of teamPictures | keyvalue" [value]="entry.value">
-                    {{ entry.key }}
-                </option>
-            </select>
 
-            <img *ngIf="selectedTeamPicture" [src]='"/assets/images/" + selectedTeamPicture' alt="Selected team" />
+</div>
+
+<div class="roster-create-container" *ngIf="!isLoading; else loading">
+
+
+    <div class="roster-create" *ngIf="canCreateRoster">
+        
+        <h3>Create New Roster</h3>
+
+        <div class="roster-content">
+
+            <div class="roster-setting">
+                <label for="teamName">Team Name:</label>
+                <input class="roster-input" type="text" placeholder="Team Name" [(ngModel)]="newRosterName" />
+
+            </div>
+            
+            <div class="team-picture">
+                <div class="team-picture-header">
+                    
+                <label for="teamPicture">Choose a team picture:</label>
+                <select class="roster-select" id="teamPicture" [(ngModel)]="selectedTeamPicture">
+                    <option *ngFor="let entry of teamPictures | keyvalue" [value]="entry.value">
+                        {{ entry.key }}
+                    </option>
+                </select>
+
+                </div>
+                <div class="team-picture-preview">
+                <img *ngIf="selectedTeamPicture" [src]='"/assets/images/" + selectedTeamPicture' alt="Selected team" />
+                </div>
+            </div>
+    
+            <button class="create-btn" (click)="createRoster()">Create</button>
+
         </div>
 
-        <button (click)="createRoster()">Create</button>
     </div>
 </div>
 

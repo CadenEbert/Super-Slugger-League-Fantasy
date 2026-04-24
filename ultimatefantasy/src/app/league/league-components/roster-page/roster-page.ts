@@ -23,6 +23,7 @@ export class RosterPage {
   username: string = '';
   positions: string[] = ['Bench', 'Pitcher', 'Catcher', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
   battingOrders: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  isLoading: boolean = false;
 
   private ownerIdSubject = new BehaviorSubject<string>('');
   ownerId$ = this.ownerIdSubject.asObservable();
@@ -46,6 +47,7 @@ export class RosterPage {
 
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.leagueService.getProfile().subscribe((profile: any) => {
       this.username = profile.username;
       this.cdr.detectChanges();
@@ -62,6 +64,7 @@ export class RosterPage {
 
     this.leagueService.getAllPlayers(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']).subscribe(players => {
       this.players = players;
+      this.isLoading = false;
       console.log('Players in RosterPage:', players);
       this.cdr.detectChanges();
 

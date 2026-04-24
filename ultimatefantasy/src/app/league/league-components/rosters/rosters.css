@@ -1,7 +1,20 @@
-::ng-deep .roster-container {
+.roster-container {
   display: flex;
   flex-direction: column;
-    align-items: center;
+  align-items: center;
+    
+  
+  height: 100%;
+  width: 100%;
+  
+  overflow: hidden;
+}
+
+.roster-create-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
     
   
   height: 100%;
@@ -24,6 +37,7 @@
     display: grid;
     flex-direction: column;
     align-items: center;
+    justify-content: top;
     
     width: 80%;
   
@@ -47,4 +61,100 @@
     margin-bottom: 1rem;
 
 }
+
+.roster-create {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+    width: 80%;
+    height: 80%;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.roster-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+}
+
+.roster-setting {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    padding: 1.1rem;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+    margin-left: 1rem;
+    gap: 1rem;
+
+}
+
+.roster-input {
+    width: 50%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.team-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  width: 90%;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.team-picture-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  margin-top: 10px;
+
+  gap: 1rem;
+}
+
+.roster-select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.team-picture-preview {
+  
+  height: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.create-btn {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background-color: #0056b3;
+}
+
 

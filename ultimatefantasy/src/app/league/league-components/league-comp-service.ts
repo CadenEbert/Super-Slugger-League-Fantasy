@@ -142,13 +142,13 @@ export class LeagueCompService {
     );
   }
 
-  rosterCreate(leagueId: string, teamName: string, userId: string, userName: string | null): Observable<any> {
+  rosterCreate(leagueId: string, teamName: string, teamImage: string, userId: string, userName: string | null): Observable<any> {
     if (!leagueId || leagueId === 'null') {
       return of(null);
     }
-    console.log('Creating roster with:', { leagueId, teamName, userId, userName });
+    console.log('Creating roster with:', { leagueId, teamName, teamImage, userId, userName });
 
-    return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId, userName });
+    return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId, teamImage, userName });
   }
 
   getFreeAgents(leagueId: string): Observable<any[]> {
