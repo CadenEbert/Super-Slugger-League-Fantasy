@@ -6,14 +6,25 @@
         <div class="indiv-leagues" *ngFor="let roster of rosters" (click)="onRosterClick(roster)">
             <h2>{{ roster.teamName }}</h2>
             <p>General Manager: {{ roster.owner_username }}</p>
-            <p>Stadium: Peaches Ice Garden</p>
-
+            <p>Stadium: {{ roster.stadium }}</p>
+            <img [src]="teamPictures[roster.teamName]" [alt]="roster.teamName" />
         </div>
 
     </div>
     <div class="roster-create" *ngIf="canCreateRoster">
         <h3>Create New Roster</h3>
         <input type="text" placeholder="Team Name" [(ngModel)]="newRosterName" />
+        <div class="team-picture">
+            <label for="teamPicture">Choose a team picture:</label>
+            <select id="teamPicture" [(ngModel)]="selectedTeamPicture">
+                <option *ngFor="let entry of teamPictures | keyvalue" [value]="entry.value">
+                    {{ entry.key }}
+                </option>
+            </select>
+
+            <img *ngIf="selectedTeamPicture" [src]='"/assets/images/" + selectedTeamPicture' alt="Selected team" />
+        </div>
+
         <button (click)="createRoster()">Create</button>
     </div>
 </div>

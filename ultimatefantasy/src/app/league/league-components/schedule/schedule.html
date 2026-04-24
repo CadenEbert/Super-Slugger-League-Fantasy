@@ -321,42 +321,15 @@
           <div class="schedule-grid-progress">
             <div class="schedule-metadata"
               *ngFor="let game of vm.scheduleGames | filterPlayoffGames: vm.scheduleMetadata.current_round">
-              <ng-container *ngIf="game.bye; else regularGame">
-                <div class="game-bye" (click)="updateGame(game)">
-                  <div class="game-header">
-                    <div class="home">
-                      <p class="head-text">Home Team</p>
-                    </div>
-    
-                    <p class="head-text">Round :  {{ vm.scheduleMetadata.current_round }}</p>
-                    <div class="away">
-                      <p class="head-text">Away Team</p>
-                    </div>
-                  </div>
-                  <div class="game-teams">
-                    <p class="game-text-neutral">
-                      {{ game.home_team }}
-                    </p>
-    
-                    <div class="versus">
-                      <p class="score-text">{{ game.home_score }}</p>
-    
-                      <p class="vs">VS</p>
-    
-                      <p class="score-text">{{ game.away_score }}</p>
-                    </div>
-                    <p class="game-text-right-neutral">bye</p>
-                  </div>
-                </div>
-              </ng-container>
-              <ng-template #regularGame>
+ 
+              
                 <div class="game" (click)="updateGame(game)">
                   <div class="game-header">
                     <div class="home">
                       <p class="head-text">Home Team</p>
                     </div>
     
-                    <p class="head-text">Week : {{ game.week }}</p>
+                    <p class="head-text">Round :  {{ vm.scheduleMetadata.current_round }}</p>
                     <div class="away">
                       <p class="head-text">Away Team</p>
                     </div>
@@ -381,7 +354,7 @@
                       {{ game.away_team }} </p>
                   </div>
                 </div>
-              </ng-template>
+              
             </div>
 
                 
@@ -391,6 +364,13 @@
         </div>
 
         
+    </div>
+
+    <div class="schedule-container" *ngIf="vm.scheduleMetadata?.status === 'completed'">
+      <div class="schedule-header">
+        <h1>Season Completed</h1>
+        <p>Congratulations to {{ vm.scheduleMetadata.winner_username }} for winning the league!</p>
+      </div>
     </div>
 
 </ng-container>

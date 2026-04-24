@@ -32,6 +32,7 @@ export interface Schedule {
   total_weeks: number;
   status: string;
   current_round: number;
+  winner_username: string | null;
 }
 
 @Pipe({ name: 'filterByWeek' })

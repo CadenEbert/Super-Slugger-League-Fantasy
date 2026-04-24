@@ -24,16 +24,36 @@ export class Rosters {
 
   creatingRoster: boolean = false;
 
+  teamPictures: { [key: string]: string } = {
+    'Birdo Bows': 'BirdoBows-MSS.png',
+    'Bowser Jr. Rookies': 'BowserJrRookies-MSS.png',
+    'Bowser Monsters': 'BowserMonsters-MSS.png',
+    'Daisy Flowers': 'DaisyFlowers-MSS.png',
+    'Diddy Monkeys': 'DiddyMonkeys-MSS.png',
+    'DK Wilds': 'DKWilds-MSS.png',
+    'Luigi Knights': 'LuigiKnights-MSS.png',
+    'Mario Fireballs': 'MarioFireballs-MSS.png',
+    'Peach Monarchs': 'PeachMonarchs-MSS.png',
+    'WaluigiSpitballs': 'WaluigiSpitballs-MSS.png',
+    'Wario Muscles': 'WarioMuscles-MSS.png',
+    'Yoshi Eggs': 'YoshiEggs-MSS.png'
+  };
+
+  selectedTeamPicture: string = '';
+
+
   profile: {
     username: string;
   } | null = null;
 
   constructor(
     private leagueService: LeagueCompService,
-     private route: ActivatedRoute,
-     private authService: AuthService,
-     private cdr: ChangeDetectorRef,
-     private router: Router) { }
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private router: Router) {
+
+  }
   @Input() leagueId: string | null = null;
 
   newRosterName: string = '';
@@ -82,7 +102,7 @@ export class Rosters {
       this.isLoading = false;
       this.cdr.detectChanges();
     });
-    
+
   }
 
   createRoster() {
@@ -104,19 +124,19 @@ export class Rosters {
         console.error('Error creating roster:', err);
       }
     });
-    
+
 
   }
 
   onRosterClick(roster: any) {
-  console.log('Navigating with roster:', roster);
-  this.router.navigate([
-    '/league-page',
-    this.leagueId,
-    'teams',
-    roster.id
-  ]);
-}
+    console.log('Navigating with roster:', roster);
+    this.router.navigate([
+      '/league-page',
+      this.leagueId,
+      'teams',
+      roster.id
+    ]);
+  }
 
 
 

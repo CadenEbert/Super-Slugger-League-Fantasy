@@ -60,79 +60,35 @@ async function get_all_rosters(leagueId) {
     }
 }
 
-const matchup  = {
-    homeTeam: 'home',
-    awayTeam: 'away',
-    week: 1,
-    bye: false,
-    homeTeamUuid: 'home-uuid',
-    awayTeamUuid: 'away-uuid'
-}
 
-const testMembers = [
-    {
-    uuid: '1234',
-    league_id: '5678',
-    user_id: 'user1',
 
-    },
-    {
-        username: '5467',
-        league_id: '5678',
-        user_id: 'user2',
-    },
-    {
-        username: '7890',
-        league_id: '5678',
-        user_id: 'user3',
-    },
-    {
-        username: '0987',
-        league_id: '5678',
-        user_id: 'user4',
-    },
-    {
-        username: '5432',
-        league_id: '5678',
-        user_id: 'user5',
-    },
-    {
-        username: '4321',
-        league_id: '5678',
-        user_id: 'user6',
-    },
-    {
-        username: '6789',
-        league_id: '5678',
-        user_id: 'user7',
-    }
-]
+
 
 async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagueId) {
     const schedule = [];
     const totalTeams = members.length;
-    
-    const totalWeeks = weeks - 1;
-    
 
-   
+    const totalWeeks = weeks - 1;
+
+
+    const membersMap = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
 
 
     if (totalTeams % 2 === 0) {
-    for (let week = 0; week <= totalWeeks; week++) {
-        const matchups = [];
-        const shuffledMembers = [...testMembers].sort(() => Math.random() - 0.5);
+        for (let week = 0; week <= totalWeeks; week++) {
+            const matchups = [];
+            const shuffledMembers = [...membersMap].sort(() => Math.random() - 0.5);
 
-        for (let i = 0; i < totalTeams / 2; i++) {
+            for (let i = 0; i < totalTeams / 2; i++) {
 
-            const homeTeam = shuffledMembers[i];
-            const awayTeam = shuffledMembers[totalTeams - 1 - i];
+                const homeTeam = shuffledMembers[i];
+                const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-            matchups.push({ homeTeam: homeTeam.profiles.username, awayTeam: awayTeam.profiles.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+                matchups.push({ homeTeam: homeTeam.profiles.username, awayTeam: awayTeam.profiles.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+            }
+            schedule.push(...matchups);
+
         }
-        schedule.push(...matchups);
-        
-    }
     } else {
         let byeIndex = 0;
         for (let week = 0; week <= totalWeeks; week++) {
@@ -148,16 +104,16 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week: week + 1, bye: true };
             console.log('Adding bye matchup:', byeMatchup);
             matchups.push(byeMatchup);
-            for (let i = 0; i < (totalTeams-1) /2; i++) {
+            for (let i = 0; i < (totalTeams - 1) / 2; i++) {
                 const homeTeam = shuffledMembers[i];
                 const awayTeam = shuffledMembers[totalTeams - 2 - i];
 
-                
-    
+
+
                 matchups.push({ homeTeam: homeTeam.username, awayTeam: awayTeam.username, week: week + 1, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             byeIndex++;
-            
+
             schedule.push(...matchups);
         }
 
@@ -169,7 +125,6 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 away_team: game.awayTeam,
                 week: game.week,
                 bye: game.bye,
-                league_id: leagueId,
                 home_team_uuid: game.homeTeamUuid,
                 away_team_uuid: game.awayTeamUuid
             })));
@@ -184,7 +139,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
     console.log('Generated schedule:', schedule);
 
     return schedule;
-        
+
 }
 
 
@@ -214,12 +169,12 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
             throw new Error('Failed to update schedule metadata');
         }
 
-       
 
-        
+
+
         return schedule;
 
-    }    catch (error) {
+    } catch (error) {
         console.error('generateSchedule error:', error.message);
         throw error;
     }
@@ -234,7 +189,7 @@ exports.clearSchedule = async (leagueId) => {
 
 
 
-        
+
         if (error) {
             console.error('Error clearing schedule:', error);
             throw new Error('Failed to clear schedule');
@@ -329,9 +284,7 @@ exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, st
                 away_score: awayScore,
                 home_team_uuid: homeTeamuuid,
                 away_team_uuid: awayTeamuuid,
-                stadium,
-                home_team_uuid: homeTeamuuid,
-                away_team_uuid: awayTeamuuid
+                stadium: stadium
             })
             .eq('id', gameId);
 
@@ -378,7 +331,7 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch standings');
         }
 
-        const {data: scheduleGames, error: gamesError} = await client
+        const { data: scheduleGames, error: gamesError } = await client
             .from('schedule_games')
             .select('*')
             .eq('league_id', leagueId);
@@ -388,7 +341,7 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch schedule games for standings update');
         }
 
-        const {data: members, error: membersError} = await client
+        const { data: members, error: membersError } = await client
             .from('league_members')
             .select('*, profiles(username)')
             .eq('league_id', leagueId);
@@ -398,90 +351,20 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch league members for standings update');
         }
 
-        const membersMapp = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
-        const membersMap = [
-            {
-                user_id: 'user1',
-                username: 'Player 1',
-                team_image: 'MarioFireballs',
-            },
-            {
-                user_id: 'user2',
-                username: 'Player 2',
-                team_image: 'BirdoBows',
-            },
-            {
-                user_id: 'user3',
-                username: 'Player 3',
-                team_image: 'DaisyFlowers',
-            },
-            {
-                user_id: 'user4',
-                username: 'Player 4',
-                team_image: 'LuigiKnights',
-            },
-            {
-                user_id: 'user5',
-                username: 'Player 5',
-                team_image: 'BowserMonsters',
-            },
-            {
-                user_id: 'user6',
-                username: 'Player 6',
-                team_image: 'LuigiKnights',
-            },
-            {
-                user_id: 'user7',
-                username: 'Player 7',
-                team_image: 'BowserMonsters',
-            }
-        ];
+        const membersMap = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
+   
 
-        const scheduleGamesTest = [
-            {
-                week: 1,
-                home_team_uuid: 'user1',
-                away_team_uuid: 'user2',
-                home_score: 100,
-                away_score: 90,
-                
-                bye: false,
-            },
-            {
-                week: 1,
-                home_team_uuid: 'user3',
-                away_team_uuid: 'user4',
-                home_score: 80,
-                away_score: 110,
-                bye: false,
-            },
-            {
-                week: 1,
-                home_team_uuid: 'user5',
-                away_team_uuid: null,
-                home_score: null,
-                away_score: null,
-                bye: true,
-            },
-            {
-                week: 1,
-                home_team_uuid: 'user6',
-                away_team_uuid: 'user7',
-                home_score: 95,
-                away_score: 105,
-                bye: false,
-            }
-        ];
+
         const standings = {};
 
         const curr_week = 1;
 
 
         for (let i = 1; i <= curr_week; i++) {
-            //const gamesForWeek = scheduleGames.filter(game => game.week === i && !game.bye);
-            const gamesForWeek = scheduleGamesTest.filter(game => game.week === i && !game.bye);
+            const gamesForWeek = scheduleGames.filter(game => game.week === i && !game.bye);
+           
             console.log('Processing standings for week', i, 'with games:', gamesForWeek);
-            for (let j = 0; j < gamesForWeek.length; j++ ) {
+            for (let j = 0; j < gamesForWeek.length; j++) {
                 if (gamesForWeek[j].home_score > gamesForWeek[j].away_score) {
 
                     console.log('Updating standings for week', i, 'game', j, 'home team win');
@@ -552,7 +435,7 @@ exports.completeWeek = async (leagueId, current_week) => {
 
 
 
-        
+
         const { error } = await client
             .from('schedule')
             .update({
@@ -595,9 +478,10 @@ exports.startPlayoffs = async (leagueId, playoffTeams) => {
 
         const playoffMatchups = [];
 
-        for (let i = 0; i < playoffTeams.length / 2; i ++) {
+        for (let i = 0; i < playoffTeams.length / 2; i++) {
             const homeTeam = playoffTeams[i];
             const awayTeam = playoffTeams[playoffTeams.length - 1 - i];
+            
 
             const matchup = {
                 league_id: leagueId,
@@ -649,44 +533,75 @@ exports.getPlayoffGames = async (leagueId) => {
     }
 }
 
-exports.completeRound = (leagueId, games) => {
+exports.completeRound = async (leagueId, games) => {
     try {
         const winner = [];
 
-        const current_round = games[0].round;
+        const { data, error } = await client
+            .from('schedule')
+            .select('current_round')
+            .eq('league_id', leagueId)
+            .single();
+
+        if (error) {
+            console.error('Error fetching schedule data for completeRound:', scheduleError);
+            throw new Error('Failed to fetch schedule data for completeRound');
+        }
+
+        const current_round = data.current_round;
+
+        const currentRoundGames = games.filter(game => game.round === current_round);
+        const winnerUsernames = [];
+
         console.log('Completing playoff round for league:', leagueId, 'with games:', games);
-        for (let i = 0; i < games.length; i++) {
-            const game = games[i];
+        for (let i = 0; i < currentRoundGames.length; i++) {
+            const game = currentRoundGames[i];
             const winnerUuid = game.home_score > game.away_score ? game.home_team_uuid : game.away_team_uuid;
+            const winnerUsername = game.home_score > game.away_score ? game.home_team : game.away_team;
             winner.push(winnerUuid);
+            winnerUsernames.push(winnerUsername);
             console.log('Game', game.id, 'winner is', winnerUuid);
         }
 
-       
+
 
         if (winner.length === 1) {
             console.log('League', leagueId, 'champion is', winner[0]);
-           
-            const { error } = client
-            .from('schedule')
-            .update({
-                status: 'completed',
-                winnerUuid: winner[0]
-            });
+
+            const { error } = await client
+                .from('schedule')
+                .update({
+                    status: 'completed',
+                    winner_username:  winnerUsernames[0]
+                })
+                .eq('league_id', leagueId);
+
+            if (error) {
+                console.error('Error marking league as completed with champion:', error);
+                throw new Error('Failed to mark league as completed with champion');
+            }
 
             return;
+
+
         }
 
         const playoffMatchups = [];
 
-        for (let i = 0; i < winner.length / 2; i ++) {
-            const homeTeamUuid = winner[i];
-            const awayTeamUuid = winner[winner.length - 1 - i];
+        for (let i = 0; i < winner.length / 2; i++) {
+            const home_team_uuid = winner[i];
+            const away_team_uuid = winner[winner.length - 1 - i];
+            const homeGame = games.find(g => g.home_team_uuid === home_team_uuid || g.away_team_uuid === home_team_uuid);
+            const awayGame = games.find(g => g.home_team_uuid === away_team_uuid || g.away_team_uuid === away_team_uuid);
+
+            
 
             const matchup = {
                 league_id: leagueId,
-                home_team_uuid: homeTeamUuid,
-                away_team_uuid: awayTeamUuid,
+                home_team: homeGame.home_team_uuid === home_team_uuid ? homeGame.home_team : homeGame.away_team,
+                away_team: awayGame.home_team_uuid === away_team_uuid ? awayGame.home_team : awayGame.away_team,
+                home_team_uuid: home_team_uuid,
+                away_team_uuid: away_team_uuid,
                 round: current_round + 1,
                 bye: false,
                 playoff_game: true
@@ -696,7 +611,7 @@ exports.completeRound = (leagueId, games) => {
 
         console.log('Next round playoff matchups for league', leagueId, ':', playoffMatchups);
 
-        const { insertError } = client
+        const { error: insertError } = await client
             .from('schedule_games')
             .insert(playoffMatchups);
 
@@ -705,21 +620,21 @@ exports.completeRound = (leagueId, games) => {
             throw new Error('Failed to insert next round playoff matchups');
         }
 
-        const { rounderr } = client
+        const { error: rounderr } = await client
             .from('schedule')
             .update({
                 current_round: current_round + 1
             }).eq('league_id', leagueId);
 
-            if (rounderr) {
-                console.error('Error updating current playoff round:', rounderr);
-                throw new Error('Failed to update current playoff round');
-            }
-       
+        if (rounderr) {
+            console.error('Error updating current playoff round:', rounderr);
+            throw new Error('Failed to update current playoff round');
+        }
+
 
         return playoffMatchups;
 
-    
+
 
     } catch (error) {
         console.error('completeRound error:', error.message);
