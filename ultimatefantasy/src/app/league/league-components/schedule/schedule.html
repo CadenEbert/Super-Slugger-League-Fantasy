@@ -314,13 +314,13 @@
     <div class="schedule-container" *ngIf="vm.isOwner && vm.scheduleMetadata?.status === 'playoffs_in_progress'">
         <div class="schedule-header">
           <h1>Playoffs</h1>
-          <button (click)="completeRound(vm.scheduleGames)" class="btn">
+          <button (click)="completeRound(vm.scheduleGames)" class="btn" [disabled]="gen_playoffs">
             Complete Round
             </button>
     
           <div class="schedule-grid-progress">
             <div class="schedule-metadata"
-              *ngFor="let game of vm.scheduleGames">
+              *ngFor="let game of vm.scheduleGames | filterPlayoffGames: vm.scheduleMetadata.current_round">
               <ng-container *ngIf="game.bye; else regularGame">
                 <div class="game-bye" (click)="updateGame(game)">
                   <div class="game-header">
@@ -328,7 +328,7 @@
                       <p class="head-text">Home Team</p>
                     </div>
     
-                    <p class="head-text">Week : {{ game.week }}</p>
+                    <p class="head-text">Round :  {{ vm.scheduleMetadata.current_round }}</p>
                     <div class="away">
                       <p class="head-text">Away Team</p>
                     </div>

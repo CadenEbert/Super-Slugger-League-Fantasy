@@ -603,7 +603,7 @@ exports.startPlayoffs = async (leagueId, playoffTeams) => {
                 league_id: leagueId,
                 home_team: homeTeam.username,
                 away_team: awayTeam.username,
-                week: 1,
+                round: 1,
                 bye: false,
                 home_team_uuid: homeTeam.user_id,
                 away_team_uuid: awayTeam.user_id,
@@ -648,3 +648,82 @@ exports.getPlayoffGames = async (leagueId) => {
         throw error;
     }
 }
+
+exports.completeRound = (leagueId, games) => {
+    try {
+        const winner = [];
+
+        const current_round = games[0].round;
+        console.log('Completing playoff round for league:', leagueId, 'with games:', games);
+        for (let i = 0; i < games.length; i++) {
+            const game = games[i];
+            const winnerUuid = game.home_score > game.away_score ? game.home_team_uuid : game.away_team_uuid;
+            winner.push(winnerUuid);
+            console.log('Game', game.id, 'winner is', winnerUuid);
+        }
+
+       
+
+        if (winner.length === 1) {
+            console.log('League', leagueId, 'champion is', winner[0]);
+           
+            const { error } = client
+            .from('schedule')
+            .update({
+                status: 'completed',
+                winnerUuid: winner[0]
+            });
+
+            return;
+        }
+
+        const playoffMatchups = [];
+
+        for (let i = 0; i < winner.length / 2; i ++) {
+            const homeTeamUuid = winner[i];
+            const awayTeamUuid = winner[winner.length - 1 - i];
+
+            const matchup = {
+                league_id: leagueId,
+                home_team_uuid: homeTeamUuid,
+                away_team_uuid: awayTeamUuid,
+                round: current_round + 1,
+                bye: false,
+                playoff_game: true
+            };
+            playoffMatchups.push(matchup);
+        }
+
+        console.log('Next round playoff matchups for league', leagueId, ':', playoffMatchups);
+
+        const { insertError } = client
+            .from('schedule_games')
+            .insert(playoffMatchups);
+
+        if (insertError) {
+            console.error('Error inserting next round playoff matchups:', insertError);
+            throw new Error('Failed to insert next round playoff matchups');
+        }
+
+        const { rounderr } = client
+            .from('schedule')
+            .update({
+                current_round: current_round + 1
+            }).eq('league_id', leagueId);
+
+            if (rounderr) {
+                console.error('Error updating current playoff round:', rounderr);
+                throw new Error('Failed to update current playoff round');
+            }
+       
+
+        return playoffMatchups;
+
+    
+
+    } catch (error) {
+        console.error('completeRound error:', error.message);
+        throw error;
+    }
+}
+

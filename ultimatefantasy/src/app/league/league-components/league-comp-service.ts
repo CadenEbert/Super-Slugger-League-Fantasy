@@ -115,7 +115,7 @@ export class LeagueCompService {
   }
 
   completeRound(leagueId: string, games: any[]): Observable<any> {
-    return this.http.put(`/api/draft/${leagueId}/round/complete`, {games});
+    return this.http.put(`/api/leagues/${leagueId}/round/complete`, {games});
   }
 
   

@@ -147,3 +147,15 @@ exports.getPlayoffGames = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch playoff games' });
     }
 }
+
+exports.completeRound = async (req, res) => {
+    try {
+
+        const leagueId = req.params.leagueId;
+        const games = req.body.games;
+        const nextGames = await scheduleService.completeRound(leagueId, games);
+        res.json(nextGames);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to complete round' });
+    }
+}

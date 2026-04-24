@@ -30,9 +30,10 @@ import { RosterPage } from './league/league-components/roster-page/roster-page';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { FilterByWeekPipe, CreateArrayPipe } from './league/league-components/schedule/schedule';
+import { FilterByWeekPipe, CreateArrayPipe, FilterPlayoffGamesPipe } from './league/league-components/schedule/schedule';
 import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     DragDropModule,
     FilterByWeekPipe,
     MatProgressSpinnerModule,
-    CreateArrayPipe
+    CreateArrayPipe,
+    FilterPlayoffGamesPipe,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -23,6 +23,7 @@ export interface Game {
   created_at: string;
   home_team_uuid: string | null;
   away_team_uuid: string | null;
+  round: number | null;
 }
 export interface Schedule {
   leagueId: string;
@@ -30,6 +31,7 @@ export interface Schedule {
   current_week: number;
   total_weeks: number;
   status: string;
+  current_round: number;
 }
 
 @Pipe({ name: 'filterByWeek' })
@@ -39,6 +41,14 @@ export class FilterByWeekPipe implements PipeTransform {
     if (!week) return games;
     const weekNum = typeof week === 'string' ? parseInt(week, 10) : week;
     return games.filter(game => game.week === weekNum);
+  }
+}
+
+@Pipe({ name: 'filterPlayoffGames' })
+export class FilterPlayoffGamesPipe implements PipeTransform {
+  transform(games: any[], current_round: boolean): any[] {
+    if (!games) return [];
+    return games.filter(game => game.round === current_round);
   }
 }
 
@@ -369,9 +379,13 @@ export class Schedule {
   }
 
   completeRound(playoffGames: Game[]) {
+    this.gen_playoffs = true;
+
     this.leagueCompService.completeRound(this.route.parent?.snapshot.params['leagueId'], playoffGames).subscribe({
       next: (response) => {
+
         console.log('Round completed successfully');
+        this.gen_playoffs = false;
         window.location.reload();
       },
       error: (err) => console.error('Error completing round:', err)

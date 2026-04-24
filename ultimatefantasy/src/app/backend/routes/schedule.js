@@ -29,4 +29,6 @@ router.post('/leagues/:leagueId/playoffs/start', authMiddleware, scheduleControl
 
 router.get('/leagues/:leagueId/playoffs/games', authMiddleware, scheduleController.getPlayoffGames);
 
+router.put('/leagues/:leagueId/round/complete', authMiddleware, scheduleController.completeRound);
+
 module.exports = router;
