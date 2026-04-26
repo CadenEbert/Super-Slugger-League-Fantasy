@@ -195,5 +195,23 @@ export class LeagueCompService {
   getPlayoffGames(leagueId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/playoffs/games`);
   }
+
+  getPlayerStats(leagueId: string): Observable<any> {
+    return this.http.get<any>(`/api/leagues/${leagueId}/playerstats`);
+  }
+
+  addPlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
+  }
+
+  updatePlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
+  }
+
+  deletePlayerStats(leagueId: string, user_id: string): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}/playerstats`, {
+      params: { user_id }
+    });
+  }
 }
 

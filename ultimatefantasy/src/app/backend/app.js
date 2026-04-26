@@ -15,5 +15,6 @@ app.use('/api', require('./routes/profile'));
 app.use('/api', require('./routes/freeagents'));
 app.use('/api', require('./routes/draft'));
 app.use('/api', require('./routes/schedule'));
+app.use('/api', require('./routes/playerstats'));
 
 module.exports = app;

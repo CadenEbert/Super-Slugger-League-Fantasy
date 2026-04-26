@@ -398,7 +398,7 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
         character_picked: characterId,
         member_picking: memberPicking,
         league_id: league_id,
-        pick_number: current_pick + 1
+        pick_number: current_pick
       });
 
     if (insertError) {

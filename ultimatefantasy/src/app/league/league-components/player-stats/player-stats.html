@@ -1,1 +1,48 @@
-<p>player-stats works!</p>
+<div class="player-stats-container" *ngIf="!isLoading; else loading">
+
+    <div class="player-stats-content">
+
+        <div class="player-stats-header">
+            <select [(ngModel)]="currentView" class="stats-select">
+                <option value="stats">Season Stats</option>
+                <option value="mvp">MVP Ladder</option>
+            </select>
+
+            <button (click)="saveStats()" class="save-btn">Save Stats</button>
+        </div>
+
+  
+
+    <table class="player-stats-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>At Bats</th>
+            <th>Hits</th>
+            <th>Home Runs</th>
+            <th>Innings Pitched</th>
+            <th>Runs Allowed</th>
+            <th>Total Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stat of playerStats">
+            <td>{{ stat.character_name }}</td>
+            <td>{{ stat.ab }}</td>
+            <td>{{ stat.hits }}</td>
+            <td>{{ stat.hr }}</td>
+            <td>{{ stat.innings }}</td>
+            <td> {{stat.runs_allowed}} </td>
+            <td>{{ stat.total_points }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+
+<ng-template #loading>
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+</ng-template>
