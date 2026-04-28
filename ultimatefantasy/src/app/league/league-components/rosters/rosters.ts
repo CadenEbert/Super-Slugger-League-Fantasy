@@ -139,6 +139,14 @@ export class Rosters {
     ]);
   }
 
+  trades() {
+    this.router.navigate([
+      '/league-page',
+      this.leagueId,
+      'trades'
+    ]);
+  }
+
 
 
 

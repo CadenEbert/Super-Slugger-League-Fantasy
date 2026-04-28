@@ -1,0 +1,31 @@
+<div class="trade-container">
+    <div class="trade-header">
+        <h3>Trade Requests</h3>
+    </div>
+
+    <mat-card class="trade-requests">
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let trade of trades">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{ trade.proposing_team }} proposes a trade to {{ trade.receiving_team }}
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="trade-details">
+                    <p><strong>Proposing Team:</strong> {{ trade.proposing_team }}</p>
+                    <p><strong>Receiving Team:</strong> {{ trade.receiving_team }}</p>
+                    <p><strong>Offered Players:</strong> {{ trade.offered_players.join(', ') }}</p>
+                    <p><strong>Requested Players:</strong> {{ trade.requested_players.join(', ') }}</p>
+
+                    <div class="trade-actions" *ngIf="(ownerId$ | async) === (userId$ | async) && trade.receiving_team_id === (userTeamId$ | async)">
+                        <button (click)="acceptTrade(trade.id)" class="accept-btn">Accept</button>
+                        <button (click)="rejectTrade(trade.id)" class="reject-btn">Reject</button>
+                    </div>
+                </div>
+
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-card>
+
+</div>

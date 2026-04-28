@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-    
+  
   
   height: 100%;
   width: 100%;
@@ -34,17 +34,32 @@
 }
 
 .my-leagues {
-    display: grid;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: top;
-    
+    height: 95%;
+    border-radius: 10px;
     width: 80%;
-  
+    background-color: white;
     margin-top: 20px;
     overflow-y: auto;
     scrollbar-width: none; 
     
+}
+
+.my-leagues-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+
+  gap: 30px;
+
+  margin: 20px;
 }
 
 .indiv-leagues {
@@ -52,10 +67,13 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    width: 70%;
     padding: 0.5rem;
     padding-right: 1rem;
     padding-left: 1rem;
-    background-color: white;
+    gap: 50px;
+    margin-top: 10px;
+    background-color: rgb(230, 230, 230);
     border-radius: 4px;
     cursor: pointer;
     margin-bottom: 1rem;

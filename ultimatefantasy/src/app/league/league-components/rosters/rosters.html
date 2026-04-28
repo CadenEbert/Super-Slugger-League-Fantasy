@@ -5,6 +5,11 @@
 
     <div class="my-leagues">
 
+        <div class="my-leagues-header">
+            <h3>Rosters</h3>
+            <button (click)="trades()" class="create-btn">Trade Requests</button>
+        </div>
+
 
 
         <div class="indiv-leagues" *ngFor="let roster of rosters" (click)="onRosterClick(roster)">
