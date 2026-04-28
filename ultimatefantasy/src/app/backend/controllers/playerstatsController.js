@@ -15,10 +15,9 @@ exports.getPlayerStats = async (req, res) => {
 exports.addPlayerStats = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
-        const characterId = req.body.characterId;
         const user_id = req.user.id;
-        const stats = req.body.stats;
-        const newStats = await playerstatsService.addPlayerStats(leagueId, characterId, user_id, stats);
+        const character = req.body.selectedPlayer;
+        const newStats = await playerstatsService.addPlayerStats(leagueId, character, user_id);
         res.status(201).json(newStats);
     } catch (error) {
         res.status(500).json({ error: 'Failed to add player stats' });
@@ -48,5 +47,17 @@ exports.deletePlayerStats = async (req, res) => {
         res.json({ message: 'Player stats deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete player stats' });
+    }
+}
+
+
+exports.getFilteredCharacters = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const user_id = req.user.id;
+        const stats = await playerstatsService.getFilteredCharacters(leagueId, user_id);
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch filtered characters' });
     }
 }

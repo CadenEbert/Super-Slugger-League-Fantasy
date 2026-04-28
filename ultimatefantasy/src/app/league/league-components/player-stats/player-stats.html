@@ -3,17 +3,48 @@
     <div class="player-stats-content">
 
         <div class="player-stats-header">
+            <select [(ngModel)]="selectedPlayer" class="stats-select">
+                <option *ngFor="let player of allPlayers" [ngValue]="player">{{ player.character_name }}</option>
+            </select>
+            <button (click)="addPlayer()" class="btn">Add Player</button>
             <select [(ngModel)]="currentView" class="stats-select">
                 <option value="stats">Season Stats</option>
                 <option value="mvp">MVP Ladder</option>
             </select>
 
             <button (click)="saveStats()" class="save-btn">Save Stats</button>
+
+            <button (click)="toggleEdit()" class="edit-btn">Edit Stats</button>
         </div>
 
   
 
-    <table class="player-stats-table">
+    <table class="player-stats-table" *ngIf="editing">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>At Bats</th>
+            <th>Hits</th>
+            <th>Home Runs</th>
+            <th>Innings Pitched</th>
+            <th>Runs Allowed</th>
+            <th>Total Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stat of playerStats">
+            <td>{{ stat.character_name }}</td>
+            <td>{{ stat.ab }}</td>
+            <td>{{ stat.hits }}</td>
+            <td>{{ stat.hr }}</td>
+            <td>{{ stat.innings }}</td>
+            <td> {{stat.runs_allowed}} </td>
+            <td>{{ stat.total_points }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="player-stats-table" *ngIf="!editing">
         <thead>
           <tr>
             <th>Name</th>

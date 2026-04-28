@@ -58,11 +58,13 @@
     border: 1px solid #ddd;
     text-align: left;
     height: 40px;
+    line-height: 40px;
     padding: 8px;
     background: #fff;
     
    
 }
+
 
 .player-stats-table th {
     background: #f5f5f5;
@@ -80,5 +82,5 @@
 
 .player-stats-table tbody {
     min-height: 200px; 
-    
+
 }

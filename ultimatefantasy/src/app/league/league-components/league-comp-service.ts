@@ -200,6 +200,16 @@ export class LeagueCompService {
     return this.http.get<any>(`/api/leagues/${leagueId}/playerstats`);
   }
 
+  getFilteredPlayerStats(leagueId: string, user_id: string): Observable<any> {
+    return this.http.get<any>(`/api/leagues/${leagueId}/playerstats/characters`, {
+      params: { user_id }
+    });
+  }
+
+  addPlayer(leagueId: string, user_id: string, selectedPlayer: any): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/playerstats/add`, { user_id, selectedPlayer });
+  }
+
   addPlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
   }
