@@ -1,6 +1,6 @@
 <div class="player-stats-container" *ngIf="!isLoading; else loading">
 
-    <div class="player-stats-content">
+    <div class="player-stats-content" *ngIf="currentView === 'stats'">
 
         <div class="player-stats-header">
             <select [(ngModel)]="selectedPlayer" class="stats-select">
@@ -38,7 +38,7 @@
             <td>{{ stat.character_name }}</td>
             <td>{{ stat.ab }}</td>
             <td>{{ stat.hits }}</td>
-            <td>{{ (stat.ab / stat.hits) | number:'1.2-2'}}</td>
+            <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
             <td>{{ stat.hr }}</td>
             <td>{{ stat.innings }}</td>
             <td>{{stat.runs_allowed}}</td>
@@ -90,6 +90,57 @@
         </tbody>
       </table>
     </div>
+
+
+
+<div class="player-stats-content" *ngIf="currentView === 'mvp'">
+
+
+
+    <div class="player-stats-header-mvp">
+        <h3>MVP Ladder</h3>
+        <div class="player-stats-header-mvp">
+            <select [(ngModel)]="currentView" class="stats-select">
+                <option value="stats">Season Stats</option>
+                <option value="mvp">MVP Ladder</option>
+            </select>
+            
+        </div>
+    </div>
+
+<table class="player-stats-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>At Bats</th>
+        <th>Hits</th>
+        <th>Batting Average</th>
+        <th>Home Runs</th>
+        <th>Innings Pitched</th>
+        <th>Runs Allowed</th>
+        <th>ERA</th>    
+        <th>Total Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let stat of playerStats">
+        <td>{{ stat.character_name }}</td>
+        <td>{{ stat.ab }}</td>
+        <td>{{ stat.hits }}</td>
+        <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
+        <td>{{ stat.hr }}</td>
+        <td>{{ stat.innings }}</td>
+        <td>{{stat.runs_allowed}}</td>
+        <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
+        <td>{{ stat.total_points }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+ 
+  
+
+</div>
 </div>
 
 

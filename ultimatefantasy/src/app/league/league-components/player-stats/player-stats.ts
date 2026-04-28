@@ -22,6 +22,7 @@ export class PlayerStats {
   editing: boolean = false;
 
   allPlayers: any[] = [];
+  mvpPlayers: any[] = [];
 
   selectedPlayer: any = null;
 
@@ -37,8 +38,10 @@ export class PlayerStats {
    ngOnInit(): void {
     this.isLoading = true;
     this.leagueService.getPlayerStats(this.route.parent?.snapshot.params['leagueId']).subscribe((stats: any[]) => {
-      this.allPlayerStats = stats;
+      
+      this.mvpPlayers = this.sortByPoints(stats).slice(0, 10);
       this.user_id = this.authService.getUserId() ?? '';
+      this.allPlayerStats = stats.filter(stat => stat.user_id === this.user_id);
       this.leagueService.getFilteredPlayerStats(this.route.parent?.snapshot.params['leagueId'], this.user_id).subscribe((stats: any[]) => {
         this.allPlayers = stats;
         console.log('All player stats:', this.allPlayers);
@@ -58,6 +61,7 @@ export class PlayerStats {
     console.log('Current player stats being saved:', this.playerStats);
     this.leagueService.savePlayerStats(this.route.parent?.snapshot.params['leagueId'], this.user_id, this.playerStats).subscribe(() => {
       window.alert('Player stats saved successfully!');
+      this.allPlayerStats = this.sortByPoints(this.allPlayerStats);
       this.cdr.detectChanges();
     });
   }
@@ -86,6 +90,19 @@ export class PlayerStats {
     } else {
       this.editing = true;
     }
+  }
+
+  sortByPoints(players: any[]) {
+    console.log('Sorting players by points:', players);
+    return players.sort((a, b) => b.total_points - a.total_points);
+  }
+
+  deletePlayer(characterId: number) {
+    console.log('Deleting player with ID:', characterId);
+    this.leagueService.deletePlayerStats(this.route.parent?.snapshot.params['leagueId'], this.user_id, characterId).subscribe(() => {
+      window.location.reload();
+      window.alert('Player stats deleted successfully!');
+    });
   }
 
 

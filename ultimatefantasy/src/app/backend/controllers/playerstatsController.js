@@ -39,16 +39,15 @@ exports.updatePlayerStats = async (req, res) => {
 
 exports.deletePlayerStats = async (req, res) => {
     try {
-        const leagueId = req.params.leagueId;
-        const characterId = req.body.characterId;
-        const user_id = req.user.id;
-        await playerstatsService.deletePlayerStats(leagueId, characterId, user_id);
-        res.json({ message: 'Player stats deleted successfully' });
+      const leagueId = req.params.leagueId;
+      const user_id = req.user.id;
+      const characterId = req.query.characterId;
+      await playerstatsService.deletePlayerStats(leagueId, characterId, user_id);
+      res.json({ message: 'Player stats deleted successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to delete player stats' });
+      res.status(500).json({ error: 'Failed to delete player stats' });
     }
-}
-
+  }
 
 exports.getFilteredCharacters = async (req, res) => {
     try {

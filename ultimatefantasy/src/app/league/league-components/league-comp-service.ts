@@ -222,9 +222,12 @@ export class LeagueCompService {
     return this.http.put(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
   }
 
-  deletePlayerStats(leagueId: string, user_id: string): Observable<any> {
-    return this.http.delete(`/api/leagues/${leagueId}/playerstats`, {
-      params: { user_id }
+  deletePlayerStats(leagueId: string, user_id: string, characterId: number): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}/playerstats/delete`, {
+      params: {
+        user_id: user_id,
+        characterId: characterId.toString()
+      }
     });
   }
 }

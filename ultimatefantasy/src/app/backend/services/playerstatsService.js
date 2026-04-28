@@ -62,12 +62,13 @@ exports.updatePlayerStats = async (leagueId, user_id, stats) => {
 };
 
 exports.deletePlayerStats = async (leagueId, characterId, user_id) => {
+    console.log('Deleting player stats with:', { leagueId, characterId, user_id });
     const { data, error } = await supabase.client
         .from('player_stats')
         .delete()
         .eq('league_id', leagueId)
         .eq('user_id', user_id)
-        .eq('character_id', characterId)
+        .eq('character_id', parseInt(characterId))
         .select();
 
     if (error) throw new Error(error.message);
