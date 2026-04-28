@@ -52,6 +52,11 @@
 
 }
 
+.input {
+    width: 40px;
+    height: 30px;
+}
+
 
 .player-stats-table th,
 .player-stats-table td {

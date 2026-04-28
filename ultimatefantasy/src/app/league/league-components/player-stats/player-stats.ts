@@ -53,6 +53,15 @@ export class PlayerStats {
 
   }
 
+  saveStats() {
+    console.log('Saving stats for user ID:', this.user_id);
+    console.log('Current player stats being saved:', this.playerStats);
+    this.leagueService.savePlayerStats(this.route.parent?.snapshot.params['leagueId'], this.user_id, this.playerStats).subscribe(() => {
+      window.alert('Player stats saved successfully!');
+      this.cdr.detectChanges();
+    });
+  }
+
   addPlayer() {
     console.log('Adding player with ID:', this.selectedPlayer?.ID);
     this.leagueService.addPlayer(this.route.parent?.snapshot.params['leagueId'], this.user_id, this.selectedPlayer).subscribe(() => {

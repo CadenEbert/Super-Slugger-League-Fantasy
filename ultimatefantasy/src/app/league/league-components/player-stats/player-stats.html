@@ -19,15 +19,17 @@
 
   
 
-    <table class="player-stats-table" *ngIf="editing">
+    <table class="player-stats-table" *ngIf="!editing">
         <thead>
           <tr>
             <th>Name</th>
             <th>At Bats</th>
             <th>Hits</th>
+            <th>Batting Average</th>
             <th>Home Runs</th>
             <th>Innings Pitched</th>
             <th>Runs Allowed</th>
+            <th>ERA</th>    
             <th>Total Points</th>
           </tr>
         </thead>
@@ -36,15 +38,17 @@
             <td>{{ stat.character_name }}</td>
             <td>{{ stat.ab }}</td>
             <td>{{ stat.hits }}</td>
+            <td>{{ (stat.ab / stat.hits) | number:'1.2-2'}}</td>
             <td>{{ stat.hr }}</td>
             <td>{{ stat.innings }}</td>
-            <td> {{stat.runs_allowed}} </td>
+            <td>{{stat.runs_allowed}}</td>
+            <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
             <td>{{ stat.total_points }}</td>
           </tr>
         </tbody>
       </table>
 
-      <table class="player-stats-table" *ngIf="!editing">
+      <table class="player-stats-table" *ngIf="editing">
         <thead>
           <tr>
             <th>Name</th>
@@ -54,17 +58,34 @@
             <th>Innings Pitched</th>
             <th>Runs Allowed</th>
             <th>Total Points</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let stat of playerStats">
             <td>{{ stat.character_name }}</td>
-            <td>{{ stat.ab }}</td>
-            <td>{{ stat.hits }}</td>
-            <td>{{ stat.hr }}</td>
-            <td>{{ stat.innings }}</td>
-            <td> {{stat.runs_allowed}} </td>
-            <td>{{ stat.total_points }}</td>
+            
+            <td>
+                <input type="number" [(ngModel)]="stat.ab" class="input" {{ stat.ab }}>
+            </td>
+            <td>
+                <input type="number" [(ngModel)]="stat.hits" class="input" {{ stat.hits }}> 
+            </td>
+            <td>
+                <input type="number" [(ngModel)]="stat.hr" class="input" {{ stat.hr }}>
+            </td>
+            <td>
+                <input type="number" [(ngModel)]="stat.innings" class="input" {{ stat.innings }}>
+            </td>
+            <td>
+                <input type="number" [(ngModel)]="stat.runs_allowed" class="input" {{stat.runs_allowed}}>
+             </td>
+            <td>
+                <input type="number" [(ngModel)]="stat.total_points" class="input" {{ stat.total_points }}>
+            </td>
+            <td>
+                <button class="delete-btn" (click)="deletePlayer(stat.character_id)">Delete</button>
+            </td>
           </tr>
         </tbody>
       </table>

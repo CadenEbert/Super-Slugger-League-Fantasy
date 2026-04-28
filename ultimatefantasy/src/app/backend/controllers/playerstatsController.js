@@ -28,10 +28,9 @@ exports.addPlayerStats = async (req, res) => {
 exports.updatePlayerStats = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
-        const characterId = req.body.characterId;
         const user_id = req.user.id;
         const stats = req.body.stats;
-        const updatedStats = await playerstatsService.updatePlayerStats(leagueId, characterId, user_id, stats);
+        const updatedStats = await playerstatsService.updatePlayerStats(leagueId, user_id, stats);
         res.json(updatedStats);
     } catch (error) {
         res.status(500).json({ error: 'Failed to update player stats' });

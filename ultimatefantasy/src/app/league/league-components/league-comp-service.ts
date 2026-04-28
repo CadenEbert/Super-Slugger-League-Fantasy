@@ -214,6 +214,10 @@ export class LeagueCompService {
     return this.http.post(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
   }
 
+  savePlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
+  }
+
   updatePlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {
     return this.http.put(`/api/leagues/${leagueId}/playerstats`, { user_id, stats });
   }

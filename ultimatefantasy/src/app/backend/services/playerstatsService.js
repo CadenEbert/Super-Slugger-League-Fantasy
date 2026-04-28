@@ -34,19 +34,32 @@ exports.addPlayerStats = async (leagueId, character, user_id) => {
     return data;
 }
 
-exports.updatePlayerStats = async (leagueId, characterId, user_id, stats) => {
-    const { data, error } = await supabase.client
-        .from('player_stats')
-        .update({ stats: stats })
-        .eq('league_id', leagueId)
-        .eq('user_id', user_id)
-        .eq('character_id', characterId)
-        .select()
-        .single();
-
-    if (error) throw new Error(error.message);
-    return data;
-}
+exports.updatePlayerStats = async (leagueId, user_id, stats) => {
+    console.log('Updating player stats with:', { leagueId, user_id, stats });
+    const results = [];
+    for (const stat of stats) {
+        const { data, error } = await supabase.client
+            .from('player_stats')
+            .update({
+                character_name: stat.character_name,
+                hits: stat.hits,
+                hr: stat.hr,
+                ab: stat.ab,
+                innings: stat.innings,
+                outs: stat.outs,
+                runs_allowed: stat.runs_allowed,
+                total_points: stat.total_points
+            })
+            .eq('league_id', leagueId)
+            .eq('user_id', user_id)
+            .eq('character_id', stat.character_id)
+            .select()
+            .maybeSingle();
+        if (error) throw new Error(error.message);
+        results.push(data);
+    }
+    return results;
+};
 
 exports.deletePlayerStats = async (leagueId, characterId, user_id) => {
     const { data, error } = await supabase.client
