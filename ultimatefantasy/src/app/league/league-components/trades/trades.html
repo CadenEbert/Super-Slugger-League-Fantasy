@@ -1,6 +1,39 @@
-<div class="trade-container">
+<div class="loading" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+</div>
+
+
+<div class="trade-container" *ngIf="!isLoading">
     <div class="trade-header">
         <h3>Trade Requests</h3>
+    </div>
+
+    <div class="trade-creator">
+        <div class="header">
+            <h4>Propose a Trade</h4>
+        </div>
+
+
+        <div class="trade-form">
+            <div class="form-group">
+                <label for="proposingTeam">Proposing Team: {{ profile?.username }}</label>
+                <select id="offeredPlayer" [(ngModel)]="offeredPlayerId">
+                    <option *ngFor="let player of proposingTeamPlayers" [value]="player.id">{{ player.name }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="receivingTeam">Receiving Team:</label>
+                <select id="receivingTeam" [(ngModel)]="receivingTeamId" (ngModelChange)="onReceivingTeamChange()">
+                    <option *ngFor="let roster of rosters" [value]="roster.id">{{ roster.team_name }}</option>
+                </select>
+
+                <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
+                    <option *ngFor="let player of receivingTeamPlayers" [value]="player.id">{{ player.name }}</option>
+                </select>
+            </div>
+
+        </div>
     </div>
 
     <mat-card class="trade-requests">
@@ -18,7 +51,8 @@
                     <p><strong>Offered Players:</strong> {{ trade.offered_players.join(', ') }}</p>
                     <p><strong>Requested Players:</strong> {{ trade.requested_players.join(', ') }}</p>
 
-                    <div class="trade-actions" *ngIf="(ownerId$ | async) === (userId$ | async) && trade.receiving_team_id === (userTeamId$ | async)">
+                    <div class="trade-actions"
+                        *ngIf="(ownerId$ | async) === (userId$ | async) && trade.receiving_team_id === (userTeamId$ | async)">
                         <button (click)="acceptTrade(trade.id)" class="accept-btn">Accept</button>
                         <button (click)="rejectTrade(trade.id)" class="reject-btn">Reject</button>
                     </div>

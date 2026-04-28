@@ -230,5 +230,18 @@ export class LeagueCompService {
       }
     });
   }
+
+  getTrades(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/trades`);
+  }
+
+  getAllCharacters(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/trades/characters`);
+  }
+
+  getAllTradeMembers(leagueId: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/leagues/${leagueId}/trades/rosters`);
+  }
+
 }
 
