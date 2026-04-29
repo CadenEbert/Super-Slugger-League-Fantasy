@@ -35,7 +35,7 @@
 
         </div>
 
-        <button (click)="proposeTrade(rosters.find(r => r.id === receivingTeamId)?.team_name)" class="propose-btn" [disabled]="!offeredPlayerId || !receivingTeamId || !requestedPlayerId">Propose Trade</button>
+        <button (click)="proposeTrade(rosters.find(r => r.id === receivingTeamId)?.team_name)" class="propose-btn" [disabled]="!offeredPlayerId || !receivingTeamId || !requestedPlayerId || requesting">Propose Trade</button>
     </div>
 
     <mat-card class="trade-requests">
@@ -55,8 +55,8 @@
 
                     <div class="trade-actions"
                         *ngIf="trade.receiving_team_id === profile?.user_id">
-                        <button (click)="acceptTrade(trade.id)" class="accept-btn">Accept</button>
-                        <button (click)="rejectTrade(trade.id)" class="reject-btn">Reject</button>
+                        <button (click)="acceptTrade(trade.id)" class="accept-btn" [disabled]="requesting">Accept</button>
+                        <button (click)="rejectTrade(trade.id)" class="reject-btn" [disabled]="requesting">Reject</button>
                     </div>
                 </div>
 

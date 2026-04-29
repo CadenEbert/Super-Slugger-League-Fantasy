@@ -14,6 +14,8 @@ export class Trades {
 
   trades: any[] = [];
 
+  requesting: boolean = false;
+
   members: any[] = [];
 
   characters: any[] = [];
@@ -182,6 +184,7 @@ export class Trades {
   }
 
   proposeTrade(roster_name: string) {
+    this.requesting = true;
       const tradeData = {
         proposingTeamId: this.proposingTeamId,
         receivingTeamUsername: roster_name,
@@ -199,14 +202,28 @@ export class Trades {
           console.log('Trade proposed successfully:', response);
           window.alert('Trade proposed successfully!');
           this.trades.push(response);
+          this.requesting = false;
           this.cdr.detectChanges();
         },
         error: (err) => {
+          alert(err.error?.message || 'You have too many active trade requests. Please wait for them to be resolved before proposing new trades.');
           console.error('Error proposing trade:', err);
-          window.alert('Error proposing trade. Please try again.');
-        }
+          this.requesting = false;
+          this.cdr.detectChanges();
+          }
       });
   }
 
+  acceptTrade(tradeId: string) {
+    this.requesting = true;
+    console.log('Accepting trade with ID:', tradeId);
+    this.requesting = false;
+  }
+
+  rejectTrade(tradeId: string) {
+    this.requesting = true;
+    console.log('Rejecting trade with ID:', tradeId);
+    this.requesting = false;
+  }
   
 }

@@ -48,6 +48,6 @@ exports.createTrade = async (req, res) => {
         const newTrade = await tradesService.createTrade(leagueId, userId, tradeData);
         res.status(201).json(newTrade);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create trade' });
+        res.status(400).json({ error: error.message });
     }
 }

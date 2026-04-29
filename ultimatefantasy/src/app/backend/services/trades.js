@@ -52,6 +52,24 @@ exports.getAllCharacterNames = async () => {
 
 exports.createTrade = async (leagueId, userId, tradeData) => {
     console.log('Creating trade with data:', { leagueId, userId, tradeData });
+
+    const {data: existingTrades, error: fetchError} = await supabase.client
+        .from('trades')
+        .select('*')
+        .eq('league_id', leagueId)
+        .eq('proposing_team_id', tradeData.proposingTeamId);
+
+    if (fetchError) {
+        console.error('Error fetching existing trades:', fetchError);
+        throw new Error(fetchError.message);
+    }
+
+    console.log('Existing trades for user:', existingTrades);
+
+    if (existingTrades && existingTrades.length > 5) {
+        throw new Error('You have too many pending trades. Please wait for them to be resolved before proposing new ones.');
+    }
+
     const { data, error } = await supabase.client
         .from('trades')
         .insert({
