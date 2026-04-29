@@ -7,7 +7,7 @@ exports.getTrades = async (leagueId, userId) => {
         .from('trades')
         .select('*')
         .eq('league_id', leagueId)
-        .eq('recieving_team_id', userId);
+        .eq('receiving_team_id', userId);
 
     if (error) throw new Error(error.message);
 
@@ -56,15 +56,18 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
         .from('trades')
         .insert({
             league_id: leagueId,
-            recieving_team_id: userId,
-            offering_team_id: tradeData.offeringTeamId,
-            offered_character_ids: tradeData.offeredCharacterIds,
-            requested_character_ids: tradeData.requestedCharacterIds,
+            receiving_team_id: userId,
+            receiving_team_username: tradeData.receivingTeamUsername,
+            proposing_team_username: tradeData.proposingTeamUsername,
+            proposing_team_id: tradeData.proposingTeamId,
+            offered_player_id: tradeData.offeredPlayerId,
+            offered_player_name: tradeData.offeredPlayerName,
+            requested_player_id: tradeData.requestedPlayerId,
+            requested_player_name: tradeData.requestedPlayerName,
             status: 'pending'
         })
         .select()
         .single();
-
     if (error) throw new Error(error.message);
 
     return data;

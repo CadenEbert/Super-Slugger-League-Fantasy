@@ -21,12 +21,16 @@ export class Trades {
   receivingTeamId: string = '';
   proposingTeamId: string = '';
 
+
+
   requestedPlayerId: string = '';
   offeredPlayerId: string = '';
 
 
   proposingTeamPlayers: any[] = [];
   receivingTeamPlayers: any[] = [];
+
+
 
   allCharacters: any[] = [];
 
@@ -177,17 +181,31 @@ export class Trades {
     this.rosters = this.rosters.filter((r: any) => r.owner_id !== this.proposingTeamId);
   }
 
-  proposeTrade() {
+  proposeTrade(roster_name: string) {
       const tradeData = {
         proposingTeamId: this.proposingTeamId,
+        receivingTeamUsername: roster_name,
         receivingTeamId: this.receivingTeamId,
         offeredPlayerId: this.offeredPlayerId,
         requestedPlayerId: this.requestedPlayerId,
+        proposingTeamUsername: this.profile?.username || 'Unknown User',
         offeredPlayerName: this.characters.find((char: any) => char.character_id === +this.offeredPlayerId)?.name || 'Unknown Character',
         requestedPlayerName: this.characters.find((char: any) => char.character_id === +this.requestedPlayerId)?.name || 'Unknown Character'
       };
 
       console.log('Trade data being sent to server:', tradeData);
+      this.leagueCompService.proposeTrade(this.route.parent?.snapshot.params['leagueId'], tradeData).subscribe({
+        next: (response) => {
+          console.log('Trade proposed successfully:', response);
+          window.alert('Trade proposed successfully!');
+          this.trades.push(response);
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error proposing trade:', err);
+          window.alert('Error proposing trade. Please try again.');
+        }
+      });
   }
 
   
