@@ -51,3 +51,23 @@ exports.createTrade = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
+
+exports.acceptTrade = async (req, res) => {
+    try {
+        const tradeId = req.params.tradeId;
+        await tradesService.acceptTrade(tradeId);
+        res.json({ message: 'Trade accepted successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+exports.rejectTrade = async (req, res) => {
+    try {
+        const tradeId = req.params.tradeId;
+        await tradesService.rejectTrade(tradeId);
+        res.json({ message: 'Trade rejected successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}

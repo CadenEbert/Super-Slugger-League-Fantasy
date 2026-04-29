@@ -33,6 +33,9 @@ export class Trades {
   proposingTradeCharacters: Trade[] = [];
 
 
+  propAdded: boolean = false;
+  recAdded: boolean = false;
+
   requestedPlayerId: string = '';
   offeredPlayerId: string = '';
 
@@ -40,11 +43,14 @@ export class Trades {
   proposingTeamPlayers: any[] = [];
   receivingTeamPlayers: any[] = [];
 
-
+  pastTrades: any[] = [];
 
   allCharacters: any[] = [];
 
+  myRosters: any[] = [];
   rosters: any[] = [];
+  otherRosters: any[] = [];
+  
 
   profile: any;
 
@@ -62,6 +68,8 @@ export class Trades {
       } else {
         console.log('Fetched trades:', trades);
         this.trades = trades;
+        this.pastTrades = this.trades.filter(trade => trade.status !== 'pending');
+        this.trades = this.trades.filter(trade => trade.status === 'pending');
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -97,7 +105,7 @@ export class Trades {
         });
 
 
-       
+
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -120,10 +128,27 @@ export class Trades {
             console.log('Fetched profile:', profile);
             this.profile = profile;
 
-            profile ? this.proposingTeamId = profile.teamId : this.proposingTeamId = '';
+
             this.members = this.members.filter((member: any) => member.user_id !== this.profile.user_id);
             this.profile = profile;
-            this.proposingTeamId = profile?.teamId ?? '';
+
+            this.leagueCompService.getAllTradeMembers(leagueId).subscribe(rosters => {
+              if (rosters.length === 0) {
+                console.log('No trade members found for league:', leagueId);
+              } else {
+                console.log('Fetched trade members:', rosters);
+                this.rosters = rosters;
+                this.myRosters = this.rosters.filter((r: any) => r.owner_id === this.profile?.user_id);
+                this.otherRosters = this.rosters.filter((r: any) => r.owner_id !== this.profile?.user_id);
+                this.proposingTeamId = this.myRosters[0]?.id || '';
+                this.populateProposingTeamPlayers();
+                this.isLoading = false;
+                this.cdr.detectChanges();
+              }
+            }, error => {
+              console.error('Error fetching trade members:', error);
+            });
+
             this.populateProposingTeamPlayers();
 
             this.isLoading = false;
@@ -143,20 +168,7 @@ export class Trades {
       console.error('Error fetching members:', error);
     });
 
-    this.leagueCompService.getAllTradeMembers(leagueId).subscribe(rosters => {
-      if (rosters.length === 0) {
-        console.log('No trade members found for league:', leagueId);
-      } else {
-        console.log('Fetched trade members:', rosters);
-        this.rosters = rosters;
-        this.rosters = rosters;
-        this.populateProposingTeamPlayers();
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    }, error => {
-      console.error('Error fetching trade members:', error);
-    });
+
   }
 
 
@@ -191,47 +203,76 @@ export class Trades {
     this.rosters = this.rosters.filter((r: any) => r.owner_id !== this.proposingTeamId);
   }
 
-  proposeTrade(roster_name: string) {
+  proposeTrade() {
     this.requesting = true;
-      const tradeData = {
-        proposingTeamId: this.proposingTeamId,
-        receivingTeamUsername: roster_name,
-        receivingTeamId: this.receivingTeamId,
-        offeredPlayerId: this.offeredPlayerId,
-        requestedPlayerId: this.requestedPlayerId,
-        proposingTeamUsername: this.profile?.username || 'Unknown User',
-        offeredPlayerName: this.characters.find((char: any) => char.character_id === +this.offeredPlayerId)?.name || 'Unknown Character',
-        requestedPlayerName: this.characters.find((char: any) => char.character_id === +this.requestedPlayerId)?.name || 'Unknown Character'
-      };
+    const tradeData = {
+      proposingTeamId: this.proposingTeamId,
+      receivingTeamUsername: this.otherRosters.find(r => r.id === this.receivingTeamId)?.team_name,
+      receivingTeamId: this.otherRosters.find(r => r.id === this.receivingTeamId)?.id,
+      offeredPlayerId: this.proposingTradeCharacters.map(trade => trade.id),
+      requestedPlayerId: this.receivingTradeCharacters.map(trade => trade.id),
+      proposingTeamUsername: this.profile?.username || 'Unknown User',
+      offeredPlayerName: this.proposingTradeCharacters.map(trade => trade.character_name),
+      requestedPlayerName: this.receivingTradeCharacters.map(trade => trade.character_name),
+      receivingTeamUserId: this.otherRosters.find(r => r.id === this.receivingTeamId)?.owner_id
+    };
 
-      console.log('Trade data being sent to server:', tradeData);
-      this.leagueCompService.proposeTrade(this.route.parent?.snapshot.params['leagueId'], tradeData).subscribe({
-        next: (response) => {
-          console.log('Trade proposed successfully:', response);
-          window.alert('Trade proposed successfully!');
-          this.trades.push(response);
-          this.requesting = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          alert(err.error?.message || 'You have too many active trade requests. Please wait for them to be resolved before proposing new trades.');
-          console.error('Error proposing trade:', err);
-          this.requesting = false;
-          this.cdr.detectChanges();
-          }
-      });
+    console.log('Trade data being sent to server:', tradeData);
+    this.leagueCompService.proposeTrade(this.route.parent?.snapshot.params['leagueId'], tradeData).subscribe({
+      next: (response) => {
+        console.log('Trade proposed successfully:', response);
+        window.alert('Trade proposed successfully!');
+        this.trades.push(response);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'You have too many active trade requests. Please wait for them to be resolved before proposing new trades.');
+        console.error('Error proposing trade:', err);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   acceptTrade(tradeId: string) {
     this.requesting = true;
-    console.log('Accepting trade with ID:', tradeId);
-    this.requesting = false;
+
+    this.leagueCompService.acceptTrade(tradeId).subscribe({
+      next: (response) => {
+        console.log('Trade accepted successfully:', response);
+        window.alert('Trade accepted successfully!');
+        this.trades = this.trades.filter(trade => trade.id !== tradeId);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Error accepting trade. Please try again later.');
+        console.error('Error accepting trade:', err);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   rejectTrade(tradeId: string) {
     this.requesting = true;
-    console.log('Rejecting trade with ID:', tradeId);
-    this.requesting = false;
+
+    this.leagueCompService.rejectTrade(tradeId).subscribe({
+      next: (response) => {
+        console.log('Trade rejected successfully:', response);
+        window.alert('Trade rejected successfully!');
+        this.trades = this.trades.filter(trade => trade.id !== tradeId);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Error rejecting trade. Please try again later.');
+        console.error('Error rejecting trade:', err);
+        this.requesting = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   addToTradeProposing() {
@@ -247,8 +288,9 @@ export class Trades {
       return;
     }
     this.proposingTradeCharacters.push(tradeItem);
+    this.propAdded = true;
   }
-  
+
   addToTradeReceiving() {
     const player = this.receivingTeamPlayers.find(p => p.character_id === +this.requestedPlayerId);
     const tradeItem: Trade = {
@@ -262,5 +304,6 @@ export class Trades {
       return;
     }
     this.receivingTradeCharacters.push(tradeItem);
+    this.recAdded = true;
   }
 }

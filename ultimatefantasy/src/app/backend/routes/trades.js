@@ -15,5 +15,9 @@ router.get('/trades/characters/names', authMiddleware, tradesController.getAllCh
 
 router.post('/leagues/:leagueId/trades', authMiddleware, tradesController.createTrade);
 
+router.put('/trades/:tradeId/accept', authMiddleware, tradesController.acceptTrade);
+
+router.put('/trades/:tradeId/reject', authMiddleware, tradesController.rejectTrade);
+
 
 module.exports = router;

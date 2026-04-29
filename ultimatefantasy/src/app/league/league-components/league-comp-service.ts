@@ -251,5 +251,13 @@ export class LeagueCompService {
     return this.http.post(`/api/leagues/${leagueId}/trades`, tradeData);
   }
 
+  acceptTrade(tradeId: string): Observable<any> {
+    return this.http.put(`/api/trades/${tradeId}/accept`, {});
+  }
+
+  rejectTrade(tradeId: string): Observable<any> {
+    return this.http.put(`/api/trades/${tradeId}/reject`, {});
+  }
+
 }
 
