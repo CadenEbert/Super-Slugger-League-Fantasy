@@ -17,25 +17,69 @@
         <div class="trade-form">
             <div class="form-group">
                 <label for="proposingTeam">Proposing Team: {{ profile?.username }}</label>
+
+                <div class="trade-header-content">
                 <select id="offeredPlayer" [(ngModel)]="offeredPlayerId">
-                    <option *ngFor="let player of proposingTeamPlayers" [value]="player.character_id">{{ player.name }}</option>
+                    <option *ngFor="let player of proposingTeamPlayers" [value]="player.character_id">{{ player.name }}
+                    </option>
                 </select>
+                 <button (click)="addToTradeProposing()">Add to Trade</button>
+
+                </div>
+
+               
+
             </div>
 
             <div class="form-group">
                 <label for="receivingTeam">Receiving Team:</label>
+
+                <div class="trade-header-content">
+
                 <select id="receivingTeam" [(ngModel)]="receivingTeamId" (ngModelChange)="onReceivingTeamChange()">
                     <option *ngFor="let roster of rosters" [value]="roster.id">{{ roster.team_name }}</option>
                 </select>
 
                 <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
-                    <option *ngFor="let player of receivingTeamPlayers" [value]="player.character_id">{{ player.name }}</option>
+                    <option *ngFor="let player of receivingTeamPlayers" [value]="player.character_id">{{ player.name }}
+                    </option>
                 </select>
+                <button (click)="addToTradeReceiving()">Add to Trade</button>
+
+                </div>
+
+                
+
+
+
             </div>
+
 
         </div>
 
-        <button (click)="proposeTrade(rosters.find(r => r.id === receivingTeamId)?.team_name)" class="propose-btn" [disabled]="!offeredPlayerId || !receivingTeamId || !requestedPlayerId || requesting">Propose Trade</button>
+        <div class="trade-content" *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+          
+
+        <div class="trade-details" *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+
+
+            <div class="trade-chars" *ngFor="let trade of proposingTradeCharacters">
+                <p><strong>Character:</strong> {{ trade.character_name }}</p>
+            </div>
+
+
+        </div>
+        <div class="trade-details" *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+
+
+            <div class="trade-chars" *ngFor="let trade of receivingTradeCharacters">
+                <p><strong>Character:</strong> {{ trade.character_name }}</p>
+            </div>
+        </div>
+        </div>
+
+        <button (click)="proposeTrade(rosters.find(r => r.id === receivingTeamId)?.team_name)" class="propose-btn"
+            [disabled]="!offeredPlayerId || !receivingTeamId || !requestedPlayerId || requesting">Propose Trade</button>
     </div>
 
     <mat-card class="trade-requests">
@@ -53,10 +97,11 @@
                     <p><strong>Offered Players:</strong> {{ trade.offered_player_name}}</p>
                     <p><strong>Requested Players:</strong> {{ trade.requested_player_name }}</p>
 
-                    <div class="trade-actions"
-                        *ngIf="trade.receiving_team_id === profile?.user_id">
-                        <button (click)="acceptTrade(trade.id)" class="accept-btn" [disabled]="requesting">Accept</button>
-                        <button (click)="rejectTrade(trade.id)" class="reject-btn" [disabled]="requesting">Reject</button>
+                    <div class="trade-actions" *ngIf="trade.receiving_team_id === profile?.user_id">
+                        <button (click)="acceptTrade(trade.id)" class="accept-btn"
+                            [disabled]="requesting">Accept</button>
+                        <button (click)="rejectTrade(trade.id)" class="reject-btn"
+                            [disabled]="requesting">Reject</button>
                     </div>
                 </div>
 

@@ -3,6 +3,11 @@ import { LeagueCompService } from '../league-comp-service';
 import { ActivatedRoute } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 
+export interface Trade {
+  id: string;
+  character_name: string;
+}
+
 @Component({
   selector: 'app-trades',
   standalone: false,
@@ -23,6 +28,9 @@ export class Trades {
   receivingTeamId: string = '';
   proposingTeamId: string = '';
 
+
+  receivingTradeCharacters: Trade[] = [];
+  proposingTradeCharacters: Trade[] = [];
 
 
   requestedPlayerId: string = '';
@@ -225,5 +233,34 @@ export class Trades {
     console.log('Rejecting trade with ID:', tradeId);
     this.requesting = false;
   }
+
+  addToTradeProposing() {
+    const player = this.proposingTeamPlayers.find(p => p.character_id === +this.offeredPlayerId);
+    const tradeItem: Trade = {
+      id: player.character_id,
+      character_name: player.name
+    };
+
+    const alreadyAdded = this.proposingTradeCharacters.some(trade => trade.id === tradeItem.id);
+    if (alreadyAdded) {
+      alert('This character has already been added to the trade.');
+      return;
+    }
+    this.proposingTradeCharacters.push(tradeItem);
+  }
   
+  addToTradeReceiving() {
+    const player = this.receivingTeamPlayers.find(p => p.character_id === +this.requestedPlayerId);
+    const tradeItem: Trade = {
+      id: player.character_id,
+      character_name: player.name
+    };
+
+    const alreadyAdded = this.receivingTradeCharacters.some(trade => trade.id === tradeItem.id);
+    if (alreadyAdded) {
+      alert('This character has already been added to the trade.');
+      return;
+    }
+    this.receivingTradeCharacters.push(tradeItem);
+  }
 }
