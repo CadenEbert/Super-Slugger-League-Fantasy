@@ -243,5 +243,13 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/trades/rosters`);
   }
 
+  getAllCharacterNames(): Observable<any[]> {
+    return this.http.get<any[]>(`/api/trades/characters/names`);
+  }
+
+  proposeTrade(leagueId: string, tradeData: any): Observable<any> {
+    return this.http.post(`/api/leagues/${leagueId}/trades`, tradeData);
+  }
+
 }
 

@@ -11,5 +11,9 @@ router.get('/leagues/:leagueId/trades/characters', authMiddleware, tradesControl
 
 router.get('/leagues/:leagueId/trades/rosters', authMiddleware, tradesController.getAllRosters);
 
+router.get('/trades/characters/names', authMiddleware, tradesController.getAllCharacterNames);
+
+router.post('/leagues/:leagueId/trades', authMiddleware, tradesController.createTrade);
+
 
 module.exports = router;

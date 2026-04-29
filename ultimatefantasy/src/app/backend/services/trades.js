@@ -39,3 +39,34 @@ exports.getAllRosters = async (leagueId) => {
     return data;
 }
 
+exports.getAllCharacterNames = async () => {
+    const { data, error } = await supabase.client
+        .from('characters')
+        .select('ID, character_name');
+
+
+        if (error) throw new Error(error.message);
+
+    return data;
+}
+
+exports.createTrade = async (leagueId, userId, tradeData) => {
+    console.log('Creating trade with data:', { leagueId, userId, tradeData });
+    const { data, error } = await supabase.client
+        .from('trades')
+        .insert({
+            league_id: leagueId,
+            recieving_team_id: userId,
+            offering_team_id: tradeData.offeringTeamId,
+            offered_character_ids: tradeData.offeredCharacterIds,
+            requested_character_ids: tradeData.requestedCharacterIds,
+            status: 'pending'
+        })
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
+
+    return data;
+}
+

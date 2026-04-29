@@ -18,10 +18,17 @@ export class Trades {
 
   characters: any[] = [];
 
-  proposingTeamId: string = '';
   receivingTeamId: string = '';
+  proposingTeamId: string = '';
+
+  requestedPlayerId: string = '';
+  offeredPlayerId: string = '';
+
+
   proposingTeamPlayers: any[] = [];
   receivingTeamPlayers: any[] = [];
+
+  allCharacters: any[] = [];
 
   rosters: any[] = [];
 
@@ -58,8 +65,25 @@ export class Trades {
         console.log('No characters found');
       } else {
         console.log('Fetched characters:', characters);
-        this.characters = characters;
-        this.populateProposingTeamPlayers();
+        this.leagueCompService.getAllCharacterNames().subscribe(characterNames => {
+          const characterMap = new Map(characterNames.map((char: any) => [char.ID, char.character_name]));
+          console.log('Character map:', characterMap);
+          console.log('First character object:', characters[0]);
+          this.characters = characters.map((char: any) => ({
+            ...char,
+            name: characterMap.get(char.character_id) || 'Unknown Character'
+          }));
+          console.log('Characters after mapping names:', this.characters);
+          this.populateProposingTeamPlayers();
+          console.log('Characters with names:', this.characters);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }, error => {
+          console.error('Error fetching character names:', error);
+        });
+
+
+       
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -123,20 +147,48 @@ export class Trades {
 
 
   onReceivingTeamChange() {
-    this.receivingTeamPlayers = this.characters.filter(
-      (char: any) => char.team_id === this.receivingTeamId
-    );
+    const newRoster = this.rosters.find((r: any) => r.id === this.receivingTeamId);
+    if (newRoster) {
+      this.receivingTeamPlayers = this.characters.filter(
+        (char: any) => char.roster_id === newRoster.id
+      );
+    } else {
+      this.receivingTeamPlayers = [];
+    }
+
+
   }
 
   populateProposingTeamPlayers() {
     if (!this.profile || !this.rosters.length || !this.characters.length) return;
+    console.log('Populating proposing team players with profile:', this.profile, 'rosters:', this.rosters, 'characters:', this.characters);
+    console.log('Finding roster for user ID:', this.profile.user_id);
+    console.log('Rosters available:', this.rosters);
 
-    const myRoster = this.rosters.find((r: any) => r.id === this.profile.teamId);
+    const myRoster = this.rosters.find((r: any) => r.owner_id === this.profile.user_id);
+    console.log('Found roster for current user:', myRoster);
     this.proposingTeamId = myRoster?.id ?? '';
+    console.log('Proposing team ID set to:', this.proposingTeamId);
+
     this.proposingTeamPlayers = this.characters.filter(
-      (char: any) => char.team_id === this.proposingTeamId
+      (char: any) => char.roster_id === this.proposingTeamId
     );
 
-    this.rosters = this.rosters.filter((r: any) => r.id !== this.proposingTeamId);
+    this.rosters = this.rosters.filter((r: any) => r.owner_id !== this.proposingTeamId);
   }
+
+  proposeTrade() {
+      const tradeData = {
+        proposingTeamId: this.proposingTeamId,
+        receivingTeamId: this.receivingTeamId,
+        offeredPlayerId: this.offeredPlayerId,
+        requestedPlayerId: this.requestedPlayerId,
+        offeredPlayerName: this.characters.find((char: any) => char.character_id === +this.offeredPlayerId)?.name || 'Unknown Character',
+        requestedPlayerName: this.characters.find((char: any) => char.character_id === +this.requestedPlayerId)?.name || 'Unknown Character'
+      };
+
+      console.log('Trade data being sent to server:', tradeData);
+  }
+
+  
 }

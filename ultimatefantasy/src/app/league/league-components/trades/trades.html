@@ -18,7 +18,7 @@
             <div class="form-group">
                 <label for="proposingTeam">Proposing Team: {{ profile?.username }}</label>
                 <select id="offeredPlayer" [(ngModel)]="offeredPlayerId">
-                    <option *ngFor="let player of proposingTeamPlayers" [value]="player.id">{{ player.name }}</option>
+                    <option *ngFor="let player of proposingTeamPlayers" [value]="player.character_id">{{ player.name }}</option>
                 </select>
             </div>
 
@@ -29,11 +29,13 @@
                 </select>
 
                 <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
-                    <option *ngFor="let player of receivingTeamPlayers" [value]="player.id">{{ player.name }}</option>
+                    <option *ngFor="let player of receivingTeamPlayers" [value]="player.character_id">{{ player.name }}</option>
                 </select>
             </div>
 
         </div>
+
+        <button (click)="proposeTrade()" class="propose-btn" [disabled]="!offeredPlayerId || !receivingTeamId || !requestedPlayerId">Propose Trade</button>
     </div>
 
     <mat-card class="trade-requests">
