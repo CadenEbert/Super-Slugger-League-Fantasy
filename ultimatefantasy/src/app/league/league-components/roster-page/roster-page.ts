@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { LeagueCompService } from '../league-comp-service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { filter } from 'rxjs/internal/operators/filter';
-import { AuthService } from '../../../core/auth.service.js';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { map } from 'rxjs/internal/operators/map';
 
@@ -35,11 +34,10 @@ export class RosterPage {
   constructor(
     private cdr: ChangeDetectorRef,
     private leagueService: LeagueCompService,
-    private route: ActivatedRoute,
-    private authService: AuthService
+    private route: ActivatedRoute
 
   ) {
-        this.userId$ = this.authService.user$.pipe(map(user => user?.id ?? ''));
+        this.userId$ = this.leagueService.getUserIdFromBackend();
 
    }
 
@@ -54,7 +52,13 @@ export class RosterPage {
       console.log('Profile data in RosterPage:', profile);
     });
 
-    this.setUserId(this.authService.getUserId() ?? '');
+    this.leagueService.getUserIdFromBackend().subscribe({
+      next: (userId) => {
+        this.setUserId(userId);
+        console.log('Fetched user ID in RosterPage:', userId);
+      },
+      error: (err) => console.error('Error fetching user ID in RosterPage:', err)
+    });
 
     console.log('User ID in RosterPage:', this.userId$);
 
@@ -92,9 +96,11 @@ export class RosterPage {
 
     this.leagueService.changePlayerPosition(leagueId, rosterId, characterId, newPosition).subscribe({
       next: () => {
+        alert('Position updated successfully');
         console.log('Position updated successfully');
       },
       error: (err) => {
+        alert('Error updating position');
         console.error('Error updating position:', err);
       }
     });
@@ -111,9 +117,11 @@ export class RosterPage {
 
     this.leagueService.changePlayerBattingOrder(leagueId, rosterId, characterId, newOrder).subscribe({
       next: () => {
+        alert('Batting order updated successfully');
         console.log('Batting order updated successfully');
       },
       error: (err) => {
+        alert('Error updating batting order');
         console.error('Error updating batting order:', err);
       }
     });
@@ -131,11 +139,13 @@ export class RosterPage {
     this.leagueService.removePlayer(leagueId, rosterId, characterId).subscribe({
       next: () => {
         console.log('Player removed successfully');
+        alert('Player removed successfully');
         this.players = this.players.filter(p => p.character.id !== characterId);
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error removing player:', err);
+        alert('Error removing player');
       }
     });
   }

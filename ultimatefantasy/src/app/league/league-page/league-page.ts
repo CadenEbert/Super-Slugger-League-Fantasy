@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LeagueService } from '../league-service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { map } from 'rxjs/internal/operators/map';
-import { AuthService } from '../../core/auth.service.js';
+import { LeagueCompService } from '../league-components/league-comp-service';
+
 
 
 @Component({
@@ -26,16 +27,22 @@ export class LeaguePage {
     private route: ActivatedRoute,
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService,
+    private leagueCompService: LeagueCompService
+  
 
   ) {
-    this.userId$ = this.authService.user$.pipe(map(user => user?.id ?? ''));
-    this.userId$.subscribe(userId => {
-      console.log('Actual user ID:', userId);
-    });
+
   }
 
   ngOnInit() {
+
+    this.leagueCompService.getUserIdFromBackend().subscribe({
+      next: (userId) => {
+        this.setUserId(userId);
+        console.log('Fetched user ID in LeaguePage:', userId);
+      },
+      error: (err) => console.error('Error fetching user ID in LeaguePage:', err)
+    });
 
 
 
@@ -78,6 +85,9 @@ export class LeaguePage {
     this.ownerIdSubject.next(ownerId);
   }
 
+  setUserId(userId: string) {
+    this.userIdSubject.next(userId);
+  }
 
 
 }

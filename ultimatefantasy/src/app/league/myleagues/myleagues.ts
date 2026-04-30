@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { take } from 'rxjs/internal/operators/take';
 import { filter } from 'rxjs/internal/operators/filter';
-import { AuthService } from '../../core/auth.service';
+import { LeagueCompService } from '../league-components/league-comp-service';
+
 
 
 @Component({
@@ -23,25 +24,29 @@ export class Myleagues {
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private authService: AuthService,
+    private leagueCompService: LeagueCompService
+    
 
   ) { }
 
   ngOnInit() {
 
-    this.userId = this.authService.getUserId();
+    this.leagueCompService.getUserIdFromBackend().subscribe({
+      next: (userId) => {
+        this.userId = userId;
+        console.log('Fetched user ID in Myleagues:', userId);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error fetching user ID in Myleagues:', err)
+    });
 
-    this.authService.session$.pipe(
-      filter(session => {
-        console.log('Session in myleagues:', session);
-        return !!session?.access_token;
-      }),
-      take(1),
-      switchMap(() => this.leagueService.getLeaguesForCurrentUser())
-    ).subscribe(leagues => {
-      this.leagues = leagues;
-      console.log('DATA:', leagues);
-      this.cdr.detectChanges();
+    this.leagueService.getLeaguesForCurrentUser(this.userId).subscribe({
+      next: (leagues) => {
+        this.leagues = leagues;
+        console.log('Fetched leagues:', leagues);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error fetching leagues in Myleagues:', err)
     });
 
     
@@ -50,9 +55,11 @@ export class Myleagues {
   joinLeague(leagueId: string) {
     this.leagueService.joinLeague(leagueId, this.userId).subscribe(() => {
       console.log(`Joined league ${leagueId} successfully`);
+      alert('Joined league successfully!');
       this.router.navigate(['/league-page', leagueId]);
     }, error => {
       console.error('Error joining league:', error);
+      alert('Error joining league: ' + error.message);
     });
   }
 

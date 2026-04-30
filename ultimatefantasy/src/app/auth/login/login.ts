@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/auth.service';
+import { AuthService } from '../auth-service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -21,17 +21,21 @@ export class Login {
     password: ['', Validators.required],
   });
 
-
   onSubmit() {
     const rawFormData = this.form.getRawValue();
 
-    this.authService.login(rawFormData.email, rawFormData.password).subscribe(response => {
-      if (response.error) {
-        console.error('Error during login:', response.error);
-      } else {
-        console.log('Login successful:', response);
-        this.router.navigate(['']);
-        
+    this.authService.login(rawFormData.email ?? '', rawFormData.password ?? '').subscribe({
+      next: (response) => {
+        if (response.error) {
+          console.error('Error during login:', response.error);
+        } else {
+          console.log('Login successful:', response);
+          this.authService.setSession({ access_token: response.session.access_token });
+          this.router.navigate(['']);
+        }
+      },
+      error: (err) => {
+        console.error('Login request failed:', err);
       }
     });
   }

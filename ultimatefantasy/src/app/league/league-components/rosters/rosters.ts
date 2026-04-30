@@ -6,7 +6,6 @@ import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { filter } from 'rxjs/internal/operators/filter';
 import { map } from 'rxjs/internal/operators/map';
-import { AuthService } from '../../../core/auth.service';
 import { Router } from '@angular/router';
 
 import { ChangeDetectorRef } from '@angular/core';
@@ -49,7 +48,6 @@ export class Rosters {
   constructor(
     private leagueService: LeagueCompService,
     private route: ActivatedRoute,
-    private authService: AuthService,
     private cdr: ChangeDetectorRef,
     private router: Router) {
 
@@ -92,14 +90,20 @@ export class Rosters {
       filter(leagueId => !!leagueId),
       switchMap(leagueId => {
         this.leagueId = leagueId;
-        return this.authService.user$.pipe(
-          filter(user => !!user),
-          switchMap(user => this.leagueService.canCreateRoster(leagueId, user!.id))
+        return this.leagueService.getUserIdFromBackend().pipe(
+          filter(userId => !!userId),
+          switchMap(userId => this.leagueService.canCreateRoster(leagueId, userId))
         );
       })
     ).subscribe(canCreate => {
       this.canCreateRoster = canCreate;
-      this.currentUserId = this.authService.getUserId();
+      this.leagueService.getUserIdFromBackend().subscribe({
+        next: (userId) => {
+          this.currentUserId = userId;
+          console.log('Fetched user ID for roster creation:', userId);
+        },
+        error: (err) => console.error('Error fetching user ID for roster creation:', err)
+      });
       this.isLoading = false;
       this.cdr.detectChanges();
     });

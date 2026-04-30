@@ -26,4 +26,9 @@ export class Sidebar {
     const body = document.body;
     body.classList.toggle('dark-theme');
   }
+
+  leaveLeague() {
+    // Implement logic to leave the league, e.g., call a service method
+    console.log('Leave league clicked');
+  }
 }

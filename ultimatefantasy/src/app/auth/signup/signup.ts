@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/auth.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth-service';
 
 @Component({
   selector: 'app-signup',
@@ -28,14 +28,20 @@ export class Signup {
       rawFormData.email ?? '',
       rawFormData.password ?? '',
       rawFormData.username ?? ''
-    ).then(response => {
-      if (response.error) {
-        console.error('Error during registration:', response.error);
-      } else {
-        console.log('Registration successful:', response);
-        this.router.navigate(['login']);
+    ).subscribe({
+      next: (response) => {
+        if (response.error) {
+          console.error('Error during signup:', response.error);
+        } else {
+          console.log('Signup successful:', response);
+          this.router.navigate(['']);
+        }
+      },
+      error: (err) => {
+        console.error('Signup request failed:', err);
       }
     });
+    
   }
 
 }

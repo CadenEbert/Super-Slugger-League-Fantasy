@@ -45,7 +45,7 @@ exports.createLeague = async (userId, leagueData) => {
 
   const { data: profile, error: profileerr } = await supabase.client
   .from('profiles')
-  .select('id')
+  .select('id, username')
   .eq('user_id', userId)
   .single();
 
@@ -57,10 +57,9 @@ exports.createLeague = async (userId, leagueData) => {
     .insert({
       name: leagueData.leagueName,
       roster_size: leagueData.roster_size,
-      size: leagueData.leagueSize,
-      draft_settings: leagueData.draftSettings,
+      league_size: leagueData.league_size,
       owner_id: userId,
-      owner_username: leagueData.userName || 'Unknown User'
+      owner_username: profile.username
     })
     .select();
 

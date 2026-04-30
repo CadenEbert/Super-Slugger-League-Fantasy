@@ -1,20 +1,21 @@
-// src/app/core/auth.interceptor.ts
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
-import { AuthService } from './auth.service';  // adjust path if needed
-import { filter, switchMap, take } from 'rxjs';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
+import { AuthService } from '../auth/auth-service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.authService.session$.pipe(
-      filter(session => session !== undefined), 
+      filter(session => session !== undefined),
       take(1),
       switchMap(session => {
-        if (!session?.access_token) return next.handle(req);
-
+        if (!session?.access_token) {
+          return next.handle(req);
+        }
         const cloned = req.clone({
           headers: req.headers.set('Authorization', `Bearer ${session.access_token}`)
         });

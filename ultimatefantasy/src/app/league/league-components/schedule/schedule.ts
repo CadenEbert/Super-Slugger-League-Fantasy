@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../../core/auth.service';
 import { BehaviorSubject, combineLatest, distinct, distinctUntilChanged, map, Observable } from 'rxjs';
 import { LeagueService } from '../../league-service.js';
 import { LeagueCompService } from '../league-comp-service.js';
@@ -128,7 +127,6 @@ export class Schedule {
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService,
     private leagueService: LeagueService,
     private leagueCompService: LeagueCompService,
     private router: Router,
@@ -142,10 +140,12 @@ export class Schedule {
 
     this.isLoading = true;
 
-    this.authService.user$.subscribe((user: any) => {
-      if (user) {
-        this.setUserId(user.id);
-      }
+    this.leagueCompService.getUserIdFromBackend().subscribe({
+      next: (userId) => {
+        this.setUserId(userId);
+        console.log('Fetched user ID:', userId);
+      },
+      error: (err) => console.error('Error fetching user ID:', err)
     });
 
     this.leagueCompService.joinScheduleChannel(this.route.parent?.snapshot.params['leagueId'] || '');

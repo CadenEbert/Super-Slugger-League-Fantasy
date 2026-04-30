@@ -178,7 +178,8 @@ exports.changePlayerPosition = async (rosterId, characterId, newPosition) => {
 
 
 
-       
+    console.log('changePlayerPosition - data:', JSON.stringify(data, null, 2));
+    console.log('changePlayerPosition - error:', error);
 
     if (error) throw new Error(error.message);
 

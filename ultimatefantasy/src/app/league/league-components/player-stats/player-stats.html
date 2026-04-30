@@ -66,22 +66,22 @@
             <td>{{ stat.character_name }}</td>
             
             <td>
-                <input type="number" [(ngModel)]="stat.ab" class="input" {{ stat.ab }}>
+                <input type="number" [(ngModel)]="stat.ab" class="input">
             </td>
             <td>
-                <input type="number" [(ngModel)]="stat.hits" class="input" {{ stat.hits }}> 
+                <input type="number" [(ngModel)]="stat.hits" class="input"> 
             </td>
             <td>
-                <input type="number" [(ngModel)]="stat.hr" class="input" {{ stat.hr }}>
+                <input type="number" [(ngModel)]="stat.hr" class="input">
             </td>
             <td>
-                <input type="number" [(ngModel)]="stat.innings" class="input" {{ stat.innings }}>
+                <input type="number" [(ngModel)]="stat.innings" class="input">
             </td>
             <td>
-                <input type="number" [(ngModel)]="stat.runs_allowed" class="input" {{stat.runs_allowed}}>
+                <input type="number" [(ngModel)]="stat.runs_allowed" class="input">
              </td>
             <td>
-                <input type="number" [(ngModel)]="stat.total_points" class="input" {{ stat.total_points }}>
+                <input type="number" [(ngModel)]="stat.total_points" class="input">
             </td>
             <td>
                 <button class="delete-btn" (click)="deletePlayer(stat.character_id)">Delete</button>

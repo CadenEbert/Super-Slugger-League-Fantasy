@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, combineLatest, distinctUntilChanged, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AuthService } from '../../../core/auth.service';
 import { LeagueService } from '../../league-service';
 import { ChangeDetectorRef } from '@angular/core';
+import { LeagueCompService } from '../league-comp-service';
 
 export interface DraftState {
   id: string;
@@ -153,7 +153,7 @@ export class Draft implements OnInit, OnDestroy {
     )
   );
 
-  constructor(private draftService: DraftService, private route: ActivatedRoute, private auth: AuthService, private leagueService: LeagueService, private cdr: ChangeDetectorRef) { }
+  constructor(private draftService: DraftService, private route: ActivatedRoute, private leagueCompService: LeagueCompService, private leagueService: LeagueService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
 
@@ -222,7 +222,14 @@ export class Draft implements OnInit, OnDestroy {
               next: (members) => {
                 console.log('Fetched league members:', members);
                 this.setMembers(members);
-                this.setUserId(this.auth.getUserId()!);
+                this.leagueCompService.getUserIdFromBackend().subscribe({
+                  next: (userId) => {
+                    this.setUserId(userId);
+                    console.log('User ID in getInitialDraftData:', userId);
+                    this.cdr.detectChanges();
+                  },
+                  error: (err) => console.error('Error fetching user ID in getInitialDraftData:', err)
+                });
                 this.setDraftDataPlayerList(members.map((m: any) => m.user_id));
                 console.log('League Members:', members);
                 console.log('Member Map:', this.memberMap);

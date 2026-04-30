@@ -259,5 +259,11 @@ export class LeagueCompService {
     return this.http.put(`/api/trades/${tradeId}/reject`, {});
   }
 
+  getUserIdFromBackend(): Observable<string> {
+    return this.http.get<{ user_id: string }>('/api/user-id').pipe(
+      map(res => res.user_id)
+  );
+}
+
 }
 
