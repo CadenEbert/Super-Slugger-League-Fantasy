@@ -1,60 +1,47 @@
-const { Observable } = require('rxjs');
-const supabase = require('../supabase.js');
+const { client, authClient } = require('../supabase.js');
 
 exports.signUp = async (email, password, username) => {
+  const { data, error } = await authClient.auth.signUp({ email, password });
 
+  if (error) {
+    console.error('Error signing up:', error);
+    throw new Error(error.message);
+  }
 
-        const { data, error } = await supabase.client.auth.signUp({
-            email,
-            password
-        });
+  const userId = data.user.id;
 
-        if (error) {
-            console.error('Error signing up:', error);
-            throw new Error(error.message);
-        }
+  
+  const { data: profileData, error: profileError } = await client
+    .from('profiles')
+    .insert({ username, user_id: userId })
+    .select()
+    .single();
 
-        const user = data.user.id;
+  if (profileError) {
+    console.error('Error inserting profile:', profileError);
+    throw new Error(profileError.message);
+  }
 
-
-        const { data: profileData, error: profileError } = await supabase.client
-            .from('profiles')
-            .insert({ username,  user_id: user })
-            .select()
-            .single();
-
-        if (profileError) {
-            console.error('Error inserting profile:', profileError);
-            throw new Error(profileError.message);
-        }
-
-
-        return data.user;
-
-}
+  return data.user;
+};
 
 exports.signIn = async (email, password) => {
+  const { data, error } = await authClient.auth.signInWithPassword({ email, password });
 
-    const { data, error } = await supabase.client.auth.signInWithPassword({
-        email,
-        password
-    });
+  if (error) {
+    console.error('Error signing in:', error);
+    throw new Error(error.message);
+  }
 
-
-    if (error) {
-        console.error('Error signing in:', error);
-        throw new Error(error.message);
-    }
-
-    return data;
-}
+  return data;
+};
 
 exports.getMe = async (req, res) => {
-    const token = req.headers['authorization']?.replace('Bearer ', '');
-    if (!token) return res.status(401).json({ error: 'No token provided' });
+  const token = req.headers['authorization']?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
-    const { data, error } = await supabase.client.auth.getUser(token);
-    if (error) return res.status(401).json({ error: error.message });
+  const { data, error } = await authClient.auth.getUser(token);
+  if (error) return res.status(401).json({ error: error.message });
 
-    return data.user.id;
+  return data.user.id;
 };

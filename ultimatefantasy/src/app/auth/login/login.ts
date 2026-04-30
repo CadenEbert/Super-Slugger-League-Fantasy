@@ -23,19 +23,20 @@ export class Login {
 
   onSubmit() {
     const rawFormData = this.form.getRawValue();
-
     this.authService.login(rawFormData.email ?? '', rawFormData.password ?? '').subscribe({
       next: (response) => {
-        if (response.error) {
-          console.error('Error during login:', response.error);
-        } else {
-          console.log('Login successful:', response);
-          this.authService.setSession({ access_token: response.session.access_token });
-          this.router.navigate(['']);
-        }
+        console.log('Login successful:', response);
+        console.log('Received session data:', response.session); 
+        this.authService.setSession(response.session); 
+        this.router.navigate(['']);
       },
       error: (err) => {
         console.error('Login request failed:', err);
+        if (err.error && err.error.error === 'Invalid login credentials') {
+          alert('Invalid email or password. Please try again.');
+        } else {
+          alert('Login failed: ' + (err.error?.error || err.message));
+        }
       }
     });
   }

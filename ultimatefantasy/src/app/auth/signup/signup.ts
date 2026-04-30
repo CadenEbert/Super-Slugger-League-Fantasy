@@ -34,6 +34,7 @@ export class Signup {
           console.error('Error during signup:', response.error);
         } else {
           console.log('Signup successful:', response);
+          this.authService.setSession({ access_token: response.access_token });
           this.router.navigate(['']);
         }
       },

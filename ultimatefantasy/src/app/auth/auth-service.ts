@@ -3,18 +3,30 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private sessionSubject = new BehaviorSubject<any>(null);
+  private sessionSubject = new BehaviorSubject<any>(
+    localStorage.getItem('session') ? JSON.parse(localStorage.getItem('session')!) : undefined
+  );
   session$ = this.sessionSubject.asObservable();
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+
+ 
+  }
 
   setSession(session: any) {
-    this.sessionSubject.next(session);
+    if (session) {
+      localStorage.setItem('session', JSON.stringify(session));
+      this.sessionSubject.next(session);
+    } else {
+      localStorage.removeItem('session');
+      this.sessionSubject.next(null); 
+    }
   }
 
 

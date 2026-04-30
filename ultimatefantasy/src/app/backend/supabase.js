@@ -3,12 +3,15 @@ const jwt = require('jsonwebtoken');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY environment variables');
 }
 
 const decoded = jwt.decode(SUPABASE_SERVICE_KEY);
+
+const authClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const client = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   auth: {
@@ -80,4 +83,4 @@ function setupDraftChannel(io, draftId) {
   activeChannels.set(id, channel);
 }
 
-module.exports = { client, setupDraftChannel, setUpScheduleChannel };
+module.exports = { client, authClient, setupDraftChannel, setUpScheduleChannel };

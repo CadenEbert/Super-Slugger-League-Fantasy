@@ -1,20 +1,20 @@
 
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
-
+import { Observable, filter, map, switchMap, take } from 'rxjs';
+import { AuthService } from '../auth/auth-service';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   getLeaguesForCurrentUser(userId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues?userId=${userId}`);
   }
 
- 
+
   getProfile(): Observable<any> {
     return this.http.get('/api/profile');
   }
@@ -29,7 +29,7 @@ export class LeagueService {
     );
   }
 
-  
+
   canDraft(leagueId: string): Observable<boolean> {
     return this.http.get<{ canDraft: boolean }>(`/api/draft/${leagueId}/can-draft`).pipe(
       map(response => response.canDraft)
