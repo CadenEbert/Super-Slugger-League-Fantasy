@@ -39,6 +39,7 @@ import { UpdateSchedule } from './league/league-components/schedule/update-sched
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Trades } from './league/league-components/trades/trades';
 import { Profile } from './profile/profile/profile.js';
+import { UpdateRoster } from './league/league-components/roster-page/update-roster/update-roster';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { Profile } from './profile/profile/profile.js';
     UpdateSchedule,
     Trades,
     Profile,
+    UpdateRoster,
   ],
   imports: [
     BrowserModule,

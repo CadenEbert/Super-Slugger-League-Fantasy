@@ -8,6 +8,8 @@ router.get('/leagues/:leagueId/rosters', authMiddleware, rosterController.getRos
 
 router.get('/leagues/:leagueId/rosters/can-create', authMiddleware, rosterController.canCreateRoster);
 
+router.get('/leagues/:leagueId/rosters/:rosterId/update-roster', authMiddleware, rosterController.getRosterForUpdate);
+
 router.post('/leagues/:leagueId/rosters', authMiddleware, rosterController.createRoster);
 
 router.get('/leagues/:leagueId/rosters/:rosterId', authMiddleware, rosterController.getRosterById);

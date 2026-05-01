@@ -97,3 +97,13 @@ exports.changePlayerBattingOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to change player batting order' });
     }
 }
+
+exports.getRosterForUpdate = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const roster = await rosterService.getRosterForUpdate(rosterId);
+        res.json(roster);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch roster for update' });
+    }
+}

@@ -1,0 +1,54 @@
+<div class="schedule-update-container" *ngIf="!isLoading; else loading">
+  <div class="header">
+    <h2>Update Roster</h2>
+  </div>
+
+  <div class="game-info">
+    <div class="edit-game">
+      <div class="edit-team-name">
+        <p><strong>Current team name: </strong>{{ roster.teamName }}</p>
+        <input
+          #usernameInput="ngModel"
+          type="text"
+          class="username-input"
+          pattern="^[^\s]+$"
+          maxlength="15"
+          [(ngModel)]="newName"
+          required
+          placeholder="New team name"
+        />
+      </div>
+
+      <div class="edit-team-name">
+        <p><strong>Current team image: </strong></p>
+
+        <select [(ngModel)]="selectedTeamPicture" class="position-select">
+          <option *ngFor="let image of teamPictures | keyvalue" [value]="image.value">
+            {{ image.key }}
+          </option>
+        </select>
+      </div>
+
+      <div class="team-picture-preview">
+        <img
+          *ngIf="selectedTeamPicture"
+          [src]="'/assets/images/' + selectedTeamPicture"
+          alt="Selected team"
+        />
+      </div>
+
+    </div>
+
+    <p *ngIf="">Please enter a score for both teams and select a stadium to update the game.</p>
+
+    <button (click)="updateRoster()" class="update-btn" [disabled]="!selectedTeamPicture || !newName" class="update-btn">
+      Update Roster
+    </button>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

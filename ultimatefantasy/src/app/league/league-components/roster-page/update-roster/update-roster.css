@@ -1,0 +1,130 @@
+.schedule-update-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 95%;
+    padding: 20px;
+    background-color: white;
+}
+
+.edit-game {
+    display: flex;
+    flex-direction: column;
+    align-items: top;
+    justify-content: center;
+    width: 80%;
+    padding: 20px;
+   
+    background-color: #f1f1f1;
+    border-radius: 10px;
+   
+}
+
+.game-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    
+ 
+}
+
+.edit-stadium {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 20px;
+    gap: 10px;
+}
+
+.update-btn {
+    background-color: #4ca0af;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+
+}
+
+.header {
+    color: #555;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+    width: 95%;
+    margin-top: 30px;
+}
+
+.score-input {
+    width: 30px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.update-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.username-input {
+    width: 30%;
+    height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    
+    text-align: center;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    color: black;
+    background: none;
+}
+
+.change-button {
+    padding: 5px 15px;
+    background-color: #4cadaf;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-team-name {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+    border-radius: 10px;
+    padding: 10px 5px;
+    gap: 15px;
+}
+
+
+.team-picture-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    height: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }

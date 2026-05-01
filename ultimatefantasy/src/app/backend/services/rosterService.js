@@ -231,3 +231,21 @@ exports.removePlayer = async (rosterId, characterId) => {
         };
 }
 
+exports.getRosterForUpdate = async (rosterId) => {
+    
+    const { data, error } = await supabase.client
+        .from('rosters')
+        .select(`
+            team_name,
+            team_image
+        `)
+        .eq('id', rosterId);
+
+        if (error) throw new Error(error.message);
+
+        return {
+            rosterId,
+            teamName: data[0].team_name,
+            teamImage: data[0].team_image
+        };
+}

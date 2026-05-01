@@ -262,8 +262,12 @@ export class LeagueCompService {
   getUserIdFromBackend(): Observable<string> {
     return this.http.get<{ user_id: string }>('/api/user-id').pipe(
       map(res => res.user_id)
-  );
-}
+    );
+  }
+
+  getRosterForUpdate(leagueId: string, rosterId: string): Observable<any> {
+    return this.http.get<any>(`/api/leagues/${leagueId}/rosters/${rosterId}/update-roster`);
+  }
 
 }
 

@@ -16,6 +16,7 @@ import { RosterPage } from './league/league-components/roster-page/roster-page';
 import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
 import { Trades } from './league/league-components/trades/trades';
 import { Profile } from './profile/profile/profile.js';
+import { UpdateRoster } from './league/league-components/roster-page/update-roster/update-roster';
 
 const routes: Routes = [
   { path: '', redirectTo: '/homepage', pathMatch: 'full' },
@@ -32,7 +33,11 @@ const routes: Routes = [
       { path: 'player-stats', component: PlayerStats },
       { path: 'draft-board', component: Draft },
       { path: 'update-schedule', component: UpdateSchedule },
-      { path: 'trades', component: Trades }
+      { path: 'trades', component: Trades },
+      {
+        path: 'teams/:rosterId/update-roster',
+        component: UpdateRoster
+      }
     ]
   },
   { path: 'create-league', component: Leagecreate },

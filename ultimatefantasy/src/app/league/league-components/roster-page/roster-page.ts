@@ -149,7 +149,9 @@ export class RosterPage {
   }
 
   rosterInfo() {
-    this.router.navigate(['../update-roster'], { relativeTo: this.route });
+    this.router.navigate(['/league-page', this.route.parent?.snapshot.params['leagueId'], 'teams', this.route.snapshot.params['rosterId'], 'update-roster'],
+      { state: { rosterId: this.route.snapshot.params['rosterId'] } }
+    );
 
   }
 
