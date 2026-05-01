@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LeagueCompService } from '../../league-comp-service.js';
 import { ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-update-roster',
@@ -35,7 +36,7 @@ export class UpdateRoster {
 
   roster: any[] = [];
 
-  constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
+  constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private cdr: ChangeDetectorRef, private router: Router) {}
 
 
   ngOnInit(): void {
@@ -58,6 +59,24 @@ export class UpdateRoster {
 
 
   updateRoster() {
+
+    const leagueId = this.route.parent?.snapshot.params['leagueId'];
+    const rosterId = this.route.snapshot.params['rosterId'];
+    const teamName = this.newName;
+    const teamImage = this.selectedTeamPicture;
+
+    this.leagueService.updateRosterDetails(leagueId, rosterId, teamName, teamImage).subscribe({
+      next: (response) => {
+        console.log('Roster updated successfully:', response);
+        alert('Roster updated successfully!');
+        this.router.navigate([`/league-page/${leagueId}/teams/${rosterId}`]);
+
+      },
+      error: (err) => {
+        console.error('Error updating roster:', err);
+        alert('Failed to update roster: ' + (err.error?.error || err.message));
+      }
+    });
 
   
   }

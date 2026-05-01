@@ -26,7 +26,7 @@
         <h3>Waiting for owner to start the draft...</h3>
       </div>
 
-    <div *ngIf="draftData.status === 'not_started' && (ownerId$ | async) !== (userId$ | async)" class="draft-content">
+    <div *ngIf="draftData.status === 'not_started' && (ownerId$ | async) === (userId$ | async)" class="draft-content">
       <div class="content">
         <h3>DRAFT SETTINGS</h3>
       </div>

@@ -20,7 +20,7 @@
       </div>
 
       <div class="edit-team-name">
-        <p><strong>Current team image: </strong></p>
+        <p><strong>Select Team Image: </strong></p>
 
         <select [(ngModel)]="selectedTeamPicture" class="position-select">
           <option *ngFor="let image of teamPictures | keyvalue" [value]="image.value">

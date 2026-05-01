@@ -22,6 +22,8 @@ router.delete('/leagues/:leagueId/rosters/:rosterId/players/:characterId', authM
 
 router.get('/rosters/:rosterId/owner-id', authMiddleware, rosterController.getOwnerId);
 
+router.put('/leagues/:leagueId/rosters/:rosterId/details', authMiddleware, rosterController.updateRosterDetails); 
+
 
 
 module.exports = router;

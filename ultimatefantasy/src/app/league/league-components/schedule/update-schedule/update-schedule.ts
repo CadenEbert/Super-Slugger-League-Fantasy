@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { LeagueCompService } from '../../league-comp-service.js';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-update-schedule',
@@ -16,7 +17,7 @@ export class UpdateSchedule {
   game: any;
   stadiums: string[] = ['Mario Stadium'];
 
-  constructor(private router: Router, private activeroute: ActivatedRoute, private leagueService: LeagueCompService) {}
+  constructor(private router: Router, private activeroute: ActivatedRoute, private leagueService: LeagueCompService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.game = history.state.game;
@@ -25,6 +26,7 @@ export class UpdateSchedule {
       next: (members) => {
         this.members = members;
         console.log('Fetched members:', this.members);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error fetching members:', error);
@@ -38,6 +40,7 @@ export class UpdateSchedule {
     const member = this.members.find(m => m.profiles.username === username);
     this.game.home_team_uuid = member.user_id;
     console.log('Selected home team:', username, 'with UUID:', this.game.home_team_uuid);
+    
   }
 
   onAwayTeamChange(teamName: string) {

@@ -107,3 +107,15 @@ exports.getRosterForUpdate = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch roster for update' });
     }
 }
+
+
+exports.updateRosterDetails = async (req, res) => {
+    try {
+        const rosterId = req.params.rosterId;
+        const { teamName, teamImage } = req.body;
+        const updatedRoster = await rosterService.updateRosterDetails(rosterId, teamName, teamImage);
+        res.json(updatedRoster);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update roster details' });
+    }
+}

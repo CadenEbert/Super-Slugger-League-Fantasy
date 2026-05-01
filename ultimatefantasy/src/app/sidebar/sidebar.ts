@@ -9,6 +9,11 @@ import { Component } from '@angular/core';
 export class Sidebar {
   isSidebarOpen = false;
 
+  constructor() {}
+
+  ngOnInit() {
+  }
+
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
     const sidebar = document.querySelector('.sidebar') as HTMLElement;
@@ -28,7 +33,7 @@ export class Sidebar {
   }
 
   leaveLeague() {
-    // Implement logic to leave the league, e.g., call a service method
+    
     console.log('Leave league clicked');
   }
 }

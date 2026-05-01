@@ -269,5 +269,9 @@ export class LeagueCompService {
     return this.http.get<any>(`/api/leagues/${leagueId}/rosters/${rosterId}/update-roster`);
   }
 
+  updateRosterDetails(leagueId: string, rosterId: string, teamName: string, teamImage: string): Observable<any> {
+    return this.http.put(`/api/leagues/${leagueId}/rosters/${rosterId}/details`, { teamName, teamImage });
+  }
+
 }
 

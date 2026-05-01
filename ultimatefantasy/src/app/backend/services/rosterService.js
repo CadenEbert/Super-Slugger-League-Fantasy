@@ -249,3 +249,23 @@ exports.getRosterForUpdate = async (rosterId) => {
             teamImage: data[0].team_image
         };
 }
+
+exports.updateRosterDetails = async (rosterId, teamName, teamImage) => {
+    const { data, error } = await supabase.client
+        .from('rosters')
+        .update({
+            team_name: teamName,
+            team_image: teamImage
+        })
+        .eq('id', rosterId)
+        .select()
+        .single();
+
+        if (error) throw new Error(error.message);
+
+        return {
+            rosterId,
+            teamName: data.team_name,
+            teamImage: data.team_image
+        };
+    }
