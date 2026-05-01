@@ -1,0 +1,50 @@
+
+
+<div class="profile-container">
+    <app-nav></app-nav>
+
+    <div class="loading" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
+
+
+
+    <div class="profile-content" *ngIf="!isLoading">
+        <div class="profile-body">
+
+            <div class="profile-header">
+                <h2>{{ profile?.username }}</h2>
+            </div>
+
+            <div class="profile-info">
+                <p><strong>Email:</strong> {{ session.user.email }}</p>
+                <p><strong>Joined:</strong> {{ profile?.created_at | date }}</p>
+            </div>
+
+            <div class="profile-change">
+                <p><strong>Change username: </strong></p>
+                <input
+                  #usernameInput="ngModel"
+                  type="text"
+                  class="username-input"
+                  pattern="^[^\s]+$"
+                  maxlength="15"
+                  [(ngModel)]="newUsername"
+                  required
+                  placeholder="New username"
+                >
+                <button
+                  class="change-button"
+                  [disabled]="!newUsername || changingUsername || usernameInput.invalid"
+                  (click)="changeUsername()"
+                >
+                  Change
+                </button>
+                
+              </div>
+
+
+
+        </div>
+    </div>
+</div>

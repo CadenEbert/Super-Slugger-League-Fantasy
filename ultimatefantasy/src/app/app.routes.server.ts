@@ -41,6 +41,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'profile',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'my-leagues',
     renderMode: RenderMode.Server
   },

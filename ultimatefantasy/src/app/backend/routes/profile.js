@@ -6,4 +6,6 @@ const authMiddleware = require('../middleware/auth.js');
 
 router.get('/profile', authMiddleware, profileController.getProfile);
 
+router.put('/profile/username', authMiddleware, profileController.changeUsername);
+
 module.exports = router;
