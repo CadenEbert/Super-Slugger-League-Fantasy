@@ -1,11 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { LeagueCompService } from '../league-comp-service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { filter } from 'rxjs/internal/operators/filter';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { map } from 'rxjs/internal/operators/map';
+import { Router } from '@angular/router';
 
 
 
@@ -34,7 +31,8 @@ export class RosterPage {
   constructor(
     private cdr: ChangeDetectorRef,
     private leagueService: LeagueCompService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
 
   ) {
         this.userId$ = this.leagueService.getUserIdFromBackend();
@@ -150,6 +148,10 @@ export class RosterPage {
     });
   }
 
+  rosterInfo() {
+    this.router.navigate(['../update-roster'], { relativeTo: this.route });
+
+  }
 
 
 }

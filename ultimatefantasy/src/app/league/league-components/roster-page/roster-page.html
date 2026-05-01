@@ -4,15 +4,15 @@
     </div>
 
 
-    <div *ngIf="!isLoading">
+    <div *ngIf="!isLoading" class="roster-content-container">
 
-
+        
         
         <div class="no-players" *ngIf="players.length === 0">
             <p>No players on this roster yet.</p>
         </div>
 
-        <div class="roster-container" *ngIf="(ownerId$ | async) != (userId$ | async)">
+    <div class="player-container" *ngIf="(ownerId$ | async) != (userId$ | async)">
         <mat-card *ngFor="let p of players" class="indiv-players">
             <mat-accordion>
                 <mat-expansion-panel class="player-info">
@@ -94,7 +94,13 @@
         </mat-card>
         </div>
 
-        <div class="roster-container" *ngIf="(ownerId$ | async) == (userId$ | async)">
+        <div class="player-container" *ngIf="(ownerId$ | async) == (userId$ | async)">
+
+            <div class="my-leagues-header">
+                <h3>Rosters</h3>
+                <button (click)="rosterInfo()" class="create-btn">Team Settings</button>
+            </div>
+
         <mat-card *ngFor="let p of players" class="indiv-players">
             <mat-accordion>
                 <mat-expansion-panel class="player-info">

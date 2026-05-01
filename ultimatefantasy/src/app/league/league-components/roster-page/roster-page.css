@@ -10,7 +10,7 @@
 
 .indiv-players {
     margin-bottom: 20px;
-    margin-right: 40px;
+    width: 90%;
     
 }
 
@@ -35,13 +35,66 @@
 
 
 .roster-container {
+    display: flex;
+   
+    align-items: center;
+    justify-content: center;
     
+  
+    width: 100%;
+    height: 100%;
+    
+}
+
+.create-btn {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+
+.my-leagues-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+  
+    gap: 30px;
+  
+    margin: 20px;
+  }
+
+
+.roster-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+    height: 95%;
+    border-radius: 10px;
+    width: 80%;
+    background-color: white;
+    
+    margin-top: 20px;
     overflow-y: auto;
-    width: 97%;
-    height: 97%;
-    padding: 20px;
-    margin-right: 20px;
-    margin-left: 20px;
+    scrollbar-width: none; 
+
+}
+
+.player-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }
 
 .player-header {
