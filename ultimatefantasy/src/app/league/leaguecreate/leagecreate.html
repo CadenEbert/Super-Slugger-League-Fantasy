@@ -33,16 +33,10 @@
           <input formControlName="leagueSize" type="number" id="leagueSize" min="2" max="8">
         </div>
 
-        <div class="league-content">
-          <label for="draftSettings">Draft Settings:</label>
-          <select formControlName="draftSettings" id="draftSettings">
-            <option value="Snake">Snake</option>
-            <option value="Standard">Standard</option>
-          </select>
-        </div>
+ 
 
         <div class="create-league">
-          <button type="submit" [disabled]="leagueForm.invalid">Create League</button>
+          <button type="submit" class="create-btn" [disabled]="leagueForm.invalid">Create League</button>
         </div>
 
       </form>

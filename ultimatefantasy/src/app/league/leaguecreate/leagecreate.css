@@ -7,6 +7,7 @@
   width: 100%;
   background-color: #f1f1f1;
   font-family: 'Arial', sans-serif;
+  overflow-y: hidden;
 
 }
 
@@ -33,7 +34,7 @@
   flex-direction: column;
   align-items: center; 
   height: auto;
-  width: 40%;
+  width: 60%;
   min-width: 320px; 
   background-color: #90bffd;
   border-radius: 20px;
@@ -131,4 +132,24 @@
 
 #create-button:hover {
   background-color: #0056b3;
+}
+
+.create-btn {
+  margin-bottom: 10px;
+  border-radius: 10px;
+
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background-color: #0270e7;
+}
+
+.create-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
