@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LeagueService } from '../league/league-service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,7 @@ export class Sidebar {
   constructor() {}
 
   ngOnInit() {
+
   }
 
   toggleSidebar() {

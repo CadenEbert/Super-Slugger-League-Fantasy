@@ -13,6 +13,8 @@ export class AuthService {
   );
   session$ = this.sessionSubject.asObservable();
 
+  userId$ = this.session$
+
 
   constructor(private http: HttpClient) {
 
