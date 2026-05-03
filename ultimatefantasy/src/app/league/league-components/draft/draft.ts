@@ -3,9 +3,7 @@ import { DraftService } from '../draft-service';
 import { ActivatedRoute } from '@angular/router';
 import {  Subscription } from 'rxjs';
 import {  take } from 'rxjs/operators';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { LeagueService } from '../../league-service';
-import { LeagueCompService } from '../league-comp-service';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 
 @Component({
