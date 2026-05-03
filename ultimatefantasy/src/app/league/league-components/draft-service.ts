@@ -36,9 +36,9 @@ export class DraftService implements OnDestroy {
   canDraftObservable$ = this.canDraft$.asObservable();
 
   public isOwner$ = new BehaviorSubject<boolean>(false);
-  isOwnerObservable$ = this.isOwner$.asObservable();
+  public isOwnerObservable$ = this.isOwner$.asObservable();
 
-  private userId$ = new BehaviorSubject<any>('');
+  public userId$ = new BehaviorSubject<any>('');
   public user_id = this.userId$.asObservable();
 
   public isLoading$ = new BehaviorSubject<boolean>(true);
@@ -64,7 +64,7 @@ export class DraftService implements OnDestroy {
         .map(pick => {
           const character = characterStats.find(c => Number(c.id) === Number(pick.character_picked));
           if (!character) return null;
-          
+
           return {
 
             character,
@@ -119,7 +119,13 @@ export class DraftService implements OnDestroy {
       }).subscribe(({ draft, members, players, canDraft, ownerId, draftPlayers }) => {
         this.setDraftData(draft);
         this.setMembers(members.members);
-        this.setCharacterStats(players.players); 
+        if ((draft as any).status === 'not_started') {
+          this.setPickOrder(members.members);
+        } else {
+          this.pickOrderSubject.next((draft as any).pick_order);
+        }
+
+        this.setCharacterStats(players.players);
         this.setDraftPlayers(draftPlayers.players);
         this.setCanDraft(canDraft);
         this.setOwnerId(ownerId);
@@ -136,6 +142,9 @@ export class DraftService implements OnDestroy {
             });
           }, 500);
         });
+
+        console.log('THIS IS THE MEMBERMAP', this.memberMap);
+        console.log('THIS IS THE PICKORDER', this.pickOrderSubject.value);
 
         this.joinDraft(draftId);
         this.draftSubscriptions.push(draftSub, playersSub);
@@ -185,10 +194,14 @@ export class DraftService implements OnDestroy {
 
 
   setDraftData(data: any) {
+
     this.draftDataSubject.next(data);
-    if (data?.pick_order?.length) {
-      this.pickOrderSubject.next(data.pick_order);
-    }
+
+  }
+
+  setPickOrder(data: any[]) {
+    const user_ids = data.map(m => m.user_id);
+    this.pickOrderSubject.next(user_ids);
   }
 
   setPlayerPool(data: any[]) {
@@ -327,29 +340,29 @@ export class DraftService implements OnDestroy {
     );
   }
 
-  updateDraftData(draftId: string, data: any): Observable<any> {
-    return this.http.put(`/api/draft/${draftId}/update`, data);
+  updateDraftData(data: any): Observable<any> {
+    return this.http.put(`/api/draft/${this.currentDraftIdSubject.value}/update`, data);
   }
 
 
-  startDraftTimer(draftId: string, timerSeconds: number): Observable<any> {
-    return this.http.post(`/api/draft/${draftId}/start`, { timerSeconds });
+  startDraftTimer(timerSeconds: number): Observable<any> {
+    return this.http.post(`/api/draft/${this.currentDraftIdSubject.value}/start`, { timerSeconds });
   }
 
-  pauseDraftTimer(draftId: string): Observable<any> {
-    return this.http.post(`/api/draft/${draftId}/pause`, {});
+  pauseDraftTimer(): Observable<any> {
+    return this.http.post(`/api/draft/${this.currentDraftIdSubject.value}/pause`, {});
   }
 
-  getPlayerPool(draftId: string): Observable<any> {
-    return this.http.get(`/api/draft/${draftId}/playerpool`);
+  getPlayerPool(): Observable<any> {
+    return this.http.get(`/api/draft/${this.currentDraftIdSubject.value}/playerpool`);
   }
 
   getPlayers(): Observable<any> {
     return this.http.get(`/api/players`);
   }
 
-  makeDraftPick(draftId: string, characterId: number, memberPicking: string): Observable<any> {
-    return this.http.post(`/api/draft/${draftId}/pick`, { characterId, memberPicking });
+  makeDraftPick(characterId: number, memberPicking: string): Observable<any> {
+    return this.http.post(`/api/draft/${this.currentDraftIdSubject.value}/pick`, { characterId, memberPicking });
   }
 }
 

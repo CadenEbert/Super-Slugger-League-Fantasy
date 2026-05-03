@@ -47,7 +47,7 @@ export class Draft implements OnInit, OnDestroy {
     const current = this.draftService.draftData$.pipe(take(1)).subscribe(data => {
       if (!data) return;
       this.subscriptions.add(
-        this.draftService.updateDraftData(this.draftId, {
+        this.draftService.updateDraftData( {
           ...data,
           status: 'in_progress',
           current_pick: 1,
@@ -56,7 +56,7 @@ export class Draft implements OnInit, OnDestroy {
           time_per_pick: timePerPick,
           number_of_rounds: numberOfRounds,
           draft_type: draftType,
-          pick_order: data.pick_order
+          pick_order: this.draftService.pickOrderSubject.value
         }).subscribe({
           next: () => console.log('Draft started'),
           error: (err) => console.error('Error starting draft:', err)
@@ -72,11 +72,11 @@ export class Draft implements OnInit, OnDestroy {
 
   toggleTimer(data: boolean) {
     if (data) {
-      this.draftService.pauseDraftTimer(this.draftId).subscribe();
+      this.draftService.pauseDraftTimer().subscribe();
     } else {
       this.draftService.draftData$.pipe(take(1)).subscribe(draftData => {
         if (draftData) {
-          this.draftService.startDraftTimer(this.draftId, draftData.timer_seconds).subscribe();
+          this.draftService.startDraftTimer(draftData.timer_seconds).subscribe();
         }
       });
     }
@@ -86,7 +86,7 @@ export class Draft implements OnInit, OnDestroy {
     if (this.isMakingPick) return;
     this.isMakingPick = true;
     this.subscriptions.add(
-      this.draftService.makeDraftPick(this.draftId, characterId, memberPicking).subscribe({
+      this.draftService.makeDraftPick(characterId, memberPicking).subscribe({
         next: () => this.isMakingPick = false,
         error: () => this.isMakingPick = false
       })

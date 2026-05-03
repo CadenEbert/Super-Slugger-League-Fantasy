@@ -28,11 +28,12 @@
 
               <div *ngIf="canDraft" class="draft-container">
 
-                <div *ngIf="draftData.status === 'not_started' && !isOwner">
+                <div *ngIf="draftData.status === 'not_started' && !draftService.isOwner$">
                   <h3>Waiting for owner to start the draft...</h3>
+                  
                 </div>
 
-                <div *ngIf="draftData.status === 'not_started' && isOwner" class="draft-content">
+                <div *ngIf="draftData.status === 'not_started' && draftService.isOwner$" class="draft-content">
                   <div class="content">
                     <h3>DRAFT SETTINGS</h3>
                   </div>
@@ -65,7 +66,7 @@
                     </div>
                     <div class="content">
                       <button class="start-draft-btn" (click)="startDraft(timePerPick, draftType, numberOfRounds)"
-                        [disabled]="!isOwner">Start Draft</button>
+                        [disabled]="!draftService.isOwner$">Start Draft</button>
                     </div>
                   </div>
                 </div>
@@ -186,7 +187,7 @@
                                   </div>
                                   <button class="draft-btn"
                                     (click)="makePick(pp.id, pickOrder[draftData.current_pick_index])"
-                                    [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== draftService.value || isMakingPick">
+                                    [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== (draftService.userId$ | async) || isMakingPick">
                                     Draft Player
                                   </button>
                                 </div>
