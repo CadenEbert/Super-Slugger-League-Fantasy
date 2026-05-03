@@ -38,7 +38,6 @@ export class PlayerstatsService {
       this.allPlayers$.next(filteredPlayersCall);
       this.playerStats$.next(playerStatsCall.filter(stat => stat.user_id === this.userId$.value));
       this.setIsLoading(false);
-      console.log("ALL THE VALUES", this.mvpPlayers$.value, this.allPlayersStats$.value, this.allPlayers$.value, this.playerStats$.value);
     })
   }
 
@@ -51,7 +50,6 @@ export class PlayerstatsService {
   }
 
   sortByPoints(players: any[]) {
-    console.log('Sorting players by points:', players);
     return players.sort((a, b) => b.total_points - a.total_points);
   }
 
@@ -67,7 +65,6 @@ export class PlayerstatsService {
 
   saveStats() {
 
-    console.log('Current player stats being saved:', this.playerStats$.value);
     this.savePlayerStats(this.leagueId$.value, this.userId$.value, this.playerStats$.value).subscribe(() => {
       alert('Player stats saved successfully!');
       
@@ -101,7 +98,6 @@ export class PlayerstatsService {
 
       this.leagueService.getFilteredPlayerStats(this.leagueId$.value, this.userId$.value).subscribe((stats: any[]) => {
         this.setAllPlayers(stats);
-        console.log('Updated player stats after adding player:', this.allPlayers$.value);
 
       });
     });
