@@ -143,9 +143,6 @@ export class DraftService implements OnDestroy {
           }, 500);
         });
 
-        console.log('THIS IS THE MEMBERMAP', this.memberMap);
-        console.log('THIS IS THE PICKORDER', this.pickOrderSubject.value);
-
         this.joinDraft(draftId);
         this.draftSubscriptions.push(draftSub, playersSub);
         this.setIsLoading(false);

@@ -29,8 +29,6 @@ export class FreeagentService {
     this.setIsLoading(true);
 
     this.leagueId$.next(leagueId);
-    console.log('FREE AGENT CALLED', this.leagueId$.value);
-
     this.http.get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${this.userId$.value}`).subscribe(data => {
       this.rosterId$.next(data.rosterId);
 

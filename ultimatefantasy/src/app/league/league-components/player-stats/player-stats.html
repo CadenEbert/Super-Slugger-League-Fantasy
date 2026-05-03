@@ -1,151 +1,170 @@
-<div class="player-stats-container" *ngIf="!isLoading; else loading">
+<div class="player-stats-container" *ngIf="!(playerstatsService.isLoading$ | async); else loading">
 
-    <div class="player-stats-content" *ngIf="currentView === 'stats'">
+  <ng-container *ngIf="playerstatsService.allPlayersStats$ | async as allPlayersStats">
+    <ng-container *ngIf="playerstatsService.playerStats$ | async as playerStats">
+      <ng-container *ngIf="playerstatsService.userId$ | async as user_id">
+          <ng-container *ngIf="playerstatsService.allPlayers$ | async as allPlayers">
+            <ng-container *ngIf="playerstatsService.mvpPlayers$ | async as mvpPlayers">
+              <ng-container *ngIf="playerstatsService.currentView$ | async as currentView">
 
-        <div class="player-stats-header">
-            <select [(ngModel)]="selectedPlayer" class="stats-select">
-                <option *ngFor="let player of allPlayers" [ngValue]="player">{{ player.character_name }}</option>
-            </select>
-            <button (click)="addPlayer()" class="btn">Add Player</button>
-            <select [(ngModel)]="currentView" class="stats-select">
-                <option value="stats">Season Stats</option>
-                <option value="mvp">MVP Ladder</option>
-            </select>
+                <div class="player-stats-content" *ngIf="currentView === 'stats'">
 
-            <button (click)="saveStats()" class="save-btn">Save Stats</button>
+                  <div class="player-stats-header">
+                    <select [(ngModel)]="playerstatsService.selectedPlayer" (ngModelChange)="playerstatsService.onPlayerChange($event)" class="stats-select">
+                      <option *ngFor="let player of allPlayers" [ngValue]="player">{{ player.character_name }}</option>
+                    </select>
+                    <button (click)="playerstatsService.addPlayer()" class="btn">Add Player</button>
+                    <select [(ngModel)]="currentView" (ngModelChange)="playerstatsService.onViewChange($event)" class="stats-select">
+                      <option value="stats">Season Stats</option>
+                      <option value="mvp">MVP Ladder</option>
+                    </select>
 
-            <button (click)="toggleEdit()" class="edit-btn">Edit Stats</button>
-        </div>
+                    <button (click)="playerstatsService.saveStats()" class="save-btn">Save Stats</button>
 
-  
-
-    <table class="player-stats-table" *ngIf="!editing">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>At Bats</th>
-            <th>Hits</th>
-            <th>Batting Average</th>
-            <th>Home Runs</th>
-            <th>Innings Pitched</th>
-            <th>Runs Allowed</th>
-            <th>ERA</th>    
-            <th>Total Points</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let stat of playerStats">
-            <td>{{ stat.character_name }}</td>
-            <td>{{ stat.ab }}</td>
-            <td>{{ stat.hits }}</td>
-            <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
-            <td>{{ stat.hr }}</td>
-            <td>{{ stat.innings }}</td>
-            <td>{{stat.runs_allowed}}</td>
-            <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
-            <td>{{ stat.total_points }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <table class="player-stats-table" *ngIf="editing">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>At Bats</th>
-            <th>Hits</th>
-            <th>Home Runs</th>
-            <th>Innings Pitched</th>
-            <th>Runs Allowed</th>
-            <th>Total Points</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let stat of playerStats">
-            <td>{{ stat.character_name }}</td>
-            
-            <td>
-                <input type="number" [(ngModel)]="stat.ab" class="input">
-            </td>
-            <td>
-                <input type="number" [(ngModel)]="stat.hits" class="input"> 
-            </td>
-            <td>
-                <input type="number" [(ngModel)]="stat.hr" class="input">
-            </td>
-            <td>
-                <input type="number" [(ngModel)]="stat.innings" class="input">
-            </td>
-            <td>
-                <input type="number" [(ngModel)]="stat.runs_allowed" class="input">
-             </td>
-            <td>
-                <input type="number" [(ngModel)]="stat.total_points" class="input">
-            </td>
-            <td>
-                <button class="delete-btn" (click)="deletePlayer(stat.character_id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                    <button (click)="playerstatsService.toggleEdit()" class="edit-btn">Edit Stats</button>
+                  </div>
 
 
 
-<div class="player-stats-content" *ngIf="currentView === 'mvp'">
+                  <table class="player-stats-table" *ngIf="!(playerstatsService.editing$ | async)">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>At Bats</th>
+                        <th>Hits</th>
+                        <th>Batting Average</th>
+                        <th>Home Runs</th>
+                        <th>Innings Pitched</th>
+                        <th>Runs Allowed</th>
+                        <th>ERA</th>
+                        <th>Total Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let stat of playerStats">
+                        <td>{{ stat.character_name }}</td>
+                        <td>{{ stat.ab }}</td>
+                        <td>{{ stat.hits }}</td>
+                        <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
+                        <td>{{ stat.hr }}</td>
+                        <td>{{ stat.innings }}</td>
+                        <td>{{stat.runs_allowed}}</td>
+                        <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
+                        <td>{{ stat.total_points }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <table class="player-stats-table" *ngIf="(playerstatsService.editing$ | async)">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>At Bats</th>
+                        <th>Hits</th>
+                        <th>Home Runs</th>
+                        <th>Innings Pitched</th>
+                        <th>Runs Allowed</th>
+                        <th>Total Points</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let stat of playerStats">
+                        <td>{{ stat.character_name }}</td>
+
+                        <td>
+                          <input type="number" [(ngModel)]="stat.ab" class="input">
+                        </td>
+                        <td>
+                          <input type="number" [(ngModel)]="stat.hits" class="input">
+                        </td>
+                        <td>
+                          <input type="number" [(ngModel)]="stat.hr" class="input">
+                        </td>
+                        <td>
+                          <input type="number" [(ngModel)]="stat.innings" class="input">
+                        </td>
+                        <td>
+                          <input type="number" [(ngModel)]="stat.runs_allowed" class="input">
+                        </td>
+                        <td>
+                          <input type="number" [(ngModel)]="stat.total_points" class="input">
+                        </td>
+                        <td>
+                          <button class="delete-btn" (click)="playerstatsService.deletePlayer(stat.character_id)">Delete</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
 
 
-    <div class="player-stats-header-mvp">
-        <h3>MVP Ladder</h3>
-        <div class="player-stats-header-mvp">
-            <select [(ngModel)]="currentView" class="stats-select">
-                <option value="stats">Season Stats</option>
-                <option value="mvp">MVP Ladder</option>
-            </select>
-            
-        </div>
-    </div>
+                <div class="player-stats-content" *ngIf="currentView === 'mvp'">
 
-<table class="player-stats-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>At Bats</th>
-        <th>Hits</th>
-        <th>Batting Average</th>
-        <th>Home Runs</th>
-        <th>Innings Pitched</th>
-        <th>Runs Allowed</th>
-        <th>ERA</th>    
-        <th>Total Points</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let stat of playerStats">
-        <td>{{ stat.character_name }}</td>
-        <td>{{ stat.ab }}</td>
-        <td>{{ stat.hits }}</td>
-        <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
-        <td>{{ stat.hr }}</td>
-        <td>{{ stat.innings }}</td>
-        <td>{{stat.runs_allowed}}</td>
-        <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
-        <td>{{ stat.total_points }}</td>
-      </tr>
-    </tbody>
-  </table>
 
- 
-  
 
-</div>
+                  <div class="player-stats-header-mvp">
+                    <h3>MVP Ladder</h3>
+                    <div class="player-stats-header-mvp">
+                      <select [(ngModel)]="currentView" (ngModelChange)="playerstatsService.onViewChange($event)" class="stats-select">
+                        <option value="stats">Season Stats</option>
+                        <option value="mvp">MVP Ladder</option>
+                      </select>
+
+                    </div>
+                  </div>
+
+                  <table class="player-stats-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>At Bats</th>
+                        <th>Hits</th>
+                        <th>Batting Average</th>
+                        <th>Home Runs</th>
+                        <th>Innings Pitched</th>
+                        <th>Runs Allowed</th>
+                        <th>ERA</th>
+                        <th>Total Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let stat of playerStats">
+                        <td>{{ stat.character_name }}</td>
+                        <td>{{ stat.ab }}</td>
+                        <td>{{ stat.hits }}</td>
+                        <td>{{ (stat.hits / stat.ab) | number:'1.3-3'}}</td>
+                        <td>{{ stat.hr }}</td>
+                        <td>{{ stat.innings }}</td>
+                        <td>{{stat.runs_allowed}}</td>
+                        <td>{{ (stat.runs_allowed / stat.innings * 9) | number:'1.2-2' }}</td>
+                        <td>{{ stat.total_points }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+
+
+
+                </div>
+
+
+              </ng-container>
+            </ng-container>
+
+          </ng-container>
+
+        </ng-container>
+      </ng-container>
+
+
+  </ng-container>
 </div>
 
 
 <ng-template #loading>
-    <div class="loading-container">
-        <mat-spinner></mat-spinner>
-      </div>
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
 </ng-template>

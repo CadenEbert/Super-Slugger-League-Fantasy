@@ -1,24 +1,11 @@
 
-    <app-sidebar></app-sidebar>
+<app-sidebar></app-sidebar>
 
-    <app-settings *ngIf="(ownerId$ | async) === user_id"></app-settings>
-
-
-
+<app-settings *ngIf="(ownerId$ | async) === user_id"></app-settings>
 
 <div class="leaguepage-container">
     
-
-
-    
-
-    <div class="leaguepage-content">
-       
-
-
-        
-
-       
+    <div class="leaguepage-content">       
         <nav class="tab-nav">
             <a class="route-button" routerLink="teams" routerLinkActive="active">Teams</a>
             <a class="route-button" routerLink="schedule" routerLinkActive="active">Schedule</a>
