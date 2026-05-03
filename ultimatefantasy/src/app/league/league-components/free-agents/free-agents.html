@@ -1,9 +1,13 @@
-<div class="loading-container" *ngIf="isLoading">
+<div class="loading-container" *ngIf="freeAgentService.isLoading$ | async">
   <mat-spinner></mat-spinner>
 </div>
 
 
-<div class="roster-container" *ngIf="!isLoading">
+<div class="roster-container" *ngIf="!(freeAgentService.isLoading$ | async)">
+  <ng-container *ngIf="freeAgentService.draftStatus$ | async as draftStatus">
+   <ng-container *ngIf="freeAgentService.players$ | async as players">
+
+  
     <div class="not_started" *ngIf="draftStatus === 'not_started'">
       <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
     </div>
@@ -23,7 +27,7 @@
             </mat-panel-title>
             <mat-content class="player-header">
               Class: {{ p?.characterClass || 'N/A' }}
-              <button (click)="addToRoster(p.id)" class="position-btn add-btn">Add to Roster</button>
+              <button (click)="freeAgentService.addToRoster(p.id)" [disabled]="(freeAgentService.addingToRoster$ | async)" class="position-btn add-btn">Add to Roster</button>
             </mat-content>
           </mat-expansion-panel-header>
 
@@ -43,5 +47,7 @@
     </mat-card>
 
   </div>
+  </ng-container>
+  </ng-container>
 
 </div>

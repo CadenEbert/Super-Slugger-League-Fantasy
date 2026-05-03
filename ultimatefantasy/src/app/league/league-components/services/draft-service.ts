@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { io, Socket } from 'socket.io-client';
 import { Observable, map, distinctUntilChanged, combineLatest, Subscription, forkJoin } from 'rxjs';
-import { DraftState, DraftPick, playerPool, CharacterStats, DraftedPlayer } from '../../core/models/draft.model';
-import { LeagueService } from '../league-service';
-import { AuthService } from '../../auth/auth-service';
+import { DraftState, DraftPick, playerPool, CharacterStats, DraftedPlayer } from '../../../core/models/draft.model';
+import { LeagueService } from '../../league-service';
+import { AuthService } from '../../../auth/auth-service';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 

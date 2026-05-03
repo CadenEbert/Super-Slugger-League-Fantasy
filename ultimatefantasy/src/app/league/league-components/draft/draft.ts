@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DraftService } from '../draft-service';
+import { DraftService } from '../services/draft-service';
 import { ActivatedRoute } from '@angular/router';
 import {  Subscription } from 'rxjs';
 import {  take } from 'rxjs/operators';
