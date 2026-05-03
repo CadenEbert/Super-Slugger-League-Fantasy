@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, map, Observable, filter } from 'rxjs';
+
 
 
 @Injectable({
@@ -13,12 +13,12 @@ export class AuthService {
   );
   session$ = this.sessionSubject.asObservable();
 
-  userId$ = this.session$
-
-
-  constructor(private http: HttpClient) {
+  
 
  
+
+
+  constructor(private http: HttpClient) { 
   }
 
   setSession(session: any) {
@@ -31,6 +31,9 @@ export class AuthService {
     }
   }
 
+  getUserId(): any {
+    return this.sessionSubject.value.user.id;
+  }
 
   get currentSession() {
     return this.sessionSubject.value;

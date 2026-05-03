@@ -1,258 +1,265 @@
-
-<div class="draft-container" *ngIf="isLoading">
+<div class="draft-container" *ngIf="draftService.isLoading$ | async">
   <mat-spinner></mat-spinner>
 </div>
 
 
-<div class="draft-container" *ngIf="!isLoading">
 
-  
 
-  <ng-container *ngIf="!(canDraft$ | async)">
-    
-     <h2 class="not-eligible">You are not eligible to participate in the draft.</h2>
-   
-    
-  </ng-container>
- 
-  <ng-container *ngIf="canDraft$ | async as canDraft">
-  <ng-container *ngIf="draftData$ | async as draftData">
-  <ng-container *ngIf="pickOrder$ | async as pickOrder">
-  <ng-container *ngIf="userId$ | async as userId">
-  
-    <div *ngIf="canDraft" class="draft-container">
-      
-      <div *ngIf="draftData.status === 'not_started' && (ownerId$ | async) !== (userId$ | async)">
-        <h3>Waiting for owner to start the draft...</h3>
-      </div>
 
-    <div *ngIf="draftData.status === 'not_started' && (ownerId$ | async) === (userId$ | async)" class="draft-content">
-      <div class="content">
-        <h3>DRAFT SETTINGS</h3>
-      </div>
-      <div class="draft-settings">
-        <div class="draft-order-section">
-          <p>Draft Order:</p>
-          <div class="draft-order" cdkDropList (cdkDropListDropped)="drop($event)">
-            <div class="draft-team" *ngFor="let memberId of pickOrder" cdkDrag>
-              {{ memberMap[memberId] }}
-            </div>
-          </div>
-        </div>
-        <div class="settings">
-          <p>Time per pick: {{ timePerPick }} seconds</p>
-          <select class="select" [(ngModel)]="timePerPick">
-            <option *ngFor="let time of [60, 90, 120]" [value]="time">{{ time }}</option>
-          </select>
-        </div>
-        <div class="settings">
-          <p>Draft Type: {{ draftType }}</p>
-          <select class="select" [(ngModel)]="draftType">
-            <option *ngFor="let type of ['Snake', 'Standard']" [value]="type">{{ type }}</option>
-          </select>
-        </div>
-        <div class="settings">
-          <p>Number of rounds:</p>
-          <select class="select" [(ngModel)]="numberOfRounds">
-            <option *ngFor="let round of [9, 10, 11, 12, 13]" [value]="round">{{ round }}</option>
-          </select>
-        </div>
-        <div class="content">
-          <button class="start-draft-btn" (click)="startDraft(timePerPick, draftType, numberOfRounds)" [disabled]="(ownerId$ | async) !== (userId$ | async)">Start Draft</button>
-        </div>
-      </div>
-    </div>
+<div class="draft-container" *ngIf="!(draftService.isLoading$ | async)">
 
-    <div *ngIf="draftData.status === 'in_progress'" class="draft-content">
-      <div class="draft-board">
-        <div class="draft-header">
-          <h3>DRAFT BOARD</h3>
-          <div class="draft-info">
-            <p>Time Remaining: {{ draftData.timer_seconds }} seconds</p>
-            <p>Current Pick: {{ memberMap[pickOrder[draftData.current_pick_index]] }}</p>
-            <p>Round: {{ draftData.current_round }}</p>
-            <p>Pick: {{ draftData.current_pick }}</p>
-            <button class="start-timer" (click)="toggleTimer(draftData.timer_running)">
-              {{ draftData.timer_running ? 'Pause Timer' : 'Start Timer' }}
-            </button>
-          </div>
-        </div>
 
-        <div class="draft-body">
-          <div class="draft-table">
-            <ng-container *ngFor="let pick of draftedPlayersWithStats$ | async">
-              <mat-card class="indiv-players">
-                <mat-accordion>
-                  <mat-expansion-panel class="player-info">
-                    <mat-expansion-panel-header class="player-header">
-                      <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
-                      <div class="player-header">
-                        <p>{{ memberMap[pick.member_picking] }}</p>
-                        <p>Pick {{ pick.pick_number }}</p>
-                      </div>
-                      
-                    </mat-expansion-panel-header>
-                    <div class="drop-down">
-                      <div class="player-stats">
-                        <div class="stat-half">
-                          <p>Pitching Arm: {{ pick.character.pitching_arm }}</p>
-                          <p>Batting Arm: {{ pick.character.batting_arm }}</p>
-                          <p>Character Class: {{ pick.character.character_class }}</p>
-                          <p>Weight: {{ pick.character.weight }}</p>
-                          <p>Captain: {{ pick.character.captain ? 'Yes' : 'No' }}</p>
-                          <p>Star Pitch: {{ pick.character.star_pitch }}</p>
-                          <p>Bunting: {{ pick.character.bunting }}</p>
-                          <p>Speed: {{ pick.character.speed }}</p>
-                          <p>Fielding: {{ pick.character.fielding }}</p>
-                          <p>Curve: {{ pick.character.curve }}</p>
-                          <p>Trajectory: {{ pick.character.traj }}</p>
-                          <p>Stamina: {{ pick.character.stamina }}</p>
-                          <p>Fielding Ability: {{ pick.character.fielding_ability }}</p>
-                          <p>Star Swing: {{ pick.character.star_swing }}</p>
-                        </div>
-                        <div class="stat-half">
-                          <p>Baserunning Ability: {{ pick.character.baserunning_ability }}</p>
-                          <p>Slap Size: {{ pick.character.slap_size }}</p>
-                          <p>Charge Size: {{ pick.character.charge_size }}</p>
-                          <p>Slap Power: {{ pick.character.slap_power }}</p>
-                          <p>Charge Power: {{ pick.character.charge_power }}</p>
-                          <p>Outfield Throwing: {{ pick.character.outfield_throwing }}</p>
-                          <p>Displayed Pitching: {{ pick.character.displayed_pitching }}</p>
-                          <p>Displayed Batting: {{ pick.character.displayed_batting }}</p>
-                          <p>Displayed Fielding: {{ pick.character.displayed_fielding }}</p>
-                          <p>Speed: {{ pick.character.dis_speed }}</p>
-                          <p>Curveball Speed: {{ pick.character.curveball_speed }}</p>
-                          <p>Charge Pitch Speed: {{ pick.character.charge_pitch_speed }}</p>
-                          <p>Hit Curve: {{ pick.character.hit_curve }}</p>
-                          <p>Star Pitch Type: {{ pick.character.star_pitch_type }}</p>
+
+    <ng-container *ngIf="!(draftService.canDraft$ | async)">
+
+      <h2 class="not-eligible">You are not eligible to participate in the draft.</h2>
+
+
+    </ng-container>
+
+    <ng-container *ngIf="draftService.canDraft$ | async as canDraft">
+      <ng-container *ngIf="draftService.draftData$ | async as draftData">
+        <ng-container *ngIf="draftService.pickOrder$ | async as pickOrder">
+          <ng-container *ngIf="draftService.draftedPlayersWithStats$ | async as draftedPlayersWithStats">
+            <ng-container *ngIf="draftService.availablePlayers$ | async as availablePlayers">
+
+
+
+
+              <div *ngIf="canDraft" class="draft-container">
+
+                <div *ngIf="draftData.status === 'not_started' && !isOwner">
+                  <h3>Waiting for owner to start the draft...</h3>
+                </div>
+
+                <div *ngIf="draftData.status === 'not_started' && isOwner" class="draft-content">
+                  <div class="content">
+                    <h3>DRAFT SETTINGS</h3>
+                  </div>
+                  <div class="draft-settings">
+                    <div class="draft-order-section">
+                      <p>Draft Order:</p>
+                      <div class="draft-order" cdkDropList (cdkDropListDropped)="drop($event)">
+                        <div class="draft-team" *ngFor="let memberId of pickOrder" cdkDrag>
+                          {{ draftService.memberMap[memberId] }}
                         </div>
                       </div>
                     </div>
-                  </mat-expansion-panel>
-                </mat-accordion>
-              </mat-card>
-            </ng-container>
-          </div>
-
-          <div class="player-pool">
-            <ng-container *ngFor="let pp of availablePlayers$ | async">
-              <mat-card class="indiv-players">
-                <mat-accordion>
-                  <mat-expansion-panel class="player-info">
-                    <mat-expansion-panel-header class="player-header">
-                      <mat-panel-title>{{ pp.character_name }}</mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div class="drop-down">
-                      <div class="player-stats">
-                        <div class="stat-half">
-                          <p>Pitching Arm: {{ pp.pitching_arm }}</p>
-                          <p>Batting Arm: {{ pp.batting_arm }}</p>
-                          <p>Character Class: {{ pp.character_class }}</p>
-                          <p>Weight: {{ pp.weight }}</p>
-                          <p>Captain: {{ pp.captain ? 'Yes' : 'No' }}</p>
-                          <p>Star Pitch: {{ pp.star_pitch }}</p>
-                          <p>Bunting: {{ pp.bunting }}</p>
-                          <p>Speed: {{ pp.speed }}</p>
-                          <p>Fielding: {{ pp.fielding }}</p>
-                          <p>Curve: {{ pp.curve }}</p>
-                          <p>Trajectory: {{ pp.traj }}</p>
-                          <p>Stamina: {{ pp.stamina }}</p>
-                          <p>Fielding Ability: {{ pp.fielding_ability }}</p>
-                          <p>Star Swing: {{ pp.star_swing }}</p>
-                        </div>
-                        <div class="stat-half">
-                          <p>Baserunning Ability: {{ pp.baserunning_ability }}</p>
-                          <p>Slap Size: {{ pp.slap_size }}</p>
-                          <p>Charge Size: {{ pp.charge_size }}</p>
-                          <p>Slap Power: {{ pp.slap_power }}</p>
-                          <p>Charge Power: {{ pp.charge_power }}</p>
-                          <p>Outfield Throwing: {{ pp.outfield_throwing }}</p>
-                          <p>Displayed Pitching: {{ pp.displayed_pitching }}</p>
-                          <p>Displayed Batting: {{ pp.displayed_batting }}</p>
-                          <p>Displayed Fielding: {{ pp.displayed_fielding }}</p>
-                          <p>Speed: {{ pp.dis_speed }}</p>
-                          <p>Curveball Speed: {{ pp.curveball_speed }}</p>
-                          <p>Charge Pitch Speed: {{ pp.charge_pitch_speed }}</p>
-                          <p>Hit Curve: {{ pp.hit_curve }}</p>
-                          <p>Star Pitch Type: {{ pp.star_pitch_type }}</p>
-                        </div>
-                      </div>
-                      <button
-                        class="draft-btn"
-                        (click)="makePick(pp.id, pickOrder[draftData.current_pick_index])"
-                        [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== userId || isMakingPick"
-                      >
-                        Draft Player
-                      </button>
+                    <div class="settings">
+                      <p>Time per pick: {{ timePerPick }} seconds</p>
+                      <select class="select" [(ngModel)]="timePerPick">
+                        <option *ngFor="let time of [60, 90, 120]" [value]="time">{{ time }}</option>
+                      </select>
                     </div>
-                  </mat-expansion-panel>
-                </mat-accordion>
-              </mat-card>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-    </div>
+                    <div class="settings">
+                      <p>Draft Type: {{ draftType }}</p>
+                      <select class="select" [(ngModel)]="draftType">
+                        <option *ngFor="let type of ['Snake', 'Standard']" [value]="type">{{ type }}</option>
+                      </select>
+                    </div>
+                    <div class="settings">
+                      <p>Number of rounds:</p>
+                      <select class="select" [(ngModel)]="numberOfRounds">
+                        <option *ngFor="let round of [9, 10, 11, 12, 13]" [value]="round">{{ round }}</option>
+                      </select>
+                    </div>
+                    <div class="content">
+                      <button class="start-draft-btn" (click)="startDraft(timePerPick, draftType, numberOfRounds)"
+                        [disabled]="!isOwner">Start Draft</button>
+                    </div>
+                  </div>
+                </div>
 
-    <div *ngIf="draftData.status === 'completed'" class="draft-content">
-      <h3>Draft Completed!</h3>
-      <ng-container *ngFor="let pick of draftedPlayersWithStats$ | async">
-              <mat-card class="indiv-players">
-                <mat-accordion>
-                  <mat-expansion-panel class="player-info">
-                    <mat-expansion-panel-header class="player-header">
-                      <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
-                      <div class="player-header">
-                        <p>{{ memberMap[pick.member_picking] }}</p>
-                        <p>Pick {{ pick.pick_number }}</p>
-                      </div>
-                      
-                    </mat-expansion-panel-header>
-                    <div class="drop-down">
-                      <div class="player-stats">
-                        <div class="stat-half">
-                          <p>Pitching Arm: {{ pick.character.pitching_arm }}</p>
-                          <p>Batting Arm: {{ pick.character.batting_arm }}</p>
-                          <p>Character Class: {{ pick.character.character_class }}</p>
-                          <p>Weight: {{ pick.character.weight }}</p>
-                          <p>Captain: {{ pick.character.captain ? 'Yes' : 'No' }}</p>
-                          <p>Star Pitch: {{ pick.character.star_pitch }}</p>
-                          <p>Bunting: {{ pick.character.bunting }}</p>
-                          <p>Speed: {{ pick.character.speed }}</p>
-                          <p>Fielding: {{ pick.character.fielding }}</p>
-                          <p>Curve: {{ pick.character.curve }}</p>
-                          <p>Trajectory: {{ pick.character.traj }}</p>
-                          <p>Stamina: {{ pick.character.stamina }}</p>
-                          <p>Fielding Ability: {{ pick.character.fielding_ability }}</p>
-                          <p>Star Swing: {{ pick.character.star_swing }}</p>
-                        </div>
-                        <div class="stat-half">
-                          <p>Baserunning Ability: {{ pick.character.baserunning_ability }}</p>
-                          <p>Slap Size: {{ pick.character.slap_size }}</p>
-                          <p>Charge Size: {{ pick.character.charge_size }}</p>
-                          <p>Slap Power: {{ pick.character.slap_power }}</p>
-                          <p>Charge Power: {{ pick.character.charge_power }}</p>
-                          <p>Outfield Throwing: {{ pick.character.outfield_throwing }}</p>
-                          <p>Displayed Pitching: {{ pick.character.displayed_pitching }}</p>
-                          <p>Displayed Batting: {{ pick.character.displayed_batting }}</p>
-                          <p>Displayed Fielding: {{ pick.character.displayed_fielding }}</p>
-                          <p>Speed: {{ pick.character.dis_speed }}</p>
-                          <p>Curveball Speed: {{ pick.character.curveball_speed }}</p>
-                          <p>Charge Pitch Speed: {{ pick.character.charge_pitch_speed }}</p>
-                          <p>Hit Curve: {{ pick.character.hit_curve }}</p>
-                          <p>Star Pitch Type: {{ pick.character.star_pitch_type }}</p>
-                        </div>
+                <div *ngIf="draftData.status === 'in_progress'" class="draft-content">
+                  <div class="draft-board">
+                    <div class="draft-header">
+                      <h3>DRAFT BOARD</h3>
+                      <div class="draft-info">
+                        <p>Time Remaining: {{ draftData.timer_seconds }} seconds</p>
+                        <p>Current Pick: {{ draftService.memberMap[pickOrder[draftData.current_pick_index]] }}</p>
+                        <p>Round: {{ draftData.current_round }}</p>
+                        <p>Pick: {{ draftData.current_pick }}</p>
+                        <button class="start-timer" (click)="toggleTimer(draftData.timer_running)">
+                          {{ draftData.timer_running ? 'Pause Timer' : 'Start Timer' }}
+                        </button>
                       </div>
                     </div>
-                  </mat-expansion-panel>
-                </mat-accordion>
-              </mat-card>
-            </ng-container>
-            </div>
-            </div>
-  </ng-container>
-  </ng-container>
-  </ng-container>
-   </ng-container>
 
-</div>
+                    <div class="draft-body">
+                      <div class="draft-table">
+                        <div *ngFor="let pick of draftedPlayersWithStats">
+                          <mat-card class="indiv-players">
+                            <mat-accordion>
+                              <mat-expansion-panel class="player-info">
+                                <mat-expansion-panel-header class="player-header">
+                                  <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
+                                  <div class="player-header">
+                                    <p>{{ draftService.memberMap[pick.member_picking] }}</p>
+                                    <p>Pick {{ pick.pick_number }}</p>
+                                  </div>
+
+                                </mat-expansion-panel-header>
+                                <div class="drop-down">
+                                  <div class="player-stats">
+                                    <div class="stat-half">
+                                      <p>Pitching Arm: {{ pick.character.pitching_arm }}</p>
+                                      <p>Batting Arm: {{ pick.character.batting_arm }}</p>
+                                      <p>Character Class: {{ pick.character.character_class }}</p>
+                                      <p>Weight: {{ pick.character.weight }}</p>
+                                      <p>Captain: {{ pick.character.captain ? 'Yes' : 'No' }}</p>
+                                      <p>Star Pitch: {{ pick.character.star_pitch }}</p>
+                                      <p>Bunting: {{ pick.character.bunting }}</p>
+                                      <p>Speed: {{ pick.character.speed }}</p>
+                                      <p>Fielding: {{ pick.character.fielding }}</p>
+                                      <p>Curve: {{ pick.character.curve }}</p>
+                                      <p>Trajectory: {{ pick.character.traj }}</p>
+                                      <p>Stamina: {{ pick.character.stamina }}</p>
+                                      <p>Fielding Ability: {{ pick.character.fielding_ability }}</p>
+                                      <p>Star Swing: {{ pick.character.star_swing }}</p>
+                                    </div>
+                                    <div class="stat-half">
+                                      <p>Baserunning Ability: {{ pick.character.baserunning_ability }}</p>
+                                      <p>Slap Size: {{ pick.character.slap_size }}</p>
+                                      <p>Charge Size: {{ pick.character.charge_size }}</p>
+                                      <p>Slap Power: {{ pick.character.slap_power }}</p>
+                                      <p>Charge Power: {{ pick.character.charge_power }}</p>
+                                      <p>Outfield Throwing: {{ pick.character.outfield_throwing }}</p>
+                                      <p>Displayed Pitching: {{ pick.character.displayed_pitching }}</p>
+                                      <p>Displayed Batting: {{ pick.character.displayed_batting }}</p>
+                                      <p>Displayed Fielding: {{ pick.character.displayed_fielding }}</p>
+                                      <p>Speed: {{ pick.character.dis_speed }}</p>
+                                      <p>Curveball Speed: {{ pick.character.curveball_speed }}</p>
+                                      <p>Charge Pitch Speed: {{ pick.character.charge_pitch_speed }}</p>
+                                      <p>Hit Curve: {{ pick.character.hit_curve }}</p>
+                                      <p>Star Pitch Type: {{ pick.character.star_pitch_type }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mat-expansion-panel>
+                            </mat-accordion>
+                          </mat-card>
+                        </div>
+                      </div>
+
+                      <div class="player-pool">
+                        <div *ngFor="let pp of availablePlayers">
+                          <mat-card class="indiv-players">
+                            <mat-accordion>
+                              <mat-expansion-panel class="player-info">
+                                <mat-expansion-panel-header class="player-header">
+                                  <mat-panel-title>{{ pp.character_name }}</mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div class="drop-down">
+                                  <div class="player-stats">
+                                    <div class="stat-half">
+                                      <p>Pitching Arm: {{ pp.pitching_arm }}</p>
+                                      <p>Batting Arm: {{ pp.batting_arm }}</p>
+                                      <p>Character Class: {{ pp.character_class }}</p>
+                                      <p>Weight: {{ pp.weight }}</p>
+                                      <p>Captain: {{ pp.captain ? 'Yes' : 'No' }}</p>
+                                      <p>Star Pitch: {{ pp.star_pitch }}</p>
+                                      <p>Bunting: {{ pp.bunting }}</p>
+                                      <p>Speed: {{ pp.speed }}</p>
+                                      <p>Fielding: {{ pp.fielding }}</p>
+                                      <p>Curve: {{ pp.curve }}</p>
+                                      <p>Trajectory: {{ pp.traj }}</p>
+                                      <p>Stamina: {{ pp.stamina }}</p>
+                                      <p>Fielding Ability: {{ pp.fielding_ability }}</p>
+                                      <p>Star Swing: {{ pp.star_swing }}</p>
+                                    </div>
+                                    <div class="stat-half">
+                                      <p>Baserunning Ability: {{ pp.baserunning_ability }}</p>
+                                      <p>Slap Size: {{ pp.slap_size }}</p>
+                                      <p>Charge Size: {{ pp.charge_size }}</p>
+                                      <p>Slap Power: {{ pp.slap_power }}</p>
+                                      <p>Charge Power: {{ pp.charge_power }}</p>
+                                      <p>Outfield Throwing: {{ pp.outfield_throwing }}</p>
+                                      <p>Displayed Pitching: {{ pp.displayed_pitching }}</p>
+                                      <p>Displayed Batting: {{ pp.displayed_batting }}</p>
+                                      <p>Displayed Fielding: {{ pp.displayed_fielding }}</p>
+                                      <p>Speed: {{ pp.dis_speed }}</p>
+                                      <p>Curveball Speed: {{ pp.curveball_speed }}</p>
+                                      <p>Charge Pitch Speed: {{ pp.charge_pitch_speed }}</p>
+                                      <p>Hit Curve: {{ pp.hit_curve }}</p>
+                                      <p>Star Pitch Type: {{ pp.star_pitch_type }}</p>
+                                    </div>
+                                  </div>
+                                  <button class="draft-btn"
+                                    (click)="makePick(pp.id, pickOrder[draftData.current_pick_index])"
+                                    [disabled]="!draftData.timer_running || pickOrder[draftData.current_pick_index] !== draftService.value || isMakingPick">
+                                    Draft Player
+                                  </button>
+                                </div>
+                              </mat-expansion-panel>
+                            </mat-accordion>
+                          </mat-card>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="draftData.status === 'completed'" class="draft-content">
+                  <h3>Draft Completed!</h3>
+                  <div *ngFor="let pick of draftedPlayersWithStats">
+                    <mat-card class="indiv-players">
+                      <mat-accordion>
+                        <mat-expansion-panel class="player-info">
+                          <mat-expansion-panel-header class="player-header">
+                            <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
+                            <div class="player-header">
+                              <p>{{ draftService.memberMap?.[pick.member_picking] }}</p>
+                              <p>Pick {{ pick.pick_number }}</p>
+                            </div>
+
+                          </mat-expansion-panel-header>
+                          <div class="drop-down">
+                            <div class="player-stats">
+                              <div class="stat-half">
+                                <p>Pitching Arm: {{ pick.character.pitching_arm }}</p>
+                                <p>Batting Arm: {{ pick.character.batting_arm }}</p>
+                                <p>Character Class: {{ pick.character.character_class }}</p>
+                                <p>Weight: {{ pick.character.weight }}</p>
+                                <p>Captain: {{ pick.character.captain ? 'Yes' : 'No' }}</p>
+                                <p>Star Pitch: {{ pick.character.star_pitch }}</p>
+                                <p>Bunting: {{ pick.character.bunting }}</p>
+                                <p>Speed: {{ pick.character.speed }}</p>
+                                <p>Fielding: {{ pick.character.fielding }}</p>
+                                <p>Curve: {{ pick.character.curve }}</p>
+                                <p>Trajectory: {{ pick.character.traj }}</p>
+                                <p>Stamina: {{ pick.character.stamina }}</p>
+                                <p>Fielding Ability: {{ pick.character.fielding_ability }}</p>
+                                <p>Star Swing: {{ pick.character.star_swing }}</p>
+                              </div>
+                              <div class="stat-half">
+                                <p>Baserunning Ability: {{ pick.character.baserunning_ability }}</p>
+                                <p>Slap Size: {{ pick.character.slap_size }}</p>
+                                <p>Charge Size: {{ pick.character.charge_size }}</p>
+                                <p>Slap Power: {{ pick.character.slap_power }}</p>
+                                <p>Charge Power: {{ pick.character.charge_power }}</p>
+                                <p>Outfield Throwing: {{ pick.character.outfield_throwing }}</p>
+                                <p>Displayed Pitching: {{ pick.character.displayed_pitching }}</p>
+                                <p>Displayed Batting: {{ pick.character.displayed_batting }}</p>
+                                <p>Displayed Fielding: {{ pick.character.displayed_fielding }}</p>
+                                <p>Speed: {{ pick.character.dis_speed }}</p>
+                                <p>Curveball Speed: {{ pick.character.curveball_speed }}</p>
+                                <p>Charge Pitch Speed: {{ pick.character.charge_pitch_speed }}</p>
+                                <p>Hit Curve: {{ pick.character.hit_curve }}</p>
+                                <p>Star Pitch Type: {{ pick.character.star_pitch_type }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </mat-card>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+
+  </div>

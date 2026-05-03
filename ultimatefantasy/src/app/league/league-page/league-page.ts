@@ -4,6 +4,8 @@ import { LeagueService } from '../league-service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { map } from 'rxjs/internal/operators/map';
 import { LeagueCompService } from '../league-components/league-comp-service';
+import { Subscription } from 'rxjs';
+
 
 
 
@@ -20,8 +22,10 @@ export class LeaguePage {
   private ownerIdSubject = new BehaviorSubject<string>('');
   ownerId$ = this.ownerIdSubject.asObservable();
 
-  private userIdSubject = new BehaviorSubject<string>('');
-  userId$ = this.userIdSubject.asObservable();
+  private subscription!: Subscription;
+  user_id: string = '';
+
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -36,21 +40,21 @@ export class LeaguePage {
 
   ngOnInit() {
 
-    this.leagueCompService.getUserIdFromBackend().subscribe({
-      next: (userId) => {
-        this.setUserId(userId);
-        console.log('Fetched user ID in LeaguePage:', userId);
-      },
-      error: (err) => console.error('Error fetching user ID in LeaguePage:', err)
+   
+
+    this.subscription = this.leagueService.user_id.subscribe(val =>
+    {
+      this.user_id = val;
     });
+  
 
 
 
-
-    console.log('User ID in RosterPage:', this.userId$);
+    
 
     this.leagueService.getOwnerId(this.route.snapshot.params['leagueId']).subscribe(ownerId => {
       console.log('Owner ID in LeaguePage:', ownerId);
+      console.log('User ID in RosterPage:', this.user_id);
       this.setOwnerId(ownerId);
     });
 
@@ -69,6 +73,10 @@ export class LeaguePage {
     }
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
 
 
   private fetchLeague(leagueId: string) {
@@ -85,9 +93,7 @@ export class LeaguePage {
     this.ownerIdSubject.next(ownerId);
   }
 
-  setUserId(userId: string) {
-    this.userIdSubject.next(userId);
-  }
+  
 
 
 }

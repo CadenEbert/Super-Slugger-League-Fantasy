@@ -1,14 +1,36 @@
 
 import { Injectable } from '@angular/core';
-import { Observable, filter, map, switchMap, take } from 'rxjs';
+import { BehaviorSubject, Observable, filter, map, switchMap, take } from 'rxjs';
 import { AuthService } from '../auth/auth-service';
 import { HttpClient } from '@angular/common/http';
+
 
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
 
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  private userId$ = new BehaviorSubject<any>('');
+  public user_id = this.userId$.asObservable();
+
+
+
+
+
+  constructor(private http: HttpClient, private authService: AuthService) {
+    this.setUserId(this.authService.getUserId());
+
+
+  }
+
+
+  setUserId(user_id: string) {
+
+    this.userId$.next(user_id);
+
+  }
+
+
+
 
   getLeaguesForCurrentUser(userId: string): Observable<any[]> {
     return this.http.get<any[]>(`/api/leagues?userId=${userId}`);
