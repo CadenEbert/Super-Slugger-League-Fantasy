@@ -63,13 +63,15 @@ export class TradeService {
         ...char,
         name: characterMap.get(char.character_id) || 'Unknown Character'
       })));
-      this.populateProposingTeamPlayers();
+      
 
       this.members$.next(allMembers.filter((member: any) => member.user_id !== this.userId$.value));
+      this.rosters$.next(tradeMembers);
       this.myRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
       this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
       this.proposingTeamId$.next(this.myRosters$.value[0]?.id);
       this.receivingTeamId$.next(this.otherRosters$.value[0]?.id);
+      this.populateProposingTeamPlayers();
       this.setIsLoading(false);
     })
 
@@ -110,104 +112,102 @@ export class TradeService {
     this.requesting$.next(true);
     const tradeData = {
       proposingTeamId: this.proposingTeamId$.value,
-      receivingTeamUsername: this.otherRosters$.value.find(r => r.id === this.receivingTeamId)?.team_name,
-      receivingTeamId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId)?.id,
+      receivingTeamUsername: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.team_name,
+      receivingTeamId: this.otherRosters$.value.find(r => r.id !== this.receivingTeamId$.value)?.id,
       offeredPlayerId: this.proposingTradeCharacters$.value.map(trade => trade.id),
       requestedPlayerId: this.receivingTradeCharacters$.value.map(trade => trade.id),
-      proposingTeamUsername: this.profile?.username || 'Unknown User',
-      offeredPlayerName: this.proposingTradeCharacters.map(trade => trade.character_name),
-      requestedPlayerName: this.receivingTradeCharacters.map(trade => trade.character_name),
-      receivingTeamUserId: this.otherRosters.find(r => r.id === this.receivingTeamId)?.owner_id
+      
+      offeredPlayerName: this.proposingTradeCharacters$.value.map(trade => trade.character_name),
+      requestedPlayerName: this.receivingTradeCharacters$.value.map(trade => trade.character_name),
+      receivingTeamUserId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.owner_id
     };
 
     console.log('Trade data being sent to server:', tradeData);
-    this.leagueCompService.proposeTrade(this.route.parent?.snapshot.params['leagueId'], tradeData).subscribe({
+    this.leagueCompService.proposeTrade(this.leagueId$.value, tradeData).subscribe({
       next: (response) => {
         console.log('Trade proposed successfully:', response);
-        window.alert('Trade proposed successfully!');
-        this.trades.push(response);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        globalThis.alert('Trade proposed successfully!');
+        this.trades$.next([...this.trades$.value, response]);
+        this.requesting$.next(false);
+
       },
       error: (err) => {
         alert(err.error?.message || 'You have too many active trade requests. Please wait for them to be resolved before proposing new trades.');
         console.error('Error proposing trade:', err);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        this.requesting$.next(false);
       }
     });
   }
 
   acceptTrade(tradeId: string) {
-    this.requesting = true;
+    this.requesting$.next(true);
 
     this.leagueCompService.acceptTrade(tradeId).subscribe({
       next: (response) => {
         console.log('Trade accepted successfully:', response);
         window.alert('Trade accepted successfully!');
-        this.trades = this.trades.filter(trade => trade.id !== tradeId);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
+        this.requesting$.next(false);
+     
       },
       error: (err) => {
         alert(err.error?.message || 'Error accepting trade. Please try again later.');
         console.error('Error accepting trade:', err);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        this.requesting$.next(false);
       }
     });
   }
 
   rejectTrade(tradeId: string) {
-    this.requesting = true;
+    this.requesting$.next(true);
 
     this.leagueCompService.rejectTrade(tradeId).subscribe({
       next: (response) => {
         console.log('Trade rejected successfully:', response);
-        window.alert('Trade rejected successfully!');
-        this.trades = this.trades.filter(trade => trade.id !== tradeId);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        globalThis.alert('Trade rejected successfully!');
+        this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
+        this.requesting$.next(false);
+     
       },
       error: (err) => {
         alert(err.error?.message || 'Error rejecting trade. Please try again later.');
         console.error('Error rejecting trade:', err);
-        this.requesting = false;
-        this.cdr.detectChanges();
+        this.requesting$.next(false);
+    
       }
     });
   }
 
   addToTradeProposing() {
-    const player = this.proposingTeamPlayers.find(p => p.character_id === +this.offeredPlayerId);
+    const player = this.proposingTeamPlayers$.value.find(p => p.character_id === +this.offeredPlayerId$.value);
     const tradeItem: Trade = {
       id: player.character_id,
       character_name: player.name
     };
 
-    const alreadyAdded = this.proposingTradeCharacters.some(trade => trade.id === tradeItem.id);
+    const alreadyAdded = this.proposingTradeCharacters$.value.some(trade => trade.id === tradeItem.id);
     if (alreadyAdded) {
       alert('This character has already been added to the trade.');
       return;
     }
-    this.proposingTradeCharacters.push(tradeItem);
-    this.propAdded = true;
+    this.proposingTradeCharacters$.next([...this.proposingTradeCharacters$.value, tradeItem]);
+    this.propAdded$.next(true);
   }
 
   addToTradeReceiving() {
-    const player = this.receivingTeamPlayers.find(p => p.character_id === +this.requestedPlayerId);
+    const player = this.receivingTeamPlayers$.value.find(p => p.character_id === +this.requestedPlayerId$.value);
     const tradeItem: Trade = {
       id: player.character_id,
       character_name: player.name
     };
 
-    const alreadyAdded = this.receivingTradeCharacters.some(trade => trade.id === tradeItem.id);
+    const alreadyAdded = this.receivingTradeCharacters$.value.some(trade => trade.id === tradeItem.id);
     if (alreadyAdded) {
       alert('This character has already been added to the trade.');
       return;
     }
-    this.receivingTradeCharacters.push(tradeItem);
-    this.recAdded = true;
+    this.receivingTradeCharacters$.next([...this.receivingTradeCharacters$.value, tradeItem]);
+    this.recAdded$.next(true);
   }
 
 

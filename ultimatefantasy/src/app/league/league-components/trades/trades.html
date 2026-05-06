@@ -1,9 +1,14 @@
-<div class="loading" *ngIf="isLoading">
+<div class="loading" *ngIf="(tradeService.isLoading$ | async)">
     <mat-spinner></mat-spinner>
 </div>
 
 
-<div class="trade-container" *ngIf="!isLoading">
+<div class="trade-container" *ngIf="!(tradeService.isLoading$ | async)">
+    <ng-container *ngIf="tradeService.proposingTeam$ | async as proposingTeam"></ng-container>
+    <ng-container *ngIf="tradeService.proposingTeamPlayers$ | async as proposingTeamPlayers"></ng-container>
+    <ng-container *ngIf="tradeService.offeredPlayerId$ | async as offeredPlayerId"></ng-container>
+
+
     <div class="trade-header">
         <h3>Trade Requests</h3>
     </div>
