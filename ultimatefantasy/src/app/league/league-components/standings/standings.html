@@ -3,14 +3,14 @@
         <h1>Standings</h1>
     </div>
 
-    <div class="loading" *ngIf="isLoading">
+    <div class="loading" *ngIf="(standingsService.isLoading$ | async)">
         <mat-spinner></mat-spinner>
     </div>
 
-    <div class="teams" *ngIf="!isLoading">
+    <div class="teams" *ngIf="!(standingsService.isLoading$ | async)">
         
     
-        
+        <ng-container *ngIf="standingsService.standingsSubject$ | async as standings">
         <div class="team-standings" *ngFor="let team of standings">
             <div class="green" *ngIf="positive(team)">
                 <div class="team-name">
@@ -44,6 +44,7 @@
 
             
             </div>
+        </ng-container>
 
        
 

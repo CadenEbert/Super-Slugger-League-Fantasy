@@ -3,10 +3,7 @@ import { LeagueCompService } from '../league-comp-service';
 import { ActivatedRoute } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 
-export interface Trade {
-  id: string;
-  character_name: string;
-}
+
 
 @Component({
   selector: 'app-trades',
@@ -15,44 +12,7 @@ export interface Trade {
   styleUrl: './trades.css',
 })
 export class Trades {
-  isLoading: boolean = true;
 
-  trades: any[] = [];
-
-  requesting: boolean = false;
-
-  members: any[] = [];
-
-  characters: any[] = [];
-
-  receivingTeamId: string = '';
-  proposingTeamId: string = '';
-
-
-  receivingTradeCharacters: Trade[] = [];
-  proposingTradeCharacters: Trade[] = [];
-
-
-  propAdded: boolean = false;
-  recAdded: boolean = false;
-
-  requestedPlayerId: string = '';
-  offeredPlayerId: string = '';
-
-
-  proposingTeamPlayers: any[] = [];
-  receivingTeamPlayers: any[] = [];
-
-  pastTrades: any[] = [];
-
-  allCharacters: any[] = [];
-
-  myRosters: any[] = [];
-  rosters: any[] = [];
-  otherRosters: any[] = [];
-  
-
-  profile: any;
 
   constructor(private leagueCompService: LeagueCompService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
 
