@@ -41,9 +41,13 @@ export class TradeService {
   userId$ = new BehaviorSubject<string>('');
 
 
-  constructor(private http: HttpClient, private authService: AuthService, private leagueCompService: LeagueCompService) {
+
+
+  constructor(private authService: AuthService, private leagueCompService: LeagueCompService) {
     this.userId$.next(this.authService.getUserId());
   }
+
+
 
   loadTrades(leagueId: string) {
     this.leagueId$.next(leagueId);
@@ -55,27 +59,29 @@ export class TradeService {
       allMembers: this.leagueCompService.getAllMembers(leagueId),
       tradeMembers: this.leagueCompService.getAllTradeMembers(leagueId)
     }).subscribe(({ trades, characters, characterNames, allMembers, tradeMembers }) => {
-      this.trades$.next(trades);
-      this.pastTrades$.next(this.trades$.value.filter(trade => trade.status !== 'pending'));
+      this.trades$.next(trades.filter(trade => trade.receiving_team_user_id === this.userId$.value && trade.status === 'pending'));
+      this.pastTrades$.next(trades.filter(trade => trade.status !== 'pending'));
 
       const characterMap = new Map(characterNames.map((char: any) => [char.ID, char.character_name]));
       this.characters$.next(characters.map((char: any) => ({
         ...char,
         name: characterMap.get(char.character_id) || 'Unknown Character'
       })));
-      
+
 
       this.members$.next(allMembers.filter((member: any) => member.user_id !== this.userId$.value));
       this.rosters$.next(tradeMembers);
       this.myRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
-      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
+      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));      
       this.proposingTeamId$.next(this.myRosters$.value[0]?.id);
-      this.receivingTeamId$.next(this.otherRosters$.value[0]?.id);
+  
       this.populateProposingTeamPlayers();
       this.setIsLoading(false);
     })
 
   }
+
+
 
 
   setIsLoading(isLoading: boolean) {
@@ -92,6 +98,9 @@ export class TradeService {
       this.receivingTeamPlayers$.next([]);
     }
 
+
+  }
+  onRequestedPlayerChange() {
 
   }
 
@@ -113,10 +122,10 @@ export class TradeService {
     const tradeData = {
       proposingTeamId: this.proposingTeamId$.value,
       receivingTeamUsername: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.team_name,
-      receivingTeamId: this.otherRosters$.value.find(r => r.id !== this.receivingTeamId$.value)?.id,
+      receivingTeamId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.id,
       offeredPlayerId: this.proposingTradeCharacters$.value.map(trade => trade.id),
       requestedPlayerId: this.receivingTradeCharacters$.value.map(trade => trade.id),
-      
+
       offeredPlayerName: this.proposingTradeCharacters$.value.map(trade => trade.character_name),
       requestedPlayerName: this.receivingTradeCharacters$.value.map(trade => trade.character_name),
       receivingTeamUserId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.owner_id
@@ -148,7 +157,7 @@ export class TradeService {
         window.alert('Trade accepted successfully!');
         this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
         this.requesting$.next(false);
-     
+
       },
       error: (err) => {
         alert(err.error?.message || 'Error accepting trade. Please try again later.');
@@ -167,16 +176,18 @@ export class TradeService {
         globalThis.alert('Trade rejected successfully!');
         this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
         this.requesting$.next(false);
-     
+
       },
       error: (err) => {
         alert(err.error?.message || 'Error rejecting trade. Please try again later.');
         console.error('Error rejecting trade:', err);
         this.requesting$.next(false);
-    
+
       }
     });
   }
+
+
 
   addToTradeProposing() {
     const player = this.proposingTeamPlayers$.value.find(p => p.character_id === +this.offeredPlayerId$.value);
@@ -192,6 +203,7 @@ export class TradeService {
     }
     this.proposingTradeCharacters$.next([...this.proposingTradeCharacters$.value, tradeItem]);
     this.propAdded$.next(true);
+    console.log(this.propAdded$.value)
   }
 
   addToTradeReceiving() {
@@ -208,6 +220,7 @@ export class TradeService {
     }
     this.receivingTradeCharacters$.next([...this.receivingTradeCharacters$.value, tradeItem]);
     this.recAdded$.next(true);
+    console.log(this.recAdded$.value)
   }
 
 

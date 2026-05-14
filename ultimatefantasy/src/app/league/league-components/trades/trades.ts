@@ -21,4 +21,16 @@ export class Trades {
   ngOnInit(): void {
     this.tradeService.loadTrades(this.route.parent?.snapshot.params['leagueId']);
   }
+
+  get offeredPlayerId() { return this.tradeService.offeredPlayerId$.value; }
+  set offeredPlayerId(v: string) { this.tradeService.offeredPlayerId$.next(v); }
+
+  get requestedPlayerId() { return this.tradeService.requestedPlayerId$.value; }
+  set requestedPlayerId(v: string) { this.tradeService.requestedPlayerId$.next(v); }
+
+  get receivingTeamId() { return this.tradeService.receivingTeamId$.value; }
+  set receivingTeamId(v: string) {
+     this.tradeService.receivingTeamId$.next(v);
+     this.tradeService.onReceivingTeamChange();
+     }
 }

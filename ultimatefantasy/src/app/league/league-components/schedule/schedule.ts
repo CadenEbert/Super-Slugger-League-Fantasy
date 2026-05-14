@@ -303,6 +303,14 @@ export class Schedule {
     this.leagueCompService.generateSchedule(this.route.parent?.snapshot.params['leagueId'], this.totalWeeks, this.number_of_playoffs).subscribe({
       next: (response) => {
         console.log('Generated schedule:', this.scheduleGames$);
+        const mapped = response.map((g: any) => ({
+          home_team: g.homeTeam,
+          away_team: g.awayTeam,
+          week: g.week,
+          bye: g.bye,
+
+        }));
+        this.setScheduleGames(mapped);
         this.generating = false;
       },
       error: (err) => {
@@ -376,7 +384,7 @@ export class Schedule {
         this.gen_playoffs = false;
       }
     });
-    
+
   }
 
   completeRound(playoffGames: Game[]) {

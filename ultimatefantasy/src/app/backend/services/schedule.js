@@ -98,8 +98,8 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 byeIndex = 0;
             }
 
-            const playerOnBye = testMembers[byeIndex];
-            const shuffledMembers = [...testMembers].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
+            const playerOnBye = membersMap[byeIndex];
+            const shuffledMembers = [...membersMap].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
 
             const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week: week + 1, bye: true };
             console.log('Adding bye matchup:', byeMatchup);
@@ -170,7 +170,7 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
         }
 
 
-
+        console.log(schedule);
 
         return schedule;
 
@@ -351,6 +351,8 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch league members for standings update');
         }
 
+ 
+
         const membersMap = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
    
 
@@ -417,7 +419,7 @@ exports.completeWeek = async (leagueId, current_week) => {
             throw new Error('Failed to fetch current week');
         }
 
-        if (parseInt(current_week) == data[0].total_weeks) {
+        if (Number.parseInt(current_week) == data[0].total_weeks) {
             const { error } = await client
                 .from('schedule')
                 .update({

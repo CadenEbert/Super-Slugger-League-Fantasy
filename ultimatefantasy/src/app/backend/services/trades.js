@@ -1,4 +1,4 @@
-const supabase = require('../supabase'); 
+const supabase = require('../supabase');
 
 
 exports.getTrades = async (leagueId, userId) => {
@@ -45,7 +45,7 @@ exports.getAllCharacterNames = async () => {
         .select('ID, character_name');
 
 
-        if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
     return data;
 }
@@ -53,7 +53,7 @@ exports.getAllCharacterNames = async () => {
 exports.createTrade = async (leagueId, userId, tradeData) => {
     console.log('Creating trade with data:', { leagueId, userId, tradeData });
 
-    const {data: existingTrades, error: fetchError} = await supabase.client
+    const { data: existingTrades, error: fetchError } = await supabase.client
         .from('trades')
         .select('*')
         .eq('league_id', leagueId)
@@ -67,9 +67,21 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
 
     console.log('Existing trades for user:', existingTrades);
 
-    if (existingTrades && existingTrades.length > 5) {
+
+    if (existingTrades.length > 5) {
         throw new Error('You have too many pending trades. Please wait for them to be resolved before proposing new ones.');
     }
+
+    const { data: profile, error: profilerror } = await supabase.client
+    .from('profiles')
+    .select('username')
+    .eq('user_id', userId);
+
+    if (profilerror) {
+        throw new Error(profilerror.message);
+    }
+    console.log(profile);
+
 
     const { data, error } = await supabase.client
         .from('trades')
@@ -77,7 +89,7 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
             league_id: leagueId,
             receiving_team_id: tradeData.receivingTeamId,
             receiving_team_username: tradeData.receivingTeamUsername,
-            proposing_team_username: tradeData.proposingTeamUsername,
+            proposing_team_username: profile[0].username,
             proposing_team_id: tradeData.proposingTeamId,
             offered_player_id: tradeData.offeredPlayerId,
             offered_player_name: tradeData.offeredPlayerName,
@@ -88,7 +100,7 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
         })
         .select()
         .single();
-        console.log('Trade creation result:', { data, error });
+    console.log('Trade creation result:', { data, error });
     if (error) throw new Error(error.message);
 
     return data;
