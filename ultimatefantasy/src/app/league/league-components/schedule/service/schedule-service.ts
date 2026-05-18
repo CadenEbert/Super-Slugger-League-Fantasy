@@ -187,9 +187,10 @@ export class ScheduleService {
   generateSchedule(league_id: string) {
     this.generating$.next(true);
 
-    this.leagueCompService.generateSchedule(league_id, this.totalWeeks$.getValue(), this.number_of_playoffs$.getValue()).subscribe({
+    this.leagueCompService.generateSchedule(league_id, this.totalWeeks$.value, this.number_of_playoffs$.value).subscribe({
       next: (response) => {
-        const mapped = response.map((g: any) => ({
+        console.log(response);
+        const mapped = response.games.map((g: any) => ({
           home_team: g.homeTeam,
           away_team: g.awayTeam,
           week: g.week,

@@ -76,6 +76,11 @@
               [disabled]="!vm.canDraft || vm.scheduleMetadata?.generated || vm.generating || !vm.totalWeeks || !vm.number_of_playoffs">
               Generate Schedule
             </button>
+            <p>canDraft: {{ vm.canDraft }}</p>
+<p>generated: {{ vm.scheduleMetadata?.generated }}</p>
+<p>generating: {{ vm.generating }}</p>
+<p>totalWeeks: {{ vm.totalWeeks }}</p>
+<p>number_of_playoffs: {{ vm.number_of_playoffs }}</p>
 
             <button
               (click)="scheduleService.clearSchedule(leagueId)"

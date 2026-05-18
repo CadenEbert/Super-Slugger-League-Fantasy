@@ -72,7 +72,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
 
 
     const membersMap = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
-
+    console.log('members', membersMap);
 
     if (totalTeams % 2 === 0) {
         for (let week = 0; week <= totalWeeks; week++) {
@@ -84,7 +84,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 const homeTeam = shuffledMembers[i];
                 const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-                matchups.push({ homeTeam: homeTeam.profiles.username, awayTeam: awayTeam.profiles.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+                matchups.push({ homeTeam: homeTeam.username, awayTeam: awayTeam.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             schedule.push(...matchups);
 
@@ -101,7 +101,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             const playerOnBye = membersMap[byeIndex];
             const shuffledMembers = [...membersMap].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
 
-            const byeMatchup = { homeTeam: playerOnBye.user_id, awayTeam: null, week: week + 1, bye: true };
+            const byeMatchup = { homeTeam: playerOnBye.username, awayTeam: null, week: week + 1, bye: true, homeTeamUuid: playerOnBye.user_id };
             console.log('Adding bye matchup:', byeMatchup);
             matchups.push(byeMatchup);
             for (let i = 0; i < (totalTeams - 1) / 2; i++) {
@@ -120,7 +120,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
         const { data, error } = await client
             .from('schedule_games')
             .insert(schedule.map(game => ({
-                league_id: game.league_id,
+                league_id: leagueId,
                 home_team: game.homeTeam,
                 away_team: game.awayTeam,
                 week: game.week,
@@ -145,6 +145,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
 
 exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) => {
     try {
+        console.log('League Id', leagueId);
         const members = await get_league_members(leagueId);
         const rosters = await get_all_rosters(leagueId);
         const memberRosterMap = {};
