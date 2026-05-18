@@ -34,7 +34,7 @@ import {
   FilterByWeekPipe,
   CreateArrayPipe,
   FilterPlayoffGamesPipe,
-} from './league/league-components/schedule/schedule';
+} from './league/league-components/schedule/service/schedule-service';
 import { UpdateSchedule } from './league/league-components/schedule/update-schedule/update-schedule';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Trades } from './league/league-components/trades/trades';
