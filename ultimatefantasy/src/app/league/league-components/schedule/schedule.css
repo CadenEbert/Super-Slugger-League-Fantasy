@@ -159,7 +159,7 @@
     align-self: flex-end;
     padding: 10px 20px;
     background-color: #429dfd;
-    color: white;
+    color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -198,7 +198,7 @@
     
     padding: 10px 10px;
     background-color: #429dfd;
-    color: white;
+    color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -214,7 +214,7 @@
     margin-left: 40px;
   
     background-color: #429dfd;
-    color: white;
+    color: black;
     border: none;
     border-radius: 8px;
     display: flex;
@@ -336,7 +336,7 @@
 .head-text {
     font-size: 1.2em;
     font-weight: bold;
-    color: white;
+    color: black;
     text-wrap: nowrap;
 }
 

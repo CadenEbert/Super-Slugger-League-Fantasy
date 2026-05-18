@@ -84,7 +84,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 const homeTeam = shuffledMembers[i];
                 const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-                matchups.push({ homeTeam: homeTeam.username, awayTeam: awayTeam.username, week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+                matchups.push({ home_team: homeTeam.username, away_team: awayTeam.username, week: week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             schedule.push(...matchups);
 
@@ -101,7 +101,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             const playerOnBye = membersMap[byeIndex];
             const shuffledMembers = [...membersMap].filter(m => m.user_id !== playerOnBye.user_id).sort(() => Math.random() - 0.5);
 
-            const byeMatchup = { homeTeam: playerOnBye.username, awayTeam: null, week: week + 1, bye: true, homeTeamUuid: playerOnBye.user_id };
+            const byeMatchup = { home_team: playerOnBye.username, away_team: null, week: week + 1, bye: true, homeTeamUuid: playerOnBye.user_id };
             console.log('Adding bye matchup:', byeMatchup);
             matchups.push(byeMatchup);
             for (let i = 0; i < (totalTeams - 1) / 2; i++) {
@@ -110,7 +110,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
 
 
 
-                matchups.push({ homeTeam: homeTeam.username, awayTeam: awayTeam.username, week: week + 1, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+                matchups.push({ home_team: homeTeam.username, away_team: awayTeam.username, week: week + 1, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             byeIndex++;
 
@@ -121,8 +121,8 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             .from('schedule_games')
             .insert(schedule.map(game => ({
                 league_id: leagueId,
-                home_team: game.homeTeam,
-                away_team: game.awayTeam,
+                home_team: game.home_team,
+                away_team: game.away_team,
                 week: game.week,
                 bye: game.bye,
                 home_team_uuid: game.homeTeamUuid,
@@ -180,6 +180,8 @@ exports.generateSchedule = async (leagueId, numberOfMatchups, numberOfPlayoffs) 
         throw error;
     }
 }
+
+
 
 exports.clearSchedule = async (leagueId) => {
     try {
@@ -442,7 +444,7 @@ exports.completeWeek = async (leagueId, current_week) => {
         const { error } = await client
             .from('schedule')
             .update({
-                current_week: parseInt(current_week) + 1
+                current_week: Number.parseInt(current_week) + 1
             })
             .eq('league_id', leagueId);
 

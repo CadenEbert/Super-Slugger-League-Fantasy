@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Game } from '../../../../core/models/schedule.model.js';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, forkJoin } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map, take, Observable, forkJoin } from 'rxjs';
 import { Pipe, PipeTransform } from '@angular/core';
 import { LeagueService } from '../../../league-service.js';
 import { LeagueCompService } from '../../league-comp-service.js';
@@ -66,6 +66,7 @@ export class ScheduleService {
   public playoffTeamsFinal$ = new BehaviorSubject<any[]>([]);
   public isLoading$ = new BehaviorSubject<boolean>(false);
   public playoffGames$ = new BehaviorSubject<Game[]>([]);
+  private initialLoadDone = false;
 
   public vm$ = combineLatest([
     this.schedule$,
@@ -96,6 +97,7 @@ export class ScheduleService {
   ) { }
 
   loadSchedule(league_id: string) {
+    this.initialLoadDone = false;
     this.setLoading(true);
     this.setUserId(this.authService.getUserId());
     this.leagueCompService.joinScheduleChannel(league_id);
@@ -118,10 +120,11 @@ export class ScheduleService {
       error: (err) => console.error('Error fetching schedule:', err)
     });
 
-    this.leagueCompService.getScheduleMetadata(league_id).subscribe({
+    this.leagueCompService.getScheduleMetadata(league_id).pipe(take(1)).subscribe({
       next: (metadata) => {
         this.setScheduleMetadata(metadata);
         this.loadGamesByStatus(metadata, league_id);
+        this.initialLoadDone = true;
         this.setLoading(false);
       },
       error: (err) => {
@@ -132,6 +135,7 @@ export class ScheduleService {
 
     this.leagueCompService.onScheduleUpdate(league_id).subscribe({
       next: (updatedGame) => {
+        if (!this.initialLoadDone) return;
         const current = this.scheduleGamesSubject.getValue();
         const idx = current.findIndex(g => g.id === updatedGame.id);
         if (idx > -1) {
@@ -147,7 +151,9 @@ export class ScheduleService {
 
     this.leagueCompService.onScheduleMetadataUpdate(league_id).subscribe({
       next: (metadata) => {
+        if (!this.initialLoadDone) return;
         this.setScheduleMetadata(metadata);
+
         this.loadGamesByStatus(metadata, league_id);
       },
       error: (err) => console.error('Error on metadata update stream:', err)
@@ -157,8 +163,15 @@ export class ScheduleService {
   private loadGamesByStatus(metadata: any, league_id: string) {
     const status = metadata.status;
 
-    if (status === 'in_progress') {
+    if (status === 'not_started') {
       this.leagueCompService.getScheduleGames(league_id).subscribe({
+        next: (games) => this.setScheduleGames(games),
+        error: (err) => console.error('Error fetching schedule games: ', err)
+      });
+    }
+
+    if (status === 'in_progress') {
+      this.leagueCompService.getScheduleGames(league_id).pipe(take(1)).subscribe({
         next: (games) => this.setScheduleGames(games),
         error: (err) => console.error('Error fetching schedule games:', err)
       });
@@ -166,7 +179,7 @@ export class ScheduleService {
 
     if (status === 'playoffs_not_started') {
       this.number_of_playoffs$.next(metadata.number_of_playoffs || 4);
-      this.leagueCompService.updateStandings(league_id).subscribe({
+      this.leagueCompService.updateStandings(league_id).pipe(take(1)).subscribe({
         next: (response) => {
           const teams = Array.isArray(response) ? response : Object.values(response);
           const sorted = [...teams].sort((a: any, b: any) => b.wins - a.wins);
@@ -177,7 +190,7 @@ export class ScheduleService {
     }
 
     if (status === 'playoffs_in_progress' || status === 'playoffs_completed') {
-      this.leagueCompService.getPlayoffGames(league_id).subscribe({
+      this.leagueCompService.getPlayoffGames(league_id).pipe(take(1)).subscribe({
         next: (games) => this.setScheduleGames(games),
         error: (err) => console.error('Error fetching playoff games:', err)
       });
@@ -190,13 +203,6 @@ export class ScheduleService {
     this.leagueCompService.generateSchedule(league_id, this.totalWeeks$.value, this.number_of_playoffs$.value).subscribe({
       next: (response) => {
         console.log(response);
-        const mapped = response.games.map((g: any) => ({
-          home_team: g.homeTeam,
-          away_team: g.awayTeam,
-          week: g.week,
-          bye: g.bye,
-        }));
-        this.setScheduleGames(mapped);
         this.generating$.next(false);
       },
       error: (err) => {
