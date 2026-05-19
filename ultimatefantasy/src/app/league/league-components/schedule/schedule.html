@@ -31,7 +31,7 @@
             <p>How many players in playoffs:</p>
             <select [value]="vm.number_of_playoffs" (change)="setNumberOfPlayoffs(+$any($event.target).value)"
               class="setting-select">
-              <option *ngFor="let number of ['4', '6']" [value]="number">{{ number }}</option>
+              <option *ngFor="let number of ['2', '4', '6']" [value]="number">{{ number }}</option>
             </select>
           </div>
         </div>

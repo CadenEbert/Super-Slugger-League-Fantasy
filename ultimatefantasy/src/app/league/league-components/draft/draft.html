@@ -93,7 +93,10 @@
                             <mat-accordion>
                               <mat-expansion-panel class="player-info">
                                 <mat-expansion-panel-header class="player-header">
-                                  <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
+                                  <mat-panel-title>
+                                    <img [src]="'/' + pick.character.character_image" alt="">
+                                    {{ pick.character.character_name }}
+                                  </mat-panel-title>
                                   <div class="player-header">
                                     <p>{{ draftService.memberMap[pick.member_picking] }}</p>
                                     <p>Pick {{ pick.pick_number }}</p>
@@ -148,7 +151,10 @@
                             <mat-accordion>
                               <mat-expansion-panel class="player-info">
                                 <mat-expansion-panel-header class="player-header">
-                                  <mat-panel-title>{{ pp.character_name }}</mat-panel-title>
+                                  <mat-panel-title>
+                                    <img [src]="'/' + pp.character_image" alt="">
+                                    {{ pp.character_name }}
+                                  </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <div class="drop-down">
                                   <div class="player-stats">
@@ -207,7 +213,11 @@
                       <mat-accordion>
                         <mat-expansion-panel class="player-info">
                           <mat-expansion-panel-header class="player-header">
-                            <mat-panel-title>{{ pick.character.character_name }}</mat-panel-title>
+                            <mat-panel-title class="player-header-fr">
+                             
+                              <img [src]="'/' + pick.character.character_image" alt="">
+                              {{ pick.character.character_name }}
+                            </mat-panel-title>
                             <div class="player-header">
                               <p>{{ draftService.memberMap?.[pick.member_picking] }}</p>
                               <p>Pick {{ pick.pick_number }}</p>

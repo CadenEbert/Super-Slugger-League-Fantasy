@@ -26,8 +26,11 @@ exports.getFreeAgents = async (leagueId) => {
     const rosteredIds = new Set(rosterPlayers.map(r => r.character_id));
 
     const freeAgents = allPlayers.filter(
-        player => !rosteredIds.has(player.character_id)
+        player => !rosteredIds.has(player.ID)
     );
+
+    console.log('rosteredIds:', [...rosteredIds]);
+console.log('sample player ID:', allPlayers[0]?.ID, typeof allPlayers[0]?.ID);
 
     return freeAgents.map(player => ({
         id: player.ID,

@@ -77,6 +77,8 @@ export class DraftService implements OnDestroy {
     )
   );
 
+  
+
   private ownerIdSubject = new BehaviorSubject<string>('');
   ownerId$ = this.ownerIdSubject.asObservable();
 
@@ -233,6 +235,7 @@ export class DraftService implements OnDestroy {
   setCharacterStats(players: any[]) {
     const mapped: CharacterStats[] = players.map(player => ({
       id: player.id,
+      character_image: player.character_image,
       character_name: player.name,
       weight: player.weight,
       captain: player.captain,

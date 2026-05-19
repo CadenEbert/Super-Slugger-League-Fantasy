@@ -124,11 +124,23 @@
 }
 
 .player-header {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 16px;
+  min-height: 80px;
 }
+
+.player-header-fr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.2em;
+  color: black;
+  flex: 1;
+}
+
 
 .player-stats {
     display: flex;

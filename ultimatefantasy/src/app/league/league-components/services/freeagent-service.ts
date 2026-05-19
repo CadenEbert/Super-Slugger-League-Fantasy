@@ -38,7 +38,6 @@ export class FreeagentService {
       }).subscribe(({ draftStatus, freeAgents }) => {
         this.draftStatus$.next(draftStatus.draftStatus);
         this.playersSubject$.next(freeAgents);
-        console.log(this.playersSubject$.value);
         this.setIsLoading(false);
       })
     });
