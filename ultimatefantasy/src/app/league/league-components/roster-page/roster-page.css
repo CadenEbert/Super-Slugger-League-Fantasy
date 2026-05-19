@@ -12,6 +12,7 @@
     margin-bottom: 20px;
     width: 90%;
     
+    
 }
 
 .player-info {
@@ -98,10 +99,36 @@
 }
 
 .player-header {
-     
-     color: black;
-     padding-right: 10px;
-     font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  min-height: 80px;
+}
+
+.player-header-fr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.2em;
+  color: black;
+  flex: 1;
+}
+
+.player-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  font-size: 1rem;
+  color: black;
+}
+
+.player-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .drop-down {

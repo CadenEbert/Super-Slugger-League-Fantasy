@@ -12,6 +12,7 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class UpdateSchedule {
   members: any[] = [];
+  isLoading: boolean = true;
 
 
   game: any;
@@ -26,9 +27,11 @@ export class UpdateSchedule {
       next: (members) => {
         this.members = members;
         console.log('Fetched members:', this.members);
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
+        this.isLoading = false;
         console.error('Error fetching members:', error);
       }
     });

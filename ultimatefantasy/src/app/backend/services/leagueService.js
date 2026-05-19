@@ -114,7 +114,7 @@ exports.fetchLeagueDetails = async (leagueId) => {
     .select(`
       id,
       name,
-      size,
+      league_size,
       draft_settings,
       owner_username,
       roster_size,
@@ -285,4 +285,30 @@ exports.updateRosterLimit = async (leagueId, newLimit) => {
   if (error) throw new Error(error.message);
 
   return data && data.length > 0 ? data[0] : null;
+}
+
+exports.leaveLeague = async (leagueId, userId) => {
+ 
+    console.log('leagueId', leagueId, 'userid', userId);
+    const { data: roster } = await supabase.client
+      .from('rosters')
+      .select('id')
+      .eq('league_id', leagueId)
+      .eq('owner_id', userId)
+      .single();
+
+    if (roster) {
+      await supabase.client.from('roster_players').delete().eq('roster_id', roster.id);
+      await supabase.client.from('rosters').delete().eq('id', roster.id);
+    }
+
+    const { error } = await supabase.client
+      .from('league_members')
+      .delete()
+      .eq('league_id', leagueId)
+      .eq('user_id', userId);
+
+    if (error) throw new Error(error.message);
+
+  
 }

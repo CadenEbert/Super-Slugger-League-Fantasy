@@ -3,11 +3,10 @@ const supabase = require('../supabase.js');
 exports.getFreeAgents = async (leagueId) => {
     const { data: allPlayers, error: playersError } = await supabase.client
         .from('characters')
-        .select('ID, character_name, pitching_arm, batting_arm, character_class, weight, captain, star_pitch');
+        .select('*');
 
     if (playersError) throw new Error(playersError.message);
 
-  
     const { data: leagueRosters, error: rostersError } = await supabase.client
         .from('rosters')
         .select('id')
@@ -26,17 +25,42 @@ exports.getFreeAgents = async (leagueId) => {
 
     const rosteredIds = new Set(rosterPlayers.map(r => r.character_id));
 
-    const freeAgents = allPlayers.filter(c => !rosteredIds.has(c.ID));
+    const freeAgents = allPlayers.filter(
+        player => !rosteredIds.has(player.character_id)
+    );
 
-    return freeAgents.map(p => ({
-        id: p.ID,
-        characterName: p.character_name,
-        pitchingArm: p.pitching_arm,
-        battingArm: p.batting_arm,
-        characterClass: p.character_class,
-        weight: p.weight,
-        captain: p.captain,
-        starPitch: p.star_pitch
+    return freeAgents.map(player => ({
+        id: player.ID,
+        characterName: player.character_name,
+        character_image: player.character_image,
+        weight: player.weight,
+        captain: player.captain,
+        bunting: player.bunting,
+        speed: player.speed,
+        fielding: player.fielding,
+        curve: player.curve,
+        trajectory: player.traj,
+        stamina: player.stamina,
+        pitchingArm: player.pitching_arm,
+        battingArm: player.batting_arm,
+        characterClass: player.character_class,
+        starPitch: player.star_pitch,
+        fieldingAbility: player.fielding_ability,
+        starSwing: player.star_swing,
+        baserunningAbility: player.baserunning_ability,
+        slapSize: player.slap_size,
+        chargeSize: player.charge_size,
+        slapPower: player.slap_power,
+        chargePower: player.charge_power,
+        outfieldThrowing: player.outfield_throwing,
+        displayedPitching: player.displayed_pitching,
+        displayedBatting: player.displayed_batting,
+        displayedFielding: player.displayed_fielding,
+        displayedSpeed: player.dis_speed,
+        curveball_speed: player.curveball_speed,
+        chargePitchSpeed: player.charge_pitch_speed,
+        hitCurve: player.hit_curve,
+        starPitchType: player.star_pitch_type
     }));
 };
 

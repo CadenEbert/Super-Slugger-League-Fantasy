@@ -48,16 +48,17 @@
 
                                             <div class="trade-header-content">
 
-                                                <select id="receivingTeam" [(ngModel)]="receivingTeamId"
-                                                    >
-                                                    <option *ngFor="let roster of otherRosters" [value]="roster.id">{{
-                                                        roster.team_name }}</option>
+                                                <select id="receivingTeam" [(ngModel)]="receivingTeamId">
+                                                    <option *ngFor="let roster of otherRosters" [value]="roster.id">
+                                                        {{ roster.team_name }}
+                                                    </option>
                                                 </select>
 
                                                 <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
-                                                    <option *ngFor="let player of receivingTeamPlayers"
-                                                        [value]="player.character_id">{{ player.name
-                                                        }}
+                                                    <option
+                                                        *ngFor="let player of (tradeService.receivingTeamPlayers$ | async)"
+                                                        [value]="player.character_id">
+                                                        {{ player.name }}
                                                     </option>
                                                 </select>
                                                 <button (click)="tradeService.addToTradeReceiving()">Add to

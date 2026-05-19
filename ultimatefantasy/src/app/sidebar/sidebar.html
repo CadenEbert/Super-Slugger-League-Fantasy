@@ -19,8 +19,8 @@
     </nav>
 
 
-    <div class="sidebar-footer">
-        <button class="sidebar-btn" (click)="leaveLeague()">Leave League</button>
+    <div class="sidebar-footer" *ngIf="!(sidebarService.isOwner$ | async)">
+        <button class="sidebar-btn" (click)="sidebarService.leaveLeague()">Leave League</button>
     </div>
 
 

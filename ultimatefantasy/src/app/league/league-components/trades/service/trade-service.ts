@@ -72,7 +72,7 @@ export class TradeService {
       this.members$.next(allMembers.filter((member: any) => member.user_id !== this.userId$.value));
       this.rosters$.next(tradeMembers);
       this.myRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
-      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));      
+      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id !== this.userId$.value));      
       this.proposingTeamId$.next(this.myRosters$.value[0]?.id);
   
       this.populateProposingTeamPlayers();
@@ -136,7 +136,6 @@ export class TradeService {
       next: (response) => {
         console.log('Trade proposed successfully:', response);
         globalThis.alert('Trade proposed successfully!');
-        this.trades$.next([...this.trades$.value, response]);
         this.requesting$.next(false);
 
       },

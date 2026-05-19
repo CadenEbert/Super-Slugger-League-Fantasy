@@ -27,4 +27,6 @@ router.post('/leagues/:id/join', authMiddleware, leagueController.joinLeague);
 
 router.get('/leagues/:id/owner-id', authMiddleware, leagueController.getOwnerId);
 
+router.delete('/league/:id/leave', authMiddleware, leagueController.leaveLeague)
+
 module.exports = router;

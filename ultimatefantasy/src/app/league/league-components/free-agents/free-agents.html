@@ -5,49 +5,103 @@
 
 <div class="roster-container" *ngIf="!(freeAgentService.isLoading$ | async)">
   <ng-container *ngIf="freeAgentService.draftStatus$ | async as draftStatus">
-   <ng-container *ngIf="freeAgentService.players$ | async as players">
-
-  
-    <div class="not_started" *ngIf="draftStatus === 'not_started'">
-      <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
-    </div>
-
-  <div class="my-leagues" *ngIf="draftStatus === 'completed'">
+    <ng-container *ngIf="freeAgentService.players$ | async as players">
 
 
+      <div class="not_started" *ngIf="draftStatus === 'not_started'">
+        <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
+      </div>
 
-    
+      <div class="roster-content-container">
 
-    <mat-card *ngFor="let p of players" class="indiv-players">
-      <mat-accordion>
-        <mat-expansion-panel class="player-info">
-          <mat-expansion-panel-header class="player-header">
-            <mat-panel-title class="player-header">
-              {{ p?.characterName || 'Unknown' }}
-            </mat-panel-title>
-            <mat-content class="player-header">
-              Class: {{ p?.characterClass || 'N/A' }}
-              <button (click)="freeAgentService.addToRoster(p.id)" [disabled]="(freeAgentService.addingToRoster$ | async)" class="position-btn add-btn">Add to Roster</button>
-            </mat-content>
-          </mat-expansion-panel-header>
+        <div class="player-container" *ngIf="draftStatus === 'completed'">
+          <mat-card *ngFor="let p of players" class="indiv-players">
+            <mat-accordion>
+              <mat-expansion-panel class="player-info">
+                <mat-expansion-panel-header class="player-header">
+                  <mat-panel-title class="player-header-fr">
+                    <img [src]="'/' + p.character_image" alt="null">
+                    {{ p.characterName }}
 
-          <div>
-            <p>Pitching Arm: {{ p?.pitchingArm || 'N/A' }}</p>
-            <p>Batting Arm: {{ p?.battingArm || 'N/A' }}</p>
-            <p>Character Class: {{ p?.characterClass || 'N/A' }}</p>
-            <p>Weight: {{ p?.weight || 'N/A' }}</p>
-            <p>Captain: {{ p?.captain ? 'Yes' : 'No' }}</p>
-            <p>Star Pitch: {{ p?.starPitch || 'N/A' }}</p>
-          </div>
+                  </mat-panel-title>
+                   <mat-content class="player-meta">
+                    Class: {{ p?.characterClass || 'N/A' }}
+                    
+                  </mat-content>
+                  <mat-content class="player-meta">
+                    
+                    <button class="add-btn" (click)="freeAgentService.addToRoster(p.id)"
+                      [disabled]="(freeAgentService.addingToRoster$ | async)" class="position-btn add-btn">Add to
+                      Roster</button>
+                  </mat-content>
+                </mat-expansion-panel-header>
 
-          
+                <div class="drop-down">
+                  <div class="stats">
 
-        </mat-expansion-panel>
-      </mat-accordion>
-    </mat-card>
 
-  </div>
-  </ng-container>
+
+                    <div class="stat-half">
+                      <p>Pitching Arm: {{ p.pitchingArm }}</p>
+                      <p>Batting Arm: {{ p.battingArm }}</p>
+                      <p>Character Class: {{ p.characterClass }}</p>
+                      <p>Weight: {{ p.weight }}</p>
+                      <p>Captain: {{ p.captain ? 'Yes' : 'No' }}</p>
+                      <p>Star Pitch: {{ p.starPitch }}</p>
+                      <p>Bunting: {{ p.bunting }}</p>
+                    </div>
+
+                    <div class="stat-half">
+                      <p>Speed: {{ p.speed }}</p>
+                      <p>Fielding: {{ p.fielding }}</p>
+                      <p>Curve: {{ p.curve }}</p>
+                      <p>Trajectory: {{ p.trajectory }}</p>
+                      <p>Stamina: {{ p.stamina }}</p>
+                      <p>Fielding Ability: {{ p.fieldingAbility }}</p>
+                      <p>Star Swing: {{ p.starSwing }}</p>
+                    </div>
+                    <div class="stat-half">
+                      <p>Baserunning Ability: {{ p.baserunningAbility }}</p>
+                      <p>Slap Size: {{ p.slapSize }}</p>
+                      <p>Charge Size: {{ p.chargeSize }}</p>
+                      <p>Slap Power: {{ p.slapPower }}</p>
+                      <p>Charge Power: {{ p.chargePower }}</p>
+                      <p>Outfield Throwing: {{ p.outfieldThrowing }}</p>
+                      <p>Displayed Pitching: {{ p.displayedPitching }}</p>
+                    </div>
+                    <div class="stat-half">
+                      <p>Displayed Batting: {{ p.displayedBatting }}</p>
+                      <p>Displayed Fielding: {{ p.displayedFielding }}</p>
+                      <p>Displayed Speed: {{ p.displayedSpeed }}</p>
+                      <p>Curveball Speed: {{ p.curveball_speed }}</p>
+                      <p>Charge Pitch Speed: {{ p.chargePitchSpeed }}</p>
+                      <p>Hit Curve: {{ p.hitCurve }}</p>
+                      <p>Star Pitch Type: {{ p.starPitchType }}</p>
+                    </div>
+
+                  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-card>
+        </div>
+      </div>
+
+    </ng-container>
   </ng-container>
 
 </div>

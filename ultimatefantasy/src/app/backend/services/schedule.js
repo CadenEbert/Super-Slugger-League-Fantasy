@@ -84,7 +84,7 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
                 const homeTeam = shuffledMembers[i];
                 const awayTeam = shuffledMembers[totalTeams - 1 - i];
 
-                matchups.push({ home_team: homeTeam.username, away_team: awayTeam.username, week: week, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
+                matchups.push({ home_team: homeTeam.username, away_team: awayTeam.username, week: week + 1, bye: false, homeTeamUuid: homeTeam.user_id, awayTeamUuid: awayTeam.user_id });
             }
             schedule.push(...matchups);
 
@@ -117,28 +117,29 @@ async function generateScheduleForLeague(members, weeks, numberInPlayoffs, leagu
             schedule.push(...matchups);
         }
 
-        const { data, error } = await client
-            .from('schedule_games')
-            .insert(schedule.map(game => ({
-                league_id: leagueId,
-                home_team: game.home_team,
-                away_team: game.away_team,
-                week: game.week,
-                bye: game.bye,
-                home_team_uuid: game.homeTeamUuid,
-                away_team_uuid: game.awayTeamUuid
-            })));
 
-        if (error) {
-            console.error('Error inserting schedule into database:', error);
-            throw new Error('Failed to save schedule');
-        }
 
+    }
+    const { data, error } = await client
+        .from('schedule_games')
+        .insert(schedule.map(game => ({
+            league_id: leagueId,
+            home_team: game.home_team,
+            away_team: game.away_team,
+            week: game.week,
+            bye: game.bye,
+            home_team_uuid: game.homeTeamUuid,
+            away_team_uuid: game.awayTeamUuid
+        })));
+
+    if (error) {
+        console.error('Error inserting schedule into database:', error);
+        throw new Error('Failed to save schedule');
     }
 
     console.log('Generated schedule:', schedule);
 
-    return schedule;
+    return data;
 
 }
 
@@ -354,10 +355,25 @@ exports.updateStandings = async (leagueId) => {
             throw new Error('Failed to fetch league members for standings update');
         }
 
- 
+        const { data: rosters, error: rosterErr } = await client
+            .from('rosters')
+            .select('team_image, owner_id')
+            .eq('league_id', leagueId);
 
-        const membersMap = members.map(m => ({ user_id: m.user_id, username: m.profiles.username }));
-   
+        if (rosterErr) {
+            console.error('Error fetching rosters:', rosterErr);
+            throw new Error('Failed to fetch rosters');
+        }
+
+        const membersMap = members.map(m => {
+            const roster = rosters?.find(r => r.owner_id === m.user_id);
+            return {
+                user_id: m.user_id,
+                username: m.profiles.username,
+                team_image: roster?.team_image || null
+            };
+        });
+
 
 
         const standings = {};
@@ -367,7 +383,7 @@ exports.updateStandings = async (leagueId) => {
 
         for (let i = 1; i <= curr_week; i++) {
             const gamesForWeek = scheduleGames.filter(game => game.week === i && !game.bye);
-           
+
             console.log('Processing standings for week', i, 'with games:', gamesForWeek);
             for (let j = 0; j < gamesForWeek.length; j++) {
                 if (gamesForWeek[j].home_score > gamesForWeek[j].away_score) {
@@ -486,7 +502,7 @@ exports.startPlayoffs = async (leagueId, playoffTeams) => {
         for (let i = 0; i < playoffTeams.length / 2; i++) {
             const homeTeam = playoffTeams[i];
             const awayTeam = playoffTeams[playoffTeams.length - 1 - i];
-            
+
 
             const matchup = {
                 league_id: leagueId,
@@ -577,7 +593,7 @@ exports.completeRound = async (leagueId, games) => {
                 .from('schedule')
                 .update({
                     status: 'completed',
-                    winner_username:  winnerUsernames[0]
+                    winner_username: winnerUsernames[0]
                 })
                 .eq('league_id', leagueId);
 
@@ -599,7 +615,7 @@ exports.completeRound = async (leagueId, games) => {
             const homeGame = games.find(g => g.home_team_uuid === home_team_uuid || g.away_team_uuid === home_team_uuid);
             const awayGame = games.find(g => g.home_team_uuid === away_team_uuid || g.away_team_uuid === away_team_uuid);
 
-            
+
 
             const matchup = {
                 league_id: leagueId,

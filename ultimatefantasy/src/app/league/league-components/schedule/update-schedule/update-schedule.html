@@ -1,4 +1,9 @@
-<div class="schedule-update-container">
+
+<div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
+
+<div class="schedule-update-container" *ngIf="!isLoading">
     <div class="header">
         <h1>Home Team</h1>
         <h1>Edit Game</h1>
@@ -11,7 +16,6 @@
         <p>{{game.home_team}}</p>
         
         <select type="text" [(ngModel)]="game.home_team" (ngModelChange)="onHomeTeamChange($event)">
-            <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
             <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
         </select>
 
@@ -28,7 +32,7 @@
         
     </div>
 
-
+<!--
     <div class="edit-stadium">
         <p>Stadium played at: </p>
         <select type="text" [(ngModel)]="game.stadium_played_at"   class="stadium-input">
@@ -36,12 +40,13 @@
         </select>
 
     </div>
+-->
 
-    <p *ngIf="game.home_score === null || game.away_score === null || game.stadium_played_at === null">
-        Please enter a score for both teams and select a stadium to update the game.
+    <p *ngIf="game.home_score === null || game.away_score === null">
+        Please enter a score for both teams to update the game.
     </p>
 
-    <button (click)="updateGame()" class="update-btn" [disabled]="game.home_score === null || game.away_score === null || game.stadium_played_at === null" class="update-btn">Update Game</button>
+    <button (click)="updateGame()" class="update-btn" [disabled]="game.home_score === null || game.away_score === null" class="update-btn">Update Game</button>
 
     </div>
 

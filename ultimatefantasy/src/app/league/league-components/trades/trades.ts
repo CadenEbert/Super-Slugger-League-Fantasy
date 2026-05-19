@@ -28,6 +28,8 @@ export class Trades {
   get requestedPlayerId() { return this.tradeService.requestedPlayerId$.value; }
   set requestedPlayerId(v: string) { this.tradeService.requestedPlayerId$.next(v); }
 
+  
+
   get receivingTeamId() { return this.tradeService.receivingTeamId$.value; }
   set receivingTeamId(v: string) {
      this.tradeService.receivingTeamId$.next(v);

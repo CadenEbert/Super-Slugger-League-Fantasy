@@ -119,6 +119,8 @@ exports.acceptTrade = async (tradeId) => {
 
     const trade = data;
 
+    console.log(trade);
+
     for (const playerId of trade.offered_player_id) {
         const { error: offeredError } = await supabase.client
             .from('roster_players')

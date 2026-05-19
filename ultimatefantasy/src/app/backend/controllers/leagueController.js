@@ -152,3 +152,15 @@ exports.updateRosterLimit = async (req, res) => {
         res.status(500).json({ error: 'Failed to update roster limit' });
     }
 };
+
+
+exports.leaveLeague = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const userId = req.user.id;
+        const response = await leagueService.leaveLeague(leagueId, userId);
+        res.json({message: 'League left successfully'});
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to leave League' });
+    }
+}

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { LeagueService } from '../league/league-service';
+import { SidebarService } from './service/sidebar-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,11 +11,16 @@ import { LeagueService } from '../league/league-service';
 export class Sidebar {
   isSidebarOpen = false;
 
-  constructor() {}
+  constructor(public sidebarService: SidebarService, private route: ActivatedRoute) {}
 
   ngOnInit() {
+    this.sidebarService.loadSideBar(this.route.snapshot.params['leagueId']);
+    console.log(this.route.snapshot.params['leagueId']);
+
 
   }
+
+
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -34,8 +40,5 @@ export class Sidebar {
     body.classList.toggle('dark-theme');
   }
 
-  leaveLeague() {
-    
-    console.log('Leave league clicked');
-  }
+
 }

@@ -51,6 +51,7 @@ exports.getRosterById = async (rosterId) => {
         characters:character_id (
             ID,
             character_name,
+            character_image,
             weight, captain,
             bunting,
             speed,
@@ -91,6 +92,7 @@ exports.getRosterById = async (rosterId) => {
         character: player.characters ? {
             id: player.characters.ID,
             characterName: player.characters.character_name,
+            character_image: player.characters.character_image,
             weight: player.characters.weight,
             captain: player.characters.captain,
             bunting: player.characters.bunting,

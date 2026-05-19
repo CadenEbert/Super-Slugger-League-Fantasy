@@ -66,5 +66,9 @@ export class LeagueService {
     return this.http.get(`/api/leagues/${leagueId}`);
   }
 
+  leaveLeague(league_id: string): Observable<any> {
+    return this.http.delete(`/api/league/${league_id}/leave`);
+  }
+
 
 }
