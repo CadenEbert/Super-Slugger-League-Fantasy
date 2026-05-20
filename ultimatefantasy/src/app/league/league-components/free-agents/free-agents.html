@@ -2,19 +2,39 @@
   <mat-spinner></mat-spinner>
 </div>
 
-
-<div class="roster-container" *ngIf="!(freeAgentService.isLoading$ | async)">
+<ng-container *ngIf="!(freeAgentService.isLoading$ | async)">
   <ng-container *ngIf="freeAgentService.draftStatus$ | async as draftStatus">
+  <div class="text-holder">
+  <div class="not_started" *ngIf="draftStatus !== 'completed' && !(freeAgentService.noRoster$ | async)">
+    <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
+  </div>
+
+  <div class="not_started" *ngIf="draftStatus !== 'completed' && (freeAgentService.noRoster$ | async)">
+    <h2>
+      Draft has not started yet. Free agents will be available once the draft is completed and you have created a
+      roster.
+    </h2>
+
+  </div>
+
+  <div class="not_started" *ngIf="draftStatus === 'completed' && (freeAgentService.noRoster$ | async) === true">
+    <h2>
+      Free agents will be available once you have created a
+      roster.
+    </h2>
+
+  </div>
+  </div>
+  <div class="roster-container" *ngIf="!(freeAgentService.isLoading$ | async)">
+
     <ng-container *ngIf="freeAgentService.players$ | async as players">
 
 
-      <div class="not_started" *ngIf="draftStatus === 'not_started'">
-        <h2>Draft has not started yet. Free agents will be available once the draft is completed.</h2>
-      </div>
 
-      <div class="roster-content-container">
 
-        <div class="player-container" *ngIf="draftStatus === 'completed'">
+      <div class="roster-content-container" *ngIf="draftStatus === 'completed'">
+
+        <div class="player-container">
           <mat-card *ngFor="let p of players" class="indiv-players">
             <mat-accordion>
               <mat-expansion-panel class="player-info">
@@ -24,12 +44,12 @@
                     {{ p.characterName }}
 
                   </mat-panel-title>
-                   <mat-content class="player-meta">
+                  <mat-content class="player-meta">
                     Class: {{ p?.characterClass || 'N/A' }}
-                    
+
                   </mat-content>
                   <mat-content class="player-meta">
-                    
+
                     <button class="add-btn" (click)="freeAgentService.addToRoster(p.id)"
                       [disabled]="(freeAgentService.addingToRoster$ | async)" class="position-btn add-btn">Add to
                       Roster</button>
@@ -102,6 +122,8 @@
       </div>
 
     </ng-container>
-  </ng-container>
 
-</div>
+
+  </div>
+</ng-container>
+</ng-container>

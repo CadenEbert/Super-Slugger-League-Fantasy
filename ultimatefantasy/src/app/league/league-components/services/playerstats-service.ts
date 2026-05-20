@@ -17,6 +17,7 @@ export class PlayerstatsService {
   public editing$ = new BehaviorSubject<boolean>(false);
   public allPlayers$ = new BehaviorSubject<any[]>([]);
   public mvpPlayers$ = new BehaviorSubject<any[]>([]);
+  public selectedPlayer: any = null;
   public selectedPlayer$ = new BehaviorSubject<any>(null);
   public currentView$ = new BehaviorSubject<string>('stats');
 
@@ -34,7 +35,7 @@ export class PlayerstatsService {
       filteredPlayersCall: this.http.get<any[]>(`/api/leagues/${league_id}/playerstats/characters`)
     }).subscribe(({ playerStatsCall, filteredPlayersCall }) => {
       this.mvpPlayers$.next(this.sortByPoints(playerStatsCall));
-      this.setAllPlayerStats(playerStatsCall.filter(stat => stat.user_id === this.userId$.value));
+      this.allPlayersStats$.next(playerStatsCall);
       this.allPlayers$.next(filteredPlayersCall);
       this.playerStats$.next(playerStatsCall.filter(stat => stat.user_id === this.userId$.value));
       this.setIsLoading(false);
@@ -67,23 +68,22 @@ export class PlayerstatsService {
 
     this.savePlayerStats(this.leagueId$.value, this.userId$.value, this.playerStats$.value).subscribe(() => {
       alert('Player stats saved successfully!');
-      
+
 
     });
   }
 
   onPlayerChange(player: any) {
     this.selectedPlayer$.next(player);
+    this.selectedPlayer = player;
   }
 
   onViewChange(view: string) {
-    if (this.currentView$.value === 'stats') {
-      this.currentView$.next('mvp'); 
-    } else {
-      this.currentView$.next('stats');
-    }
-
+    this.currentView$.next(view);
     this.setAllPlayerStats(this.sortByPoints(this.allPlayersStats$.value));
+
+
+
   }
 
   savePlayerStats(leagueId: string, user_id: string, stats: any): Observable<any> {

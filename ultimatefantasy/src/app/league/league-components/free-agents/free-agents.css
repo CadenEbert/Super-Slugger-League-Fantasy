@@ -116,6 +116,17 @@
   flex: 1;
 }
 
+.text-holder {
+    width: 100%;
+    display: flex;
+   align-items: center;
+   justify-content: center;
+ 
+}
+
+.not_started {
+    padding: 10px;
+}
 .add-btn {
     background-color: #4CAF50;
     color: white;

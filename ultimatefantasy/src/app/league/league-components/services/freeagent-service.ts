@@ -10,7 +10,7 @@ import { LeagueCompService } from '../league-comp-service';
 export class FreeagentService {
   public playersSubject$ = new BehaviorSubject<any[]>([]);
   public players$ = this.playersSubject$.asObservable();
-
+  public noRoster$ = new BehaviorSubject<boolean>(true);
   public isLoading$ = new BehaviorSubject<boolean>(true);
   public addingToRoster$ = new BehaviorSubject<boolean>(false);
   public draftStatus$ = new BehaviorSubject<string>('not_started');
@@ -27,23 +27,34 @@ export class FreeagentService {
 
   loadFreeAgents(leagueId: string) {
     this.setIsLoading(true);
-
     this.leagueId$.next(leagueId);
-    this.http.get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${this.userId$.value}`).subscribe(data => {
-      this.rosterId$.next(data.rosterId);
 
-      forkJoin({
-        draftStatus: this.http.get<{ draftStatus: string }>(`/api/draft/${leagueId}/status`),
-        freeAgents: this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`)
-      }).subscribe(({ draftStatus, freeAgents }) => {
-        this.draftStatus$.next(draftStatus.draftStatus);
-        this.playersSubject$.next(freeAgents);
+    this.http.get<{ rosterId: string }>(`/api/leagues/${leagueId}/rosters/user/${this.userId$.value}`).subscribe({
+      next: (data) => {
+        this.rosterId$.next(data.rosterId);
+        this.noRoster$.next(false);
+
+        forkJoin({
+          draftStatus: this.http.get<{ draftStatus: string }>(`/api/draft/${leagueId}/status`),
+          freeAgents: this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`)
+        }).subscribe({
+          next: ({ draftStatus, freeAgents }) => {
+            this.draftStatus$.next(draftStatus.draftStatus);
+            this.playersSubject$.next(freeAgents);
+            this.setIsLoading(false);
+          },
+          error: (err) => {
+            console.error('Error fetching draft data:', err);
+            this.setIsLoading(false);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching roster:', err);
+        this.noRoster$.next(true);
         this.setIsLoading(false);
-      })
+      }
     });
-
-    
-
   }
 
   setUserId(user_id: string) {

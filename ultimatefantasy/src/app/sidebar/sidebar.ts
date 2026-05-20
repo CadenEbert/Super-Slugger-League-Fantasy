@@ -15,7 +15,7 @@ export class Sidebar {
 
   ngOnInit() {
     this.sidebarService.loadSideBar(this.route.snapshot.params['leagueId']);
-    console.log(this.route.snapshot.params['leagueId']);
+ 
 
 
   }

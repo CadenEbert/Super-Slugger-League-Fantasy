@@ -57,8 +57,6 @@ export class LeaguePage {
 
 
     this.leagueService.getOwnerId(this.route.snapshot.params['leagueId']).subscribe(ownerId => {
-      console.log('Owner ID in LeaguePage:', ownerId);
-      console.log('User ID in RosterPage:', this.user_id);
       this.setOwnerId(ownerId);
     });
 

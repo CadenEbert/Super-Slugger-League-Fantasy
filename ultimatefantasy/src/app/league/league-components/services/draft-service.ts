@@ -180,7 +180,7 @@ export class DraftService implements OnDestroy {
   }
 
   setIsOwner(user_id: string, owner_id: string) {
-    if (user_id == owner_id) {
+    if (user_id === owner_id) {
       this.isOwner$.next(true);
     } else {
       this.isOwner$.next(false);

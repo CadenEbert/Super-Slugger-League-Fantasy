@@ -146,7 +146,6 @@ export class LeagueCompService {
     if (!leagueId || leagueId === 'null') {
       return of(null);
     }
-    console.log('Creating roster with:', { leagueId, teamName, teamImage, userId, userName });
 
     return this.http.post<any>(`/api/leagues/${leagueId}/rosters`, { teamName, userId, teamImage, userName });
   }
@@ -180,7 +179,6 @@ export class LeagueCompService {
   }
 
   updateDraftSettings(leagueId: string, newSetting: string): Observable<any> {
-    console.log('Updating draft settings for league:', leagueId, 'with new setting:', newSetting);
     return this.http.post(`/api/leagues/${leagueId}/draft-settings`, { draftSettings: newSetting });
   }
 

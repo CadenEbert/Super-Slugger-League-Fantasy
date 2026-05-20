@@ -312,7 +312,17 @@ exports.updateRosterLimit = async (leagueId, newLimit) => {
 
 exports.leaveLeague = async (leagueId, userId) => {
  
-    console.log('leagueId', leagueId, 'userid', userId);
+    const { error: stats } = await supabase.client
+    .from('player_stats')
+    .delete()
+    .eq('user_id', userId)
+    .eq('league_id', leagueId);
+
+    if (stats) {
+      throw new Error(stats.message);
+    }
+
+    
     const { data: roster } = await supabase.client
       .from('rosters')
       .select('id')
