@@ -1,20 +1,12 @@
 require('dotenv').config();
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const URL = require("url").URL;
 const crypto = require("crypto");
 const { Server } = require('socket.io');
 const { setupDraftChannel, setUpScheduleChannel } = require('./src/app/backend/supabase');
 const app = require('./src/app/backend/app');
 const debug = require("debug")("node-angular");
-
-
-
-
-
-
-// import http from "http";
-// import { URL } from "url";
-// import crypto from "crypto";
 
 
 
@@ -106,10 +98,17 @@ const onError = error => {
 };
 
 
-const server = http.createServer((req, res) => {
+const server = https.createServer(
+  {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH || "./key.pem"),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH || "./cert.pem"),
+  },
+
+  (req, res) => {
   try {
     // Parse URL safely
-    const u = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+    const u = new URL(req.url || "/", `https://${req.headers.host || "localhost"}`);
+
 
     // FIX 1: API routes are delegated to Express FIRST, before any method restrictions.
     // Previously the method allow-list ran before this block, which silently dropped
@@ -209,7 +208,7 @@ io.on('connection', (socket) => {
 server.on("clientError", (_err, socket) => socket.end("HTTP/1.1 400 Bad Request\r\n\r\n"));
 
 server.listen(PORT, HOST, () => {
-  console.log(`Listening on http://${HOST}:${PORT}`);
+  console.log(`Listening on https://${HOST}:${PORT}`);
 });
 
 server.on("error", onError);

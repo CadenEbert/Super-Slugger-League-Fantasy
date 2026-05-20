@@ -150,6 +150,13 @@
     
 }
 
+.completed-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .stat-half {
     display: flex;
     flex-direction: column;

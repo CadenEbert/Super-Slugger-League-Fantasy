@@ -207,7 +207,11 @@
                 </div>
 
                 <div *ngIf="draftData.status === 'completed'" class="draft-content">
-                  <h3>Draft Completed!</h3>
+                  <div class="completed-header">
+                    <h3>Draft Completed!</h3>
+
+                  </div>
+                  
                   <div *ngFor="let pick of draftedPlayersWithStats">
                     <mat-card class="indiv-players">
                       <mat-accordion>
