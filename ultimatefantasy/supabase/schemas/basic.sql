@@ -1,25 +1,201 @@
-create table leagues (
-  id uuid primary key default uuid_generate_v4(),
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.characters (
+  ID bigint NOT NULL,
+  character_name text,
+  pitching_arm text,
+  batting_arm text,
+  character_class text,
+  weight bigint,
+  captain bigint,
+  star_pitch text,
+  star_swing text,
+  fielding_ability text,
+  baserunning_ability text,
+  slap_size bigint,
+  charge_size bigint,
+  slap_power bigint,
+  charge_power bigint,
+  bunting bigint,
+  speed bigint,
+  outfield_throwing bigint,
+  fielding bigint,
+  displayed_pitching bigint,
+  displayed_batting bigint,
+  displayed_fielding bigint,
+  dis_speed bigint,
+  curveball_speed bigint,
+  charge_pitch_speed bigint,
+  curve bigint,
+  traj text,
+  hit_curve bigint,
+  stamina bigint,
+  star_pitch_type text,
+  character_image text,
+  CONSTRAINT characters_pkey PRIMARY KEY (ID)
+);
+CREATE TABLE public.draft (
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  league_id uuid DEFAULT gen_random_uuid(),
+  current_pick bigint DEFAULT '0'::bigint,
+  current_round bigint DEFAULT '1'::bigint,
+  timer_seconds bigint,
+  status text,
+  draft_type text DEFAULT 'Standard'::text,
+  uuid uuid NOT NULL DEFAULT gen_random_uuid(),
+  number_of_rounds bigint,
+  time_per_pick bigint,
+  pick_order ARRAY,
+  current_pick_index bigint DEFAULT '0'::bigint,
+  timer_running boolean DEFAULT false,
+  player_pool ARRAY DEFAULT '{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76}'::bigint[],
+  reversed boolean DEFAULT false,
+  end_of_snake text DEFAULT 'bot'::text,
+  CONSTRAINT draft_pkey PRIMARY KEY (uuid),
+  CONSTRAINT draft_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
+);
+CREATE TABLE public.draft_players (
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  league_id uuid DEFAULT gen_random_uuid(),
+  draft_id uuid DEFAULT gen_random_uuid(),
+  character_picked bigint NOT NULL,
+  pick_number bigint,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  member_picking uuid,
+  CONSTRAINT draft_players_pkey PRIMARY KEY (id),
+  CONSTRAINT players_picked_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id),
+  CONSTRAINT players_picked_draft_id_fkey FOREIGN KEY (draft_id) REFERENCES public.draft(uuid),
+  CONSTRAINT players_picked_character_picked_fkey FOREIGN KEY (character_picked) REFERENCES public.characters(ID)
+);
+CREATE TABLE public.league_members (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  league_id uuid,
+  user_id uuid,
+  role text DEFAULT 'member'::text,
+  joined_at timestamp without time zone DEFAULT now(),
+  profile_id uuid,
+  wins bigint DEFAULT '0'::bigint,
+  loses bigint DEFAULT '0'::bigint,
+  CONSTRAINT league_members_pkey PRIMARY KEY (id),
+  CONSTRAINT league_members_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id),
+  CONSTRAINT league_members_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES public.profiles(id),
+  CONSTRAINT league_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.leagues (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
   name text,
-  owner_id uuid references auth.users(id),
-  created_at timestamp default now()
+  owner_id uuid,
+  created_at timestamp without time zone DEFAULT now(),
+  league_size smallint,
+  draft_settings text,
+  owner_username text,
+  roster_size bigint,
+  CONSTRAINT leagues_pkey PRIMARY KEY (id),
+  CONSTRAINT leagues_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id)
 );
-
-create table teams (
-  id uuid primary key default uuid_generate_v4(),
-  league_id uuid references leagues(id),
-  user_id uuid references auth.users(id),
-  name text
+CREATE TABLE public.player_stats (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  hits bigint DEFAULT '0'::bigint,
+  ab bigint DEFAULT '0'::bigint,
+  hr bigint DEFAULT '0'::bigint,
+  innings bigint DEFAULT '0'::bigint,
+  outs bigint DEFAULT '0'::bigint,
+  runs_allowed bigint DEFAULT '0'::bigint,
+  character_id bigint,
+  character_name text,
+  character_image text,
+  user_id uuid,
+  league_id uuid,
+  total_points bigint DEFAULT '0'::bigint,
+  CONSTRAINT player_stats_pkey PRIMARY KEY (id),
+  CONSTRAINT player_stats_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
 );
-
-create table players (
-  id uuid primary key default uuid_generate_v4(),
-  name text,
-  position text
+CREATE TABLE public.profiles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  username text NOT NULL UNIQUE,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  user_id uuid,
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
-
-create table rosters (
-  id uuid primary key default uuid_generate_v4(),
-  team_id uuid references teams(id),
-  player_id uuid references players(id)
+CREATE TABLE public.roster_players (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  roster_id uuid NOT NULL,
+  position text,
+  created_at timestamp with time zone DEFAULT now(),
+  character_id bigint,
+  batting_order bigint,
+  league_id uuid,
+  CONSTRAINT roster_players_pkey PRIMARY KEY (id),
+  CONSTRAINT roster_players_character_id_fkey FOREIGN KEY (character_id) REFERENCES public.characters(ID),
+  CONSTRAINT roster_players_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id),
+  CONSTRAINT roster_players_roster_id_fkey FOREIGN KEY (roster_id) REFERENCES public.rosters(id)
+);
+CREATE TABLE public.rosters (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  league_id uuid,
+  team_name text,
+  owner_id uuid,
+  owner_username text,
+  roster_players uuid,
+  team_image text,
+  CONSTRAINT rosters_pkey PRIMARY KEY (id),
+  CONSTRAINT rosters_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id),
+  CONSTRAINT rosters_roster_players_fkey FOREIGN KEY (roster_players) REFERENCES public.roster_players(id),
+  CONSTRAINT rosters_owner_username_fkey FOREIGN KEY (owner_username) REFERENCES public.profiles(username),
+  CONSTRAINT rosters_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
+);
+CREATE TABLE public.schedule (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  total_weeks bigint DEFAULT '7'::bigint,
+  league_id uuid,
+  owner_id uuid,
+  status text DEFAULT 'not_started'::text,
+  current_week text DEFAULT '1'::text,
+  generated boolean DEFAULT false,
+  playoff_spots bigint,
+  standings ARRAY DEFAULT '{}'::uuid[],
+  winner_username text,
+  current_round bigint DEFAULT '1'::bigint,
+  CONSTRAINT schedule_pkey PRIMARY KEY (id),
+  CONSTRAINT schedule_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
+);
+CREATE TABLE public.schedule_games (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  home_team text,
+  home_score bigint DEFAULT '0'::bigint,
+  stadium_played_at text,
+  away_team text,
+  away_score bigint DEFAULT '0'::bigint,
+  playoff_game boolean DEFAULT false,
+  bye boolean DEFAULT false,
+  league_id uuid,
+  week bigint,
+  home_team_uuid uuid,
+  away_team_uuid uuid,
+  round bigint DEFAULT '0'::bigint,
+  CONSTRAINT schedule_games_pkey PRIMARY KEY (id),
+  CONSTRAINT schedule_games_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
+);
+CREATE TABLE public.trades (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  proposing_team_id uuid,
+  proposing_team_username text,
+  receiving_team_id uuid NOT NULL,
+  receiving_team_username text,
+  offered_player_name ARRAY,
+  offered_player_id ARRAY,
+  requested_player_name ARRAY,
+  requested_player_id ARRAY,
+  status text DEFAULT 'not_active'::text,
+  league_id uuid,
+  receiving_team_user_id uuid,
+  CONSTRAINT trades_pkey PRIMARY KEY (id),
+  CONSTRAINT trades_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
 );

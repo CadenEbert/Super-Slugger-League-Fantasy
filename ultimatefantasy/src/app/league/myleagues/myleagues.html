@@ -5,35 +5,40 @@
     <div class="myleague-content">
         <div class="league-container">
             <h1 class="league-title">My Leagues</h1>
-            <div class="leaguejoin-container"> 
+            <div class="leaguejoin-container">
                 <div class="leaguejoin-header">
                     <p>Join League: </p>
 
                 </div>
-                
+
                 <div class="leaguejoin-form">
                     <input type="text" class="form-control" [(ngModel)]="leagueId" placeholder="Enter League Code">
                     <button class="join-button" (click)="joinLeague(leagueId)">Join</button>
-                   
+
 
                 </div>
 
-                
-                
+
+
             </div>
-            <div class="my-leagues" *ngIf="leagues.length > 0" >
-                    
-                    
+             <div class="loading-container" *ngIf="isLoading">
+                    <mat-spinner></mat-spinner>
+                </div>
+            <div class="my-leagues" *ngIf="leagues.length > 0 && !isLoading">
 
-                    <div (click)="selectLeague(league)" class="indiv-leagues" *ngFor="let league of leagues">
-                        <h2>{{ league.name }}</h2>
-                        <p>League Code: {{ league.id }}</p>
-                        <p>Members: {{ league.memberCount}}</p>
 
-                    </div>
+               
+
+
+                <div (click)="selectLeague(league)" class="indiv-leagues" *ngFor="let league of leagues">
+                    <h2>{{ league.name }}</h2>
+                    <p>League Code: {{ league.id }}</p>
+                    <p>Members: {{ league.memberCount}}</p>
 
                 </div>
-           
+
+            </div>
+
 
 
 

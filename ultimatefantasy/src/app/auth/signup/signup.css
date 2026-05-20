@@ -38,8 +38,10 @@
     border-bottom: 1px solid #ccc;
     width: 80%;
     justify-content: center;
+    text-wrap: nowrap;
     align-items: center;
     text-align: center;
+    padding-bottom: 15px;
 }
 
 ::ng-deep .signup-form {

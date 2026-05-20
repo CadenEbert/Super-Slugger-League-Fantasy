@@ -13,12 +13,12 @@ export class AuthService {
   );
   session$ = this.sessionSubject.asObservable();
 
-  
-
- 
 
 
-  constructor(private http: HttpClient) { 
+
+
+
+  constructor(private http: HttpClient) {
   }
 
   setSession(session: any) {
@@ -27,13 +27,15 @@ export class AuthService {
       this.sessionSubject.next(session);
     } else {
       localStorage.removeItem('session');
-      this.sessionSubject.next(null); 
+      this.sessionSubject.next(null);
     }
   }
 
   getUserId(): any {
     return this.sessionSubject.value.user.id;
   }
+
+  isLoggedIn$ = this.session$.pipe(map(session => !!session));
 
   get currentSession() {
     return this.sessionSubject.value;

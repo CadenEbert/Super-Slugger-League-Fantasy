@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { LeagueService } from '../league-service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { map } from 'rxjs/internal/operators/map';
-import { LeagueCompService } from '../league-components/league-comp-service';
-import { Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth-service';
+import { Subscription, combineLatest } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 
@@ -25,14 +25,15 @@ export class LeaguePage {
   private subscription!: Subscription;
   user_id: string = '';
 
-  
+
 
   constructor(
     private route: ActivatedRoute,
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
-    private leagueCompService: LeagueCompService
-  
+    private authService: AuthService,
+    private router: Router
+
 
   ) {
 
@@ -40,17 +41,20 @@ export class LeaguePage {
 
   ngOnInit() {
 
-   
-
-    this.subscription = this.leagueService.user_id.subscribe(val =>
-    {
-      this.user_id = val;
+    this.subscription = combineLatest([
+      this.authService.isLoggedIn$,
+      this.leagueService.user_id
+    ]).subscribe(([loggedIn, userId]) => {
+      if (!loggedIn) {
+        this.router.navigate(['']);
+      }
+      this.user_id = userId;
     });
-  
 
 
 
-    
+
+
 
     this.leagueService.getOwnerId(this.route.snapshot.params['leagueId']).subscribe(ownerId => {
       console.log('Owner ID in LeaguePage:', ownerId);
@@ -89,11 +93,16 @@ export class LeaguePage {
     });
   }
 
+  isLoggedIn() {
+    return !!this.authService.currentSession;
+  }
+
+
   setOwnerId(ownerId: string) {
     this.ownerIdSubject.next(ownerId);
   }
 
-  
+
 
 
 }

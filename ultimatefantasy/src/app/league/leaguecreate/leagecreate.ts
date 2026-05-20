@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeagueService } from '../league-service';
 import { AuthService } from '../../auth/auth-service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-leagecreate',
   standalone: false,
@@ -22,12 +22,16 @@ export class Leagecreate {
     leagueSize: new FormControl(8, Validators.required),
   });
 
-  constructor(private leagueService: LeagueService) { }
+  constructor(private leagueService: LeagueService, public authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
+    if (!this.authService.currentSession) {
+      this.router.navigate(['']);
+      return;
+    }
+
     this.leagueService.getProfile().subscribe((profile: any) => {
       this.profile = profile;
-      console.log('Profile data:', profile);
     });
   }
 
@@ -53,7 +57,10 @@ export class Leagecreate {
     });
   }
 
-
-
-
+  isLoggedIn() {
+    return !!this.authService.currentSession;
   }
+
+
+
+}

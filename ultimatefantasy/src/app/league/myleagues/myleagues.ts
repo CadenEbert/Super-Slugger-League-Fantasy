@@ -3,7 +3,7 @@ import { LeagueService } from '../league-service';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { take } from 'rxjs/internal/operators/take';
-import { filter } from 'rxjs/internal/operators/filter';
+import { AuthService } from '../../auth/auth-service';
 import { LeagueCompService } from '../league-components/league-comp-service';
 
 
@@ -18,38 +18,39 @@ export class Myleagues {
   leagues: any[] = [];
   userId: string = '';
   leagueId: string = '';
-  
+  isLoading: boolean = true;
+
 
   constructor(
     private leagueService: LeagueService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private leagueCompService: LeagueCompService
-    
+    private leagueCompService: LeagueCompService,
+    private authService: AuthService
+
 
   ) { }
 
   ngOnInit() {
+    if (!this.authService.currentSession) {
+      this.router.navigate(['']);
+      return;
+    }
 
-    this.leagueCompService.getUserIdFromBackend().subscribe({
-      next: (userId) => {
+    this.leagueCompService.getUserIdFromBackend().pipe(
+      take(1),
+      switchMap(userId => {
         this.userId = userId;
-        console.log('Fetched user ID in Myleagues:', userId);
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Error fetching user ID in Myleagues:', err)
-    });
-
-    this.leagueService.getLeaguesForCurrentUser(this.userId).subscribe({
+        return this.leagueService.getLeaguesForCurrentUser(userId);
+      })
+    ).subscribe({
       next: (leagues) => {
         this.leagues = leagues;
-        console.log('Fetched leagues:', leagues);
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error fetching leagues in Myleagues:', err)
+      error: (err) => console.error('Error fetching leagues:', err)
     });
-
-    
   }
 
   joinLeague(leagueId: string) {

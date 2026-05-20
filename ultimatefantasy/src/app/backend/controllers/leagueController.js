@@ -14,6 +14,9 @@ exports.getLeagues = async (req, res) => {
 exports.createLeague = async (req, res) => {
     try {
         const userId = req.user.id;
+        if (!userId) {
+            res.status(500).json({error: 'You must be logged in to create a league'})
+        }
         const leagueData = req.body;
         const userName = req.user.name || 'Unknown User';
         const newLeague = await leagueService.createLeague(userId, leagueData, userName);

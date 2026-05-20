@@ -17,7 +17,10 @@ export class LeagueService {
 
 
   constructor(private http: HttpClient, private authService: AuthService) {
-    this.setUserId(this.authService.getUserId());
+    this.authService.session$.pipe(
+      filter(session => !!session),
+      map(session => session.user.id)
+    ).subscribe(userId => this.setUserId(userId));
 
 
   }
