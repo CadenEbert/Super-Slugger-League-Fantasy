@@ -3,8 +3,6 @@ const leagueService = require('../services/leagueService');
 exports.getLeagues = async (req, res) => {
     try {
         const userId = req.user.id; 
-        console.log('userId:', userId);
-        console.log('req.user:', req.user);
         const leagues = await leagueService.getLeaguesForUser(userId);
         res.json(leagues);
     } catch (error) {
@@ -139,7 +137,6 @@ exports.updateRosterLimit = async (req, res) => {
     try {
         const leagueId = req.params.id;
         const { rosterLimit } = req.body;
-        console.log('Received request to update roster limit:', leagueId, rosterLimit);
         const updatedLeague = await leagueService.updateRosterLimit(leagueId, rosterLimit);
         if (updatedLeague) {
             res.json({ message: 'Roster limit updated successfully' });

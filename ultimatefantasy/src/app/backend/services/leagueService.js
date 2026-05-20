@@ -195,67 +195,90 @@ exports.getOwnerId = async (leagueId) => {
 exports.deleteLeague = async (leagueId) => {
   console.log('Deleting league with ID:', leagueId);
 
+  const { error: trades } = await supabase.client
+    .from('trades')
+    .delete()
+    .eq('league_id', leagueId);
+  console.log('trades error:', trades);
+  if (trades) throw new Error(trades.message);
+
+  const { error: playerstats } = await supabase.client
+  .from('player_stats')
+  .delete()
+  .eq('league_id', leagueId);
+console.log('trades error:', trades);
+if (playerstats) throw new Error(playerstats.message);
+
   const { error: scheduleGamesError } = await supabase.client
     .from('schedule_games')
     .delete()
     .eq('league_id', leagueId);
+  console.log('scheduleGamesError:', scheduleGamesError);
   if (scheduleGamesError) throw new Error(scheduleGamesError.message);
 
   const { error: scheduleError } = await supabase.client
     .from('schedule')
     .delete()
     .eq('league_id', leagueId);
+  console.log('scheduleError:', scheduleError);
   if (scheduleError) throw new Error(scheduleError.message);
-
 
   const { error: draftPlayersError } = await supabase.client
     .from('draft_players')
     .delete()
     .eq('league_id', leagueId);
+  console.log('draftPlayersError:', draftPlayersError);
   if (draftPlayersError) throw new Error(draftPlayersError.message);
-
 
   const { error: draftError } = await supabase.client
     .from('draft')
     .delete()
     .eq('league_id', leagueId);
+  console.log('draftError:', draftError);
   if (draftError) throw new Error(draftError.message);
-
 
   const { data: rosterData, error: rosterError } = await supabase.client
     .from('rosters')
     .select('id')
     .eq('league_id', leagueId);
+  console.log('rosterError:', rosterError);
+  console.log('rosterData:', rosterData);
   if (rosterError) throw new Error(rosterError.message);
 
   const rosterIds = rosterData ? rosterData.map(r => r.id) : [];
+  console.log('rosterIds:', rosterIds);
+
   if (rosterIds.length > 0) {
     const { error: rosterPlayersError } = await supabase.client
       .from('roster_players')
       .delete()
       .in('roster_id', rosterIds);
+    console.log('rosterPlayersError:', rosterPlayersError);
     if (rosterPlayersError) throw new Error(rosterPlayersError.message);
   }
-
 
   const { error: rostersDeleteError } = await supabase.client
     .from('rosters')
     .delete()
     .eq('league_id', leagueId);
+  console.log('rostersDeleteError:', rostersDeleteError);
   if (rostersDeleteError) throw new Error(rostersDeleteError.message);
 
   const { error: memberError } = await supabase.client
     .from('league_members')
     .delete()
     .eq('league_id', leagueId);
+  console.log('memberError:', memberError);
   if (memberError) throw new Error(memberError.message);
-
 
   const { data, error } = await supabase.client
     .from('leagues')
     .delete()
     .eq('id', leagueId)
     .select();
+  console.log('league delete error:', error);
+  console.log('deleted league data:', data);
+
   if (error) throw new Error(error.message);
 
   return data && data.length > 0 ? data[0] : null;
