@@ -1,4 +1,4 @@
--- Supabase profiles table for storing additional user info
+
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text unique not null,
@@ -6,7 +6,7 @@ create table if not exists profiles (
   updated_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- Automatically update updated_at on row update
+
 create or replace function update_updated_at_column()
 returns trigger as $$
 begin
