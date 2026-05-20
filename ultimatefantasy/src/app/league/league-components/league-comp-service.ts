@@ -14,7 +14,7 @@ export class LeagueCompService {
 
 
   constructor(private http: HttpClient, private route: ActivatedRoute, ) {
-    this.socket = io('http://localhost:3000');
+    this.socket = io('https://localhost:3000');
    }
 
   ngOnInit(): void {

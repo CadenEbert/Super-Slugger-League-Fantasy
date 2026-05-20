@@ -93,7 +93,7 @@ export class DraftService implements OnDestroy {
 
 
   constructor(private http: HttpClient, private leagueService: LeagueService, private authService: AuthService) {
-    this.socket = io('http://localhost:3000');
+    this.socket = io('https://localhost:3000');
     this.setUserId(this.authService.getUserId());
 
 
