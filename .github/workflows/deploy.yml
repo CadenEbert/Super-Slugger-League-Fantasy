@@ -1,0 +1,66 @@
+name: Deploy to Droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ultimatefantasy/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ultimatefantasy
+        run: npm ci
+
+      - name: Build Angular app
+        working-directory: ultimatefantasy
+        run: npm run build
+
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: root
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            set -e
+            cd /var/www/sslfantasy/ultimatefantasy
+
+            # Pull latest source for backend files only
+            git fetch origin main
+            git checkout origin/main -- src/app/backend/ server.js package.json package-lock.json
+
+            # Install production dependencies only
+            npm ci --omit=dev
+
+      - name: Copy dist to Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: root
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          source: "ultimatefantasy/dist/"
+          target: "/var/www/sslfantasy/ultimatefantasy/"
+          strip_components: 1
+
+      - name: Restart PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: root
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            pm2 restart sslfantasy
+            pm2 save
