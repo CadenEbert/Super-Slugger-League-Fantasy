@@ -9,6 +9,7 @@ router.get('/leagues', authMiddleware, leagueController.getLeagues);
 
 router.post('/leagues', authMiddleware, leagueController.createLeague);
 
+router.get('/leagues/:id/roster/players/leagueid', authMiddleware, leagueController.getRosterPlayersByLeagueId);
 
 router.get('/leagues/:id', authMiddleware, leagueController.getLeagueById);
 

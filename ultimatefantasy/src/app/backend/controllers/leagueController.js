@@ -33,6 +33,17 @@ exports.getProtections = async (req, res) => {
     }
 }
 
+exports.getRosterPlayersByLeagueId = async (req, res) => {
+        try {
+        const leagueId = req.params.id;
+        const players = await leagueService.getRosterPlayersByLeagueId(leagueId);
+        res.status(201).json(players);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get players' });
+    }
+
+}
+
 exports.resetLeague = async (req, res) => {
     try {
         const leagueId = req.params.id;

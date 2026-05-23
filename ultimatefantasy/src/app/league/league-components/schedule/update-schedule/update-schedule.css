@@ -2,79 +2,140 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 95%;
     padding: 20px;
     background-color: white;
 }
 
 .loading-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 90%;
-    width: 95%;
-    margin-top: 30px;
 }
 
-.edit-game {
+.header {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
-    padding: 20px;
-    gap: 40px;
-    background-color: #f1f1f1;
-    border-radius: 10px;
-   
+    max-width: 900px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.header h1 {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
 }
 
 .game-info {
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f1f1f1;
-    border-radius: 10px;
-    
- 
+    width: 100%;
+    max-width: 900px;
+    gap: 20px;
 }
-
-.edit-stadium {
+.edit-game {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
     background-color: #f1f1f1;
     border-radius: 10px;
     padding: 20px;
+    gap: 20px;
+}
+
+.vs-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     gap: 10px;
+    padding-top: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #555;
+}
+
+.team-roster {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    gap: 12px;
+}
+
+.team-roster select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.score-input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    padding-top: 10px;
+}
+
+.roster-players {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.roster-player {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 8px 12px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.roster-player p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    text-align: center;
+}
+
+.roster-player p:first-child {
+    text-align: left;
+}
+
+.roster-player p:last-child {
+    text-align: right;
 }
 
 .update-btn {
     background-color: #4ca0af;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 30px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
-
-}
-
-.header {
-    color: #555;
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-}
-
-.score-input {
-    width: 30px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
+    font-size: 16px;
 }
 
 .update-btn:disabled {

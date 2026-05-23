@@ -216,6 +216,10 @@ export class LeagueCompService {
     return this.http.get<any>(`/api/leagues/${leagueId}/playerstats`);
   }
 
+  getAllPlayersByLeagueId(leagueId: string): Observable<any>  {
+    return this.http.get(`/api/leagues/${leagueId}/roster/players/leagueid`);
+  }
+
 
   getFilteredPlayerStats(leagueId: string, user_id: string): Observable<any> {
     return this.http.get<any>(`/api/leagues/${leagueId}/playerstats/characters`, { params: { user_id } });

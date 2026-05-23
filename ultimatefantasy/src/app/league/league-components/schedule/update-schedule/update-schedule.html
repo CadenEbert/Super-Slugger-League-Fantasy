@@ -1,7 +1,6 @@
-
 <div class="loading-container" *ngIf="isLoading">
-        <mat-spinner></mat-spinner>
-    </div>
+    <mat-spinner></mat-spinner>
+</div>
 
 <div class="schedule-update-container" *ngIf="!isLoading">
     <div class="header">
@@ -11,47 +10,52 @@
     </div>
 
     <div class="game-info">
-    
-    <div class="edit-game">
-        <p>{{game.home_team}}</p>
-        
-        <select type="text" [(ngModel)]="game.home_team" (ngModelChange)="onHomeTeamChange($event)">
-            <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
-        </select>
+        <div class="edit-game">
+            <div class="team-roster">
+                <select [(ngModel)]="game.home_team" (ngModelChange)="onHomeTeamChange($event)">
+                    <option *ngFor="let member of members" [value]="member.profiles.username">{{
+                        member.profiles.username }}</option>
+                </select>
+                <div class="roster-players" *ngIf="getHomeRoster()">
+                    <div class="roster-player" *ngFor="let rp of getHomeRoster().roster_players">
+                        <p>{{ rp.character_id.character_name }}</p>
+                        <p>{{ rp.position }}</p>
+                        <p>{{ rp.batting_order ?? 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
 
-        <input class="score-input" type="number" [(ngModel)]="game.home_score" class="score-input">
+            <div class="vs-section">
+                <input class="score-input" type="number" [(ngModel)]="game.home_score">
+                <span>VS</span>
+                <input class="score-input" type="number" [(ngModel)]="game.away_score">
+            </div>
 
-        <p>VS</p>
+            <div class="team-roster">
+                <select [(ngModel)]="game.away_team" (ngModelChange)="onAwayTeamChange($event)">
+                    <option *ngFor="let member of members" [value]="member.profiles.username">{{
+                        member.profiles.username }}</option>
+                </select>
+                <div class="roster-players" *ngIf="getAwayRoster()">
+                    <div class="roster-player" *ngFor="let rp of getAwayRoster().roster_players">
+                        <p>{{ rp.character_id.character_name }}</p>
+                        <p>{{ rp.position }}</p>
+                        <p>{{ rp.batting_order ?? 'N/A' }}</p>
 
-        <select type="text" [(ngModel)]="game.away_team" (ngModelChange)="onAwayTeamChange($event)">
-            <option *ngFor="let member of members" [value]="member.profiles.username">{{ member.profiles.username }}</option>
-        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <input type="number" class="score-input" [(ngModel)]="game.away_score" class="score-input">
-        <p>{{game.away_team}}</p>
-        
+        <p *ngIf="game.home_score === null || game.away_score === null">
+            Please enter a score for both teams to update the game.
+        </p>
+        <button (click)="updateGame()" class="update-btn"
+            [disabled]="game.home_score === null || game.away_score === null">Update Game</button>
     </div>
-
-<!--
-    <div class="edit-stadium">
-        <p>Stadium played at: </p>
-        <select type="text" [(ngModel)]="game.stadium_played_at"   class="stadium-input">
-            <option *ngFor="let stadium of stadiums" [value]="stadium">{{ stadium }}</option>
-        </select>
-
-    </div>
--->
-
-    <p *ngIf="game.home_score === null || game.away_score === null">
-        Please enter a score for both teams to update the game.
-    </p>
-
-    <button (click)="updateGame()" class="update-btn" [disabled]="game.home_score === null || game.away_score === null" class="update-btn">Update Game</button>
-
-    </div>
-
-
-
-
-
 </div>
+
+
+
+
+
