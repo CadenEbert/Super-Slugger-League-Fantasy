@@ -1,5 +1,6 @@
 require('dotenv').config();
 const http = require("http");
+const path = require('path');
 const fs = require("fs");
 const URL = require("url").URL;
 const crypto = require("crypto");
@@ -113,11 +114,45 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    if (u.pathname === "/") {
-      send(res, 200, "Hello from a minimal Node.js HTTP server.\n");
-      safeLogLine(req, 200);
-      return;
+    if (u.pathname === "/" || u.pathname === "/index.html") {
+      u.pathname = "/index.html";
     }
+
+    const isFrontendAsset = u.pathname.startsWith("/assets/") ||
+      u.pathname === "/favicon.ico" ||
+      u.pathname === "/index.html" ||
+      u.pathname.endsWith(".js") ||
+      u.pathname.endsWith(".css");
+
+    if (isFrontendAsset) {
+      const targetPath = path.join(process.cwd(), 'dist/ultimatefantasy/browser', u.pathname);
+
+      if (fs.existsSync(targetPath) && fs.statSync(targetPath).isFile()) {
+        const ext = path.extname(targetPath).toLowerCase();
+        let mimeType = "application/octet-stream";
+
+        if (ext === ".html") mimeType = "text/html; charset=utf-8";
+        else if (ext === ".ico") mimeType = "image/x-icon";
+        else if (ext === ".png") mimeType = "image/png";
+        else if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
+        else if (ext === ".gif") mimeType = "image/gif";
+        else if (ext === ".svg") mimeType = "image/svg+xml";
+        else if (ext === ".css") mimeType = "text/css";
+        else if (ext === ".js") mimeType = "application/javascript";
+
+        res.writeHead(200, {
+          "Content-Type": mimeType,
+          "Cache-Control": u.pathname === "/index.html" ? "no-cache" : "public, max-age=2592000"
+        });
+        fs.createReadStream(targetPath).pipe(res);
+        safeLogLine(req, 200);
+        return;
+      }
+    }
+
+
+
+
 
     if (u.pathname === "/nonce") {
       const nonce = crypto.randomBytes(16).toString("hex");
