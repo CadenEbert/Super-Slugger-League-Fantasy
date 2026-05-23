@@ -162,8 +162,14 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`);
   }
 
-  changePlayerPosition(leagueId: string, rosterId: string, characterId: string, newPosition: string): Observable<any> {
-    return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}/position`, { newPosition });
+  getProtections(leagueId: string): Observable<number> {
+    return this.http.get<{ protections: number }>(`/api/leagues/${leagueId}/protections`).pipe(
+      map(res => res.protections)
+    );
+  }
+
+  updateProtctionLimit(leagueId: string, newLimit: number) {
+     return this.http.put(`/api/leagues/${leagueId}/protection-limit`, { newLimit: newLimit });
   }
 
   removePlayer(leagueId: string, rosterId: string, characterId: string): Observable<any> {
@@ -174,12 +180,16 @@ export class LeagueCompService {
     return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}`, {});
   }
 
-  changePlayerBattingOrder(leagueId: string, rosterId: string, characterId: string, newOrder: number): Observable<any> {
-    return this.http.post(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${characterId}/batting-order`, { newBattingOrder: newOrder });
+  savePlayer(leagueId: string, rosterId: string, player: any) {
+    return this.http.put(`/api/leagues/${leagueId}/rosters/${rosterId}/players/${player.character_id}/save-player`, { player: player });
   }
 
   deleteLeague(leagueId: string): Observable<any> {
     return this.http.delete(`/api/leagues/${leagueId}`);
+  }
+
+  resetLeague(leagueId: string): Observable<any> {
+    return this.http.delete(`/api/leagues/${leagueId}/reset`);
   }
 
   getAllMembers(leagueId: string): Observable<any[]> {
@@ -205,6 +215,7 @@ export class LeagueCompService {
   getPlayerStats(leagueId: string): Observable<any> {
     return this.http.get<any>(`/api/leagues/${leagueId}/playerstats`);
   }
+
 
   getFilteredPlayerStats(leagueId: string, user_id: string): Observable<any> {
     return this.http.get<any>(`/api/leagues/${leagueId}/playerstats/characters`, { params: { user_id } });

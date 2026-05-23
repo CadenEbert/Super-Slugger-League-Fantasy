@@ -284,6 +284,77 @@ if (playerstats) throw new Error(playerstats.message);
   return data && data.length > 0 ? data[0] : null;
 };
 
+exports.resetLeague = async (leagueId) => {
+
+  const { error: tradesError } = await supabase.client
+    .from('trades')
+    .delete()
+    .eq('league_id', leagueId);
+  if (tradesError) throw new Error(tradesError.message);
+
+  const { error: scheduleGamesError } = await supabase.client
+    .from('schedule_games')
+    .delete()
+    .eq('league_id', leagueId);
+  if (scheduleGamesError) throw new Error(scheduleGamesError.message);
+
+  const { error: scheduleError } = await supabase.client
+    .from('schedule')
+    .update({
+      status: 'not_started',
+      current_week: '1',
+      generated: false,
+      standings: [],
+      winner_username: null,
+      current_round: 1
+    })
+    .eq('league_id', leagueId);
+  if (scheduleError) throw new Error(scheduleError.message);
+
+  const { data: draft } = await supabase.client
+    .from('draft')
+    .select('uuid')
+    .eq('league_id', leagueId)
+    .single();
+
+  if (draft) {
+    const { error: draftPlayersError } = await supabase.client
+      .from('draft_players')
+      .delete()
+      .eq('draft_id', draft.uuid);
+    if (draftPlayersError) throw new Error(draftPlayersError.message);
+
+    const { error: draftError } = await supabase.client
+      .from('draft')
+      .update({
+        current_pick: 0,
+        current_round: 1,
+        status: 'not_started',
+        timer_running: false,
+        current_pick_index: 0,
+        player_pool: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76]
+      })
+      .eq('league_id', leagueId);
+    if (draftError) throw new Error(draftError.message);
+  }
+
+  const { error: rosterPlayersError } = await supabase.client
+    .from('roster_players')
+    .delete()
+    .eq('protected', false)
+    .eq('league_id', leagueId);
+  if (rosterPlayersError) throw new Error(rosterPlayersError.message);
+
+  const { error: membersError } = await supabase.client
+    .from('league_members')
+    .update({ wins: 0, loses: 0 })
+    .eq('league_id', leagueId);
+  if (membersError) throw new Error(membersError.message);
+
+
+
+}
+
 exports.updateDraftSettings = async (leagueId, newSetting) => {
   console.log('Updating draft settings for league ID:', leagueId, 'with new setting:', newSetting);
   const { data, error } = await supabase.client
@@ -344,4 +415,44 @@ exports.leaveLeague = async (leagueId, userId) => {
     if (error) throw new Error(error.message);
 
   
+}
+
+exports.getProtections = async (leagueId) => {
+    const { data, error } = await supabase.client
+    .from('leagues')
+    .select('protections')
+    .eq('id', leagueId)
+    .single();
+
+
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return data;
+}
+
+exports.updateProtectionLimit = async (leagueId, newLimit) => {
+  console.log(leagueId, newLimit);
+  const { data, error } = await supabase.client
+  .from('leagues')
+  .update({protections: newLimit})
+  .eq('id', leagueId)
+  .select();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const { error: err } = await supabase.client
+  .from('roster_players')
+  .update({protected: false})
+  .eq('league_id', leagueId);
+
+  if (err) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }

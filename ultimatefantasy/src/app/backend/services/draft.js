@@ -142,43 +142,43 @@ exports.getAllLeagueMembers = async (leagueId) => {
 };
 
 exports.getDraftStatus = async (leagueId) => {
-    console.log('Fetching draft status for leagueId:', leagueId);
-    const { data, error } = await client
-        .from('draft')
-        .select('status')
-        .eq('league_id', leagueId)
-        .single();
+  console.log('Fetching draft status for leagueId:', leagueId);
+  const { data, error } = await client
+    .from('draft')
+    .select('status')
+    .eq('league_id', leagueId)
+    .single();
 
-    console.log('Draft status data from database:', data, 'error:', error);
-    if (error) throw new Error(error.message);
+  console.log('Draft status data from database:', data, 'error:', error);
+  if (error) throw new Error(error.message);
 
-    return data.status;
+  return data.status;
 };
 
 exports.getCanDraft = async (leagueId) => {
 
-    console.log('Checking if user can draft for leagueId:', leagueId);
-    const { data: rostersData, error } = await client
-        .from('rosters')
-        .select('*')
-        .eq('league_id', leagueId);
+  console.log('Checking if user can draft for leagueId:', leagueId);
+  const { data: rostersData, error } = await client
+    .from('rosters')
+    .select('*')
+    .eq('league_id', leagueId);
 
-    if (error) {
-        console.error('Supabase error:', error);
-        throw new Error(error.message);
-    }
+  if (error) {
+    console.error('Supabase error:', error);
+    throw new Error(error.message);
+  }
 
-    const { data: membersData, error: membersError } = await client
-        .from('league_members')
-        .select('user_id')
-        .eq('league_id', leagueId);
+  const { data: membersData, error: membersError } = await client
+    .from('league_members')
+    .select('user_id')
+    .eq('league_id', leagueId);
 
-    if (membersError) {
-        console.error('Supabase error fetching league members:', membersError);
-        throw new Error(membersError.message);
-    }
+  if (membersError) {
+    console.error('Supabase error fetching league members:', membersError);
+    throw new Error(membersError.message);
+  }
 
-   return membersData.length === rostersData.length;
+  return membersData.length === rostersData.length;
 };
 
 exports.updateDraftData = async (draftId, data) => {
@@ -305,7 +305,7 @@ async function getAllPlayers() {
     throw new Error(error.message);
   }
 
-  
+
 
   return data.map(player => ({
     id: player.ID,
@@ -342,30 +342,45 @@ async function getAllPlayers() {
   }));
 }
 
-exports.getAllPlayers = getAllPlayers;
-
-
 exports.getPlayerPool = async (draftId) => {
-  const { data, error } = await client
+  console.log('hlksadjf;lkasdjfl;ksadjf;lkasjdflk;asjdf;lkasjdf;lkajsdf;lkjsai')
+  const { data: draftPlayers, error } = await client
     .from('draft_players')
-    .select('character_picked')
+    .select('character_picked, league_id')
     .eq('draft_id', draftId);
 
+  console.log(error);
 
-  if (error) {
-    console.error('Supabase error:', error);
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
+
+  const { data: draft, error: draftError } = await client
+    .from('draft')
+    .select('league_id')
+    .eq('uuid', draftId)
+    .single();
+
+  console.log(draftError);
+
+  if (draftError) throw new Error(draftError.message);
+
+  const { data: rosterPlayers, error: rosterError } = await client
+    .from('roster_players')
+    .select('character_id')
+    .eq('league_id', draft.league_id);
+
+  console.log(rosterError);
+
+  if (rosterError) throw new Error(rosterError.message);
+
+  const pickedCharacterIds = draftPlayers.map(p => p.character_picked);
+  const rosterCharacterIds = rosterPlayers.map(p => p.character_id);
 
   const allPlayers = await getAllPlayers();
 
-
-  const pickedCharacterIds = data.map(p => p.character_picked);
-
-
-  const availablePlayers = allPlayers.filter(player => !pickedCharacterIds.includes(player.id));
-
-  return availablePlayers;
+  return allPlayers.filter(player =>
+    !pickedCharacterIds.includes(player.id) &&
+    !rosterCharacterIds.includes(player.id)
+  );
 };
 
 
@@ -415,24 +430,24 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
     let nextRound = current_round;
     let finalRound = false;
 
-  
+
     if (draft_type === 'Snake') {
-     
+
       if (!reversed) {
         if (current_pick_index === totalPicks - 1) {
-         
+
           if (current_round === number_of_rounds) {
             finalRound = true;
           } else {
             nextRound = current_round + 1;
           }
           nextReversed = true;
-          nextIndex = totalPicks - 1; 
+          nextIndex = totalPicks - 1;
         } else {
           nextIndex = current_pick_index + 1;
         }
       } else {
-       
+
         if (current_pick_index === 0) {
           if (current_round === number_of_rounds) {
             finalRound = true;
@@ -460,6 +475,13 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
       console.log('Draft completed after this pick');
       exports.pauseDraftTimer(draftId);
       await finishDraft(draftId, league_id);
+    }
+
+    if (newPlayerPool <= 0) {
+      console.log('Draft completed after this pick');
+      exports.pauseDraftTimer(draftId);
+      await finishDraft(draftId, league_id);
+
     }
 
     const { error: updateError } = await client

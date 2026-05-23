@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../node_modules/rxjs/dist/cjs/internal/operators/filter.js"],
+  "sourcesContent": ["\"use strict\";\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.filter = void 0;\nvar lift_1 = require(\"../util/lift\");\nvar OperatorSubscriber_1 = require(\"./OperatorSubscriber\");\nfunction filter(predicate, thisArg) {\n    return lift_1.operate(function (source, subscriber) {\n        var index = 0;\n        source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function (value) { return predicate.call(thisArg, value, index++) && subscriber.next(value); }));\n    });\n}\nexports.filter = filter;\n"],
+  "mappings": ";;;;;;;;;;AAAA;AAAA;AACA,WAAO,eAAe,SAAS,cAAc,EAAE,OAAO,KAAK,CAAC;AAC5D,YAAQ,SAAS;AACjB,QAAI,SAAS;AACb,QAAI,uBAAuB;AAC3B,aAAS,OAAO,WAAW,SAAS;AAChC,aAAO,OAAO,QAAQ,SAAU,QAAQ,YAAY;AAChD,YAAI,QAAQ;AACZ,eAAO,UAAU,qBAAqB,yBAAyB,YAAY,SAAU,OAAO;AAAE,iBAAO,UAAU,KAAK,SAAS,OAAO,OAAO,KAAK,WAAW,KAAK,KAAK;AAAA,QAAG,CAAC,CAAC;AAAA,MAC9K,CAAC;AAAA,IACL;AACA,YAAQ,SAAS;AAAA;AAAA;",
+  "names": []
+}

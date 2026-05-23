@@ -14,9 +14,6 @@ exports.getLeagues = async (req, res) => {
 exports.createLeague = async (req, res) => {
     try {
         const userId = req.user.id;
-        if (!userId) {
-            res.status(500).json({error: 'You must be logged in to create a league'})
-        }
         const leagueData = req.body;
         const userName = req.user.name || 'Unknown User';
         const newLeague = await leagueService.createLeague(userId, leagueData, userName);
@@ -25,6 +22,37 @@ exports.createLeague = async (req, res) => {
         res.status(500).json({ error: 'Failed to create league' });
     }
 };
+
+exports.getProtections = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const protections = await leagueService.getProtections(leagueId);
+        res.status(201).json(protections);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get Protections' });
+    }
+}
+
+exports.resetLeague = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const reset = await leagueService.resetLeague(leagueId);
+        res.status(201).json(reset);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to reset league' });
+    }
+}
+
+exports.updateProtectionLimit = async (req, res) => {
+    try {
+        const leagueId = req.params.id;
+        const newLimit = req.body.newLimit;
+        const updatedProtections = await leagueService.updateProtectionLimit(leagueId, newLimit);
+        res.status(201).json(updatedProtections);
+    } catch (error) {
+        res.status(500).json({error: 'Failed to update protections'});
+    }
+}
 
 exports.getOwnerId = async (req, res) => {
     try {

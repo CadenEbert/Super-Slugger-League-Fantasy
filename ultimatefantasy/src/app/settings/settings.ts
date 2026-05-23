@@ -15,9 +15,9 @@ export class Settings {
   players: any[] = [];
   leagueId: string = '';
   rosterLimit: number = 0;
-
+  protectionLimit: number = 0;
   newDraftSetting: string = '';
-  
+
 
   constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private router: Router) { }
 
@@ -43,7 +43,7 @@ export class Settings {
   }
 
   deleteLeague() {
-    
+
     this.leagueService.deleteLeague(this.leagueId).subscribe({
       next: () => {
         console.log('League deleted successfully');
@@ -56,16 +56,69 @@ export class Settings {
     this.router.navigate(['/']);
   }
 
+
+    resetLeague() {
+
+    this.leagueService.resetLeague(this.leagueId).subscribe({
+      next: () => {
+        console.log('League deleted successfully');
+      },
+      error: (error) => {
+        console.error('Error deleting league:', error);
+      }
+    });
+
+   
+  }
+
   updateRosterLimit(newLimit: number) {
+    if (newLimit < 9) {
+      return alert('Cant have less than 9 players');
+    }
+
+    if (!Number.isInteger(newLimit)) {
+      return alert('Please enter a whole number');
+    }
+
+    if (newLimit > 11) {
+      return alert('Cant have more than 11 players');
+    }
+
     this.leagueService.updateRosterLimit(this.leagueId, newLimit).subscribe({
       next: () => {
         console.log('Roster limit updated successfully');
+        alert('Roster limit updated successfully');
       },
       error: (error) => {
         console.error('Error updating roster limit:', error);
+        alert('Error updating roster limit');
       }
     });
   }
 
-  
+  updateProtectionLimit(newLimit: number) {
+    if (newLimit < 0) {
+      return alert('No Negative Numbers');
+    }
+
+    if (!Number.isInteger(newLimit)) {
+      return alert('Please enter a whole number');
+    }
+
+    if (newLimit > 11) {
+      return alert('Too Many Protections');
+    }
+    this.leagueService.updateProtctionLimit(this.leagueId, newLimit).subscribe({
+      next: () => {
+        console.log('Protection limit updated successfully');
+        alert('Protections updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating roster limit:', error);
+        alert('Protections update failed');
+      }
+    });
+  }
+
+
 }

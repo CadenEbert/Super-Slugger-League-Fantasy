@@ -15,13 +15,12 @@ exports.getRoster = async (leagueId) => {
                 character_image
             ),
             position,
-            batting_order
+            batting_order,
+            protected
         )
     `)
         .eq('league_id', leagueId);
 
-    console.log('data:', JSON.stringify(data, null, 2));
-    console.log('error:', error);
 
     if (error) throw new Error(error.message);
 
@@ -34,6 +33,7 @@ exports.getRoster = async (leagueId) => {
         players: (roster.roster_players || []).map(rp => ({
             position: rp.position,
             battingOrder: rp.batting_order,
+             protected: rp.protected,
             characterName: rp.character_id?.character_name,
             characterImage: rp.character_id?.character_image
         }))
@@ -62,6 +62,7 @@ exports.getRosterById = async (rosterId) => {
         character_id,
         position,
         batting_order,
+        protected,
         characters:character_id (
             ID,
             character_name,
@@ -103,6 +104,7 @@ exports.getRosterById = async (rosterId) => {
         character_id: player.character_id,
         position: player.position,
         batting_order: player.batting_order,
+        protected: player.protected,
         character: player.characters ? {
             id: player.characters.ID,
             characterName: player.characters.character_name,
@@ -156,7 +158,6 @@ exports.canCreateRoster = async (leagueId, userId) => {
 }
 
 exports.createRoster = async (leagueId, userId, teamName, teamImage, userName) => {
-    console.log('Creating roster with:', { leagueId, userId, teamName, userName });
     const { data, error } = await supabase.client
         .from('rosters')
         .insert({
@@ -180,52 +181,34 @@ exports.createRoster = async (leagueId, userId, teamName, teamImage, userName) =
     };
 }
 
-exports.changePlayerPosition = async (rosterId, characterId, newPosition) => {
-
-
+exports.savePlayer = async (rosterId, characterId, player) => {
 
     const { data, error } = await supabase.client
-        .from('roster_players')
-        .update({ position: newPosition })
-        .eq('roster_id', rosterId)
-        .eq('character_id', characterId)
-        .select()
-        .single();
+    .from('roster_players')
+    .update({ 
+        position: player.position,
+        batting_order: player.batting_order,
+        protected: player.protected
+
+     })
+    .eq('roster_id', rosterId)
+    .eq('character_id', characterId)
+    .select()
+    .single();
 
 
 
-    console.log('changePlayerPosition - data:', JSON.stringify(data, null, 2));
-    console.log('changePlayerPosition - error:', error);
+    if (error) {
+        throw new Error(error.message);
+    }
 
-    if (error) throw new Error(error.message);
-
-    return {
-        rosterId,
-        characterId,
-        newPosition: data.position
-    };
-
+    return data;
 
 }
 
-exports.changePlayerBattingOrder = async (rosterId, characterId, newBattingOrder) => {
-    newBattingOrder = newBattingOrder;
-    const { data, error } = await supabase.client
-        .from('roster_players')
-        .update({ batting_order: newBattingOrder })
-        .eq('roster_id', rosterId)
-        .eq('character_id', characterId)
-        .select()
-        .single();
 
-    if (error) throw new Error(error.message);
 
-    return {
-        rosterId,
-        characterId,
-        newBattingOrder: data.batting_order
-    };
-}
+
 
 
 exports.removePlayer = async (rosterId, characterId) => {

@@ -61,12 +61,13 @@ exports.getOwnerId = async (req, res) => {
     }
 }
 
-exports.changePlayerPosition = async (req, res) => {
+
+exports.savePlayer = async (req, res) => {
     try {
         const rosterId = req.params.rosterId;
         const characterId = req.params.characterId;
-        const newPosition = req.body.newPosition;
-        const updatedPlayer = await rosterService.changePlayerPosition(rosterId, characterId, newPosition);
+        const savePlayer= req.body.player;
+        const updatedPlayer = await rosterService.savePlayer(rosterId, characterId, savePlayer);
         res.json(updatedPlayer);
 
     } catch (error) {
@@ -83,18 +84,6 @@ exports.removePlayer = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to remove player' });
-    }
-}
-
-exports.changePlayerBattingOrder = async (req, res) => {
-    try {
-        const rosterId = req.params.rosterId;
-        const characterId = req.params.characterId;
-        const newBattingOrder = req.body.newBattingOrder;
-        const updatedPlayer = await rosterService.changePlayerBattingOrder(rosterId, characterId, newBattingOrder);
-        res.json(updatedPlayer);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to change player batting order' });
     }
 }
 

@@ -116,20 +116,21 @@ export class DraftService implements OnDestroy {
       forkJoin({
         draft: this.http.get(`/api/leagues/${leagueId}/draft`),
         members: this.http.get<{ members: any[] }>(`/api/league/${leagueId}/draft/members`),
-        players: this.getPlayers(),
+        players: this.getPlayerPool(),
         canDraft: this.canDraft(leagueId),
         ownerId: this.leagueService.getOwnerId(leagueId),
         draftPlayers: this.getDraftPlayers(draftId)
       }).subscribe(({ draft, members, players, canDraft, ownerId, draftPlayers }) => {
         this.setDraftData(draft);
         this.setMembers(members.members);
+        console.log(players);
         if ((draft as any).status === 'not_started') {
           this.setPickOrder(members.members);
         } else {
           this.pickOrderSubject.next((draft as any).pick_order);
         }
 
-        this.setCharacterStats(players.players);
+        this.setCharacterStats(players.playerPool);
         this.setDraftPlayers(draftPlayers.players);
         this.setCanDraft(canDraft);
         this.setOwnerId(ownerId);

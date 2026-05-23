@@ -1,211 +1,143 @@
+
+
 <div class="roster-container">
-    <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-container" *ngIf="(rosterpageService.isLoading$ | async)">
         <mat-spinner></mat-spinner>
     </div>
 
 
-    <div *ngIf="!isLoading" class="roster-content-container">
-
-        
-        
-      
-
-    <div class="player-container" *ngIf="(ownerId$ | async) != (userId$ | async)">
-        <mat-card *ngFor="let p of players" class="indiv-players">
-            <mat-accordion>
-                <mat-expansion-panel class="player-info">
-                    <mat-expansion-panel-header class="player-header">
-                        <mat-panel-title class="player-header-fr">
-                            <img [src]="'/' + p.character.character_image" alt="null">
-                            {{ p.character.characterName }}
-                            
-                        </mat-panel-title>
-                        <mat-content class="player-meta">
-                            Position: {{ p.position }} 
-                            
-                        </mat-content>
-                        <mat-content class="player-meta">
-                            Batting Order: {{ p.batting_order }}
-                            
-                        </mat-content>
-                    </mat-expansion-panel-header>
-
-                  <div class="drop-down">
-                    <div class="stats">
-
-                 
-                    
-                        <div class="stat-half">
-                            <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
-                            <p>Batting Arm: {{ p.character.battingArm }}</p>
-                            <p>Character Class: {{ p.character.characterClass }}</p>
-                            <p>Weight: {{ p.character.weight }}</p>
-                            <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
-                            <p>Star Pitch: {{ p.character.starPitch }}</p>
-                            <p>Bunting: {{ p.character.bunting }}</p>
-                            </div>
-    
-                        <div class="stat-half">
-                            <p>Speed: {{ p.character.speed }}</p>
-                            <p>Fielding: {{ p.character.fielding }}</p>
-                            <p>Curve: {{ p.character.curve }}</p>
-                            <p>Trajectory: {{ p.character.trajectory }}</p>
-                            <p>Stamina: {{ p.character.stamina }}</p>
-                            <p>Fielding Ability: {{ p.character.fieldingAbility }}</p>
-                            <p>Star Swing: {{ p.character.starSwing }}</p>
-                        </div>
-                          <div class="stat-half">
-                            <p>Baserunning Ability: {{ p.character.baserunningAbility }}</p>
-                            <p>Slap Size: {{ p.character.slapSize }}</p>
-                            <p>Charge Size: {{ p.character.chargeSize }}</p>
-                            <p>Slap Power: {{ p.character.slapPower }}</p>
-                            <p>Charge Power: {{ p.character.chargePower }}</p>
-                            <p>Outfield Throwing: {{ p.character.outfieldThrowing }}</p>
-                            <p>Displayed Pitching: {{ p.character.displayedPitching }}</p>
-                            </div>
-                            <div class="stat-half">
-                            <p>Displayed Batting: {{ p.character.displayedBatting }}</p>
-                            <p>Displayed Fielding: {{ p.character.displayedFielding }}</p>
-                            <p>Displayed Speed: {{ p.character.displayedSpeed }}</p>
-                            <p>Curveball Speed: {{ p.character.curveball_speed }}</p>
-                            <p>Charge Pitch Speed: {{ p.character.chargePitchSpeed }}</p>
-                            <p>Hit Curve: {{ p.character.hitCurve }}</p>
-                            <p>Star Pitch Type: {{ p.character.starPitchType }}</p>
-                          </div>
-    
-                        </div>
-    
-                        
-                        
-                        
-                    
-                 
-                        
-                        
-                 
-                    
-                    
-                    
-                </div>
-                    
-
-                </mat-expansion-panel>
-            </mat-accordion>
-        </mat-card>
-        </div>
+    <div *ngIf="!(rosterpageService.isLoading$ | async)" class="roster-content-container">
+        <ng-container *ngIf="rosterpageService.players$ | async as players">
 
         <div class="player-container" *ngIf="(ownerId$ | async) == (userId$ | async)">
 
             <div class="my-leagues-header">
-                <h3>Rosters</h3>
-                <button (click)="rosterInfo()" class="create-btn">Team Settings</button>
+                <button (click)="rosterpageService.rosterInfo()" class="create-btn">Team Settings</button>
             </div>
 
-        <mat-card *ngFor="let p of players" class="indiv-players">
-            <mat-accordion>
-                <mat-expansion-panel class="player-info">
-                    <mat-expansion-panel-header class="player-header">
-                        <mat-panel-title class="player-header-fr">
-                            <img class="playe-image" [src]="'/' + p.character.character_image" alt="null">
-                            {{ p.character.characterName }}
-                            
-                        </mat-panel-title>
-                        <mat-content class="player-meta">
-                            Position: {{ p.position }} 
-                            
-                        </mat-content>
-                        <mat-content class="player-meta">
-                            Batting Order: {{ p.batting_order }}
-                            
-                        </mat-content>
-                    </mat-expansion-panel-header>
+            <mat-card *ngFor="let p of players" class="indiv-players">
+                <mat-accordion>
+                    <mat-expansion-panel class="player-info">
+                        <mat-expansion-panel-header class="player-header">
+                            <mat-panel-title class="player-header-fr">
+                                <img class="playe-image" [src]="'/' + p.character.character_image" alt="null">
+                                {{ p.character.characterName }}
 
-                  <div class="drop-down">
+                            </mat-panel-title>
+                            <mat-content class="player-meta">
+                                Position: {{ p.position }}
 
-                    <div class="change">
-                        <div class="position-change">
-                        <p>Change Position:</p>
-                        <select [(ngModel)]="p.position" class="position-select">
-                                <option *ngFor="let pos of positions" [value]="pos">{{ pos }}</option>
-                        </select>
-                        <button (click)="changePosition(p.character.id, p.position)" class="position-btn">Update</button>
-                        </div>
-                    
-                        <div class="position-change">
-                        <p>Change Batting Order:</p>
-                        <select [(ngModel)]="p.batting_order" class="position-select">
-                                <option *ngFor="let bat of battingOrders" [value]="bat">{{ bat }}</option>
-                        </select>
-                        <button (click)="changeBattingOrder(p.character.id, p.batting_order)" class="position-btn">Update</button>
-                        </div>
-                        <div class="position-change">
-                            <button (click)="removePlayer(p.character.id)" class="remove-btn" >Remove Player</button>
-                        </div>
-                        
-                        
-                    </div>
+                            </mat-content>
+                            <mat-content class="player-meta">
+                                Batting Order: {{ p.batting_order ?? 'N/A' }}
 
-                    <div class="stats">
+                            </mat-content>
+                            <mat-content class="player-meta">
+                                Protected: {{ p.protected }}
 
-                 
-                    
-                    <div class="stat-half">
-                        <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
-                        <p>Batting Arm: {{ p.character.battingArm }}</p>
-                        <p>Character Class: {{ p.character.characterClass }}</p>
-                        <p>Weight: {{ p.character.weight }}</p>
-                        <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
-                        <p>Star Pitch: {{ p.character.starPitch }}</p>
-                        <p>Bunting: {{ p.character.bunting }}</p>
-                        </div>
+                            </mat-content>
+                        </mat-expansion-panel-header>
 
-                    <div class="stat-half">
-                        <p>Speed: {{ p.character.speed }}</p>
-                        <p>Fielding: {{ p.character.fielding }}</p>
-                        <p>Curve: {{ p.character.curve }}</p>
-                        <p>Trajectory: {{ p.character.trajectory }}</p>
-                        <p>Stamina: {{ p.character.stamina }}</p>
-                        <p>Fielding Ability: {{ p.character.fieldingAbility }}</p>
-                        <p>Star Swing: {{ p.character.starSwing }}</p>
-                    </div>
-                      <div class="stat-half">
-                        <p>Baserunning Ability: {{ p.character.baserunningAbility }}</p>
-                        <p>Slap Size: {{ p.character.slapSize }}</p>
-                        <p>Charge Size: {{ p.character.chargeSize }}</p>
-                        <p>Slap Power: {{ p.character.slapPower }}</p>
-                        <p>Charge Power: {{ p.character.chargePower }}</p>
-                        <p>Outfield Throwing: {{ p.character.outfieldThrowing }}</p>
-                        <p>Displayed Pitching: {{ p.character.displayedPitching }}</p>
-                        </div>
-                        <div class="stat-half">
-                        <p>Displayed Batting: {{ p.character.displayedBatting }}</p>
-                        <p>Displayed Fielding: {{ p.character.displayedFielding }}</p>
-                        <p>Displayed Speed: {{ p.character.displayedSpeed }}</p>
-                        <p>Curveball Speed: {{ p.character.curveball_speed }}</p>
-                        <p>Charge Pitch Speed: {{ p.character.chargePitchSpeed }}</p>
-                        <p>Hit Curve: {{ p.character.hitCurve }}</p>
-                        <p>Star Pitch Type: {{ p.character.starPitchType }}</p>
-                      </div>
+                        <div class="drop-down">
 
-                    </div>
+                            <div class="change">
+                                <div class="position-change">
+                                    <p>Change Position:</p>
+                                    <select [(ngModel)]="p.position" class="position-select">
+                                        <option *ngFor="let pos of rosterpageService.positions" [value]="pos">{{ pos }}</option>
+                                    </select>
+                                    
+                                </div>
 
-                    
-                    
-                    
-                </div>
-                    
-
-                </mat-expansion-panel>
-            </mat-accordion>
-        </mat-card>
-
+                                <div class="position-change">
+                                    <p>Change Batting Order:</p>
+                                    <select [(ngModel)]="p.batting_order" class="position-select">
+                                        <option *ngFor="let bat of rosterpageService.battingOrders" [value]="bat">{{ bat }}</option>
+                                    </select>
+                                    
+                                </div>
         
-         
+                                <div class="position-change">
+                                    <p>Protect Player:</p>
+                                    <select [(ngModel)]="p.protected" class="position-select" [disabled]="rosterpageService.getNumberOfProtected() >= rosterpageService.protections$.value && p.protected === false">
+                                        <option>true</option>
+                                        <option>false</option>
+                                    </select>
+                                    
+                                </div>
+
+                                <button (click)="rosterpageService.savePlayer(p)" class="save-btn">Save</button>
+
+
+
+                            </div>
+
+                            <div class="stats">
+
+
+
+                                <div class="stat-half">
+                                    <p>Pitching Arm: {{ p.character.pitchingArm }}</p>
+                                    <p>Batting Arm: {{ p.character.battingArm }}</p>
+                                    <p>Character Class: {{ p.character.characterClass }}</p>
+                                    <p>Weight: {{ p.character.weight }}</p>
+                                    <p>Captain: {{ p.character.captain ? 'Yes' : 'No' }}</p>
+                                    <p>Star Pitch: {{ p.character.starPitch }}</p>
+                                    <p>Bunting: {{ p.character.bunting }}</p>
+                                </div>
+
+                                <div class="stat-half">
+                                    <p>Speed: {{ p.character.speed }}</p>
+                                    <p>Fielding: {{ p.character.fielding }}</p>
+                                    <p>Curve: {{ p.character.curve }}</p>
+                                    <p>Trajectory: {{ p.character.trajectory }}</p>
+                                    <p>Stamina: {{ p.character.stamina }}</p>
+                                    <p>Fielding Ability: {{ p.character.fieldingAbility }}</p>
+                                    <p>Star Swing: {{ p.character.starSwing }}</p>
+                                </div>
+                                <div class="stat-half">
+                                    <p>Baserunning Ability: {{ p.character.baserunningAbility }}</p>
+                                    <p>Slap Size: {{ p.character.slapSize }}</p>
+                                    <p>Charge Size: {{ p.character.chargeSize }}</p>
+                                    <p>Slap Power: {{ p.character.slapPower }}</p>
+                                    <p>Charge Power: {{ p.character.chargePower }}</p>
+                                    <p>Outfield Throwing: {{ p.character.outfieldThrowing }}</p>
+                                    <p>Displayed Pitching: {{ p.character.displayedPitching }}</p>
+                                </div>
+                                <div class="stat-half">
+                                    <p>Displayed Batting: {{ p.character.displayedBatting }}</p>
+                                    <p>Displayed Fielding: {{ p.character.displayedFielding }}</p>
+                                    <p>Displayed Speed: {{ p.character.displayedSpeed }}</p>
+                                    <p>Curveball Speed: {{ p.character.curveball_speed }}</p>
+                                    <p>Charge Pitch Speed: {{ p.character.chargePitchSpeed }}</p>
+                                    <p>Hit Curve: {{ p.character.hitCurve }}</p>
+                                    <p>Star Pitch Type: {{ p.character.starPitchType }}</p>
+                                </div>
+
+                            </div>
+
+
+
+
+                        </div>
+                        <div class="remove-player">
+                            <button (click)="rosterpageService.removePlayer(p.character.id)" class="remove-btn">Remove Player</button>
+                        </div>
+
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </mat-card>
+
+
+
 
         </div>
-         <div class="no-players" *ngIf="players.length === 0">
+        <div class="no-players" *ngIf="players.length === 0">
             <p>No players on this roster yet.</p>
         </div>
+
+        </ng-container>
 
     </div>
 

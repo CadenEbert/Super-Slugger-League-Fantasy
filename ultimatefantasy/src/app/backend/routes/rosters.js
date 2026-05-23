@@ -14,9 +14,7 @@ router.post('/leagues/:leagueId/rosters', authMiddleware, rosterController.creat
 
 router.get('/leagues/:leagueId/rosters/:rosterId', authMiddleware, rosterController.getRosterById);
 
-router.post('/leagues/:leagueId/rosters/:rosterId/players/:characterId/position', authMiddleware, rosterController.changePlayerPosition);
-
-router.post('/leagues/:leagueId/rosters/:rosterId/players/:characterId/batting-order', authMiddleware, rosterController.changePlayerBattingOrder);
+router.put('/leagues/:leagueId/rosters/:rosterId/players/:characterId/save-player', authMiddleware, rosterController.savePlayer);
 
 router.delete('/leagues/:leagueId/rosters/:rosterId/players/:characterId', authMiddleware, rosterController.removePlayer);
 
