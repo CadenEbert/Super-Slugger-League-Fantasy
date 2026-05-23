@@ -6,6 +6,10 @@
     width: 100%;
     background-color: #f1f1f1;
     font-family: 'Arial', sans-serif;
+     background-image: url('/assets/images/mariobackgroundcolor.png');
+      background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   
 }
 

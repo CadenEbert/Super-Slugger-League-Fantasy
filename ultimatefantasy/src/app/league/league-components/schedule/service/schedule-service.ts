@@ -100,7 +100,7 @@ export class ScheduleService {
     this.initialLoadDone = false;
     this.setLoading(true);
     this.setUserId(this.authService.getUserId());
-    this.leagueCompService.joinScheduleChannel(league_id);
+  
 
     this.leagueService.canDraft(league_id).subscribe({
       next: (canDraft) => this.setCanDraft(canDraft),

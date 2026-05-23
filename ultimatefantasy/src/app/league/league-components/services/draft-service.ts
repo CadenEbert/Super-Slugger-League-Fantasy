@@ -7,13 +7,15 @@ import { DraftState, DraftPick, playerPool, CharacterStats, DraftedPlayer } from
 import { LeagueService } from '../../league-service';
 import { AuthService } from '../../../auth/auth-service';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { environment } from '../../../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class DraftService implements OnDestroy {
-  private socket: Socket;
+
 
   private draftDataSubject = new BehaviorSubject<DraftState | null>(null);
   draftData$: Observable<DraftState | null> = this.draftDataSubject.pipe(
@@ -46,6 +48,9 @@ export class DraftService implements OnDestroy {
 
   public memberMap: { [id: string]: string } = {};
 
+  private supabase: SupabaseClient;
+  private activeChannels: Map<string, RealtimeChannel> = new Map();
+
   availablePlayers$: Observable<CharacterStats[]> = combineLatest([
     this.draftDataSubject,
     this.characterStatsSubject
@@ -77,7 +82,7 @@ export class DraftService implements OnDestroy {
     )
   );
 
-  
+
 
   private ownerIdSubject = new BehaviorSubject<string>('');
   ownerId$ = this.ownerIdSubject.asObservable();
@@ -93,11 +98,8 @@ export class DraftService implements OnDestroy {
 
 
   constructor(private http: HttpClient, private leagueService: LeagueService, private authService: AuthService) {
-    this.socket = io('https://localhost:3000');
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
     this.setUserId(this.authService.getUserId());
-
-
-
   }
 
   setUserId(user_id: string) {
@@ -145,7 +147,7 @@ export class DraftService implements OnDestroy {
           }, 500);
         });
 
-        this.joinDraft(draftId);
+
         this.draftSubscriptions.push(draftSub, playersSub);
         this.setIsLoading(false);
       });
@@ -156,15 +158,65 @@ export class DraftService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanupDraft(this.currentDraftIdSubject.value);
-    this.socket.disconnect();
   }
 
   public cleanupDraft(draft_id: string) {
     this.draftSubscriptions.forEach(sub => sub.unsubscribe());
     this.draftSubscriptions = [];
 
-    this.socket.off(`draftUpdate:${draft_id}`);
-    this.socket.off(`draftPlayersUpdate:${draft_id}`);
+    const draftChannel = this.activeChannels.get(`draft-${draft_id}`);
+    if (draftChannel) { draftChannel.unsubscribe(); this.activeChannels.delete(`draft-${draft_id}`); }
+
+    const playersChannel = this.activeChannels.get(`draft-players-${draft_id}`);
+    if (playersChannel) { playersChannel.unsubscribe(); this.activeChannels.delete(`draft-players-${draft_id}`); }
+  }
+
+  onDraftUpdate(draftId: string): Observable<any> {
+    return new Observable(observer => {
+      const channelKey = `draft-${draftId}`;
+      if (this.activeChannels.has(channelKey)) {
+        this.activeChannels.get(channelKey)!.unsubscribe();
+      }
+
+      const channel = this.supabase
+        .channel(channelKey)
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'draft', filter: `uuid=eq.${draftId}` },
+          (payload) => observer.next(payload)
+        )
+        .subscribe((status) => console.log('Draft channel status:', status));
+
+      this.activeChannels.set(channelKey, channel);
+
+      return () => {
+        channel.unsubscribe();
+        this.activeChannels.delete(channelKey);
+      };
+    });
+  }
+
+  onDraftPlayersUpdate(draftId: string): Observable<any> {
+    return new Observable(observer => {
+      const channelKey = `draft-players-${draftId}`;
+      if (this.activeChannels.has(channelKey)) {
+        this.activeChannels.get(channelKey)!.unsubscribe();
+      }
+
+      const channel = this.supabase
+        .channel(channelKey)
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'draft_players', filter: `draft_id=eq.${draftId}` },
+          (payload) => observer.next(payload)
+        )
+        .subscribe((status) => console.log('Draft players channel status:', status));
+
+      this.activeChannels.set(channelKey, channel);
+
+      return () => {
+        channel.unsubscribe();
+        this.activeChannels.delete(channelKey);
+      };
+    });
   }
 
   setIsLoading(isLoading: boolean) {
@@ -277,22 +329,8 @@ export class DraftService implements OnDestroy {
   }
 
 
-  joinDraft(draftId: string) {
-    this.socket.emit('joinDraft', draftId);
-  }
 
-  onDraftUpdate(draftId: string): Observable<any> {
-    return new Observable(observer => {
-      const eventName = `draftUpdate:${draftId}`;
-      this.socket.on(eventName, (data) => {
-        observer.next(data);
-      });
 
-      return () => {
-        this.socket.off(eventName);
-      };
-    });
-  }
 
   canDraft(leagueId: string): Observable<boolean> {
     return this.http.get<{ canDraft: boolean }>(`/api/draft/${leagueId}/can-draft`).pipe(
@@ -306,18 +344,7 @@ export class DraftService implements OnDestroy {
     this.pickOrderSubject.next(order);
   }
 
-  onDraftPlayersUpdate(draftId: string): Observable<any> {
-    return new Observable(observer => {
-      const eventName = `draftPlayersUpdate:${draftId}`;
-      this.socket.on(eventName, (data) => {
-        observer.next(data);
-      });
 
-      return () => {
-        this.socket.off(eventName);
-      };
-    });
-  }
 
   getDraftPlayers(draftId: string): Observable<any> {
     return this.http.get(`/api/draft/${draftId}/players`);
