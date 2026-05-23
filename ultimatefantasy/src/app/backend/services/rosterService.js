@@ -4,12 +4,20 @@ exports.getRoster = async (leagueId) => {
     const { data, error } = await supabase.client
         .from('rosters')
         .select(`
-            id,
-            team_name,
-            owner_id,
-            owner_username,
-            team_image
-        `)
+        id,
+        team_name,
+        owner_id,
+        owner_username,
+        team_image,
+        roster_players!roster_players_roster_id_fkey(
+            character_id(
+                character_name,
+                character_image
+            ),
+            position,
+            batting_order
+        )
+    `)
         .eq('league_id', leagueId);
 
     console.log('data:', JSON.stringify(data, null, 2));
@@ -22,7 +30,13 @@ exports.getRoster = async (leagueId) => {
         teamName: roster.team_name,
         ownerId: roster.owner_id,
         owner_username: roster.owner_username,
-        team_image: roster.team_image
+        team_image: roster.team_image,
+        players: (roster.roster_players || []).map(rp => ({
+            position: rp.position,
+            battingOrder: rp.batting_order,
+            characterName: rp.character_id?.character_name,
+            characterImage: rp.character_id?.character_image
+        }))
     }));
 };
 
@@ -191,7 +205,7 @@ exports.changePlayerPosition = async (rosterId, characterId, newPosition) => {
         newPosition: data.position
     };
 
-    
+
 }
 
 exports.changePlayerBattingOrder = async (rosterId, characterId, newBattingOrder) => {
@@ -216,25 +230,25 @@ exports.changePlayerBattingOrder = async (rosterId, characterId, newBattingOrder
 
 exports.removePlayer = async (rosterId, characterId) => {
 
-    
 
-        const { data, error } = await supabase.client
-    .from('roster_players')
-    .delete()
-    .eq('roster_id', rosterId)
-    .eq('character_id', characterId)
-    .select();
+
+    const { data, error } = await supabase.client
+        .from('roster_players')
+        .delete()
+        .eq('roster_id', rosterId)
+        .eq('character_id', characterId)
+        .select();
 
     if (error) throw new Error(error.message);
 
-        return {
-            rosterId,
-            characterId
-        };
+    return {
+        rosterId,
+        characterId
+    };
 }
 
 exports.getRosterForUpdate = async (rosterId) => {
-    
+
     const { data, error } = await supabase.client
         .from('rosters')
         .select(`
@@ -243,13 +257,13 @@ exports.getRosterForUpdate = async (rosterId) => {
         `)
         .eq('id', rosterId);
 
-        if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
-        return {
-            rosterId,
-            teamName: data[0].team_name,
-            teamImage: data[0].team_image
-        };
+    return {
+        rosterId,
+        teamName: data[0].team_name,
+        teamImage: data[0].team_image
+    };
 }
 
 exports.updateRosterDetails = async (rosterId, teamName, teamImage) => {
@@ -263,11 +277,11 @@ exports.updateRosterDetails = async (rosterId, teamName, teamImage) => {
         .select()
         .single();
 
-        if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
-        return {
-            rosterId,
-            teamName: data.team_name,
-            teamImage: data.team_image
-        };
-    }
+    return {
+        rosterId,
+        teamName: data.team_name,
+        teamImage: data.team_image
+    };
+}

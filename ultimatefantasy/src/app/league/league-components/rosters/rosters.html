@@ -1,69 +1,107 @@
-<ng-container *ngIf="!isLoading; else loading">
+<ng-container *ngIf="!(rosterService.isLoading$ | async); else loading">
+    <ng-container *ngIf="rosterService.rosters$ | async as rosters">
+        <ng-container *ngIf="{ canCreate: (rosterService.canCreateRoster$ | async) } as state">
+            <ng-container *ngIf="rosterService.selectedRoster$ | async as selected">
 
-<div class="roster-container" *ngIf="!canCreateRoster">
-
-
-    <div class="my-leagues">
-
-        <div class="my-leagues-header">
-            <h3>Rosters</h3>
-            <button (click)="trades()" class="create-btn">Trade Requests</button>
-        </div>
+                <div class="roster-container" *ngIf="!state.canCreate">
 
 
+                    <div class="my-leagues" >
 
-        <div class="indiv-leagues" *ngFor="let roster of rosters" (click)="onRosterClick(roster)">
-            <h2>{{ roster.teamName }}</h2>
-            <p>General Manager: {{ roster.owner_username }}</p>
-            <img  [src]='"/assets/images/" + roster.team_image' alt="Selected team" />
-        </div>
+                        <div class="header" >
+                            <div class="left-arrow">
+                                <button class="arrow-btn" (click)="rosterService.prevRoster()">
+                                    < 
+                                </button>
 
-    </div>
+                            </div>
+                            <div class="header-name" [style.background-image]="'url(/assets/images/' + selected.team_image + ')'">
+                                <h1>
+                                    {{selected.teamName}}
+                                </h1>
+                                <h2>
+                                    {{selected.owner_username}}
+                                </h2>
 
-</div>
+                            </div>
 
-<div class="roster-create-container" *ngIf="canCreateRoster">
+                            <div class="right-arrow">
+                                <button class="arrow-btn" (click)="rosterService.nextRoster()">
+                                     > 
+                                </button>
+                            </div>
 
 
-    <div class="roster-create">
-        
-        <h3>Create New Roster</h3>
+                        </div>
 
-        <div class="roster-content">
+                        <div class="my-leagues-header" *ngIf="rosterService.userId$.value === selected.ownerId">
+                            <button (click)="rosterService.onRosterClick(selected)" class="create-btn">Edit Roster</button>
+                            <button (click)="rosterService.trades()" class="create-btn">Trade Requests</button>
+                        </div>
 
-            <div class="roster-setting">
-                <label for="teamName">Team Name:</label>
-                <input class="roster-input" type="text" placeholder="Team Name" [(ngModel)]="newRosterName" />
+                
 
-            </div>
-            
-            <div class="team-picture">
-                <div class="team-picture-header">
-                    
-                <label for="teamPicture">Choose a team picture:</label>
-                <select class="roster-select" id="teamPicture" [(ngModel)]="selectedTeamPicture">
-                    <option *ngFor="let entry of teamPictures | keyvalue" [value]="entry.value">
-                        {{ entry.key }}
-                    </option>
-                </select>
+                        <div class="indiv-leagues" *ngFor="let players of selected.players">
+                            <img [src]="'/' + players.characterImage" alt="null">
+                            <h3 class="player-name">{{players.characterName}}</h3>
+                            <p class="player-position">{{players.position}}</p>
+                            <p class="player-bat-order">{{players.battingOrder ?? 'N/A' }}</p>
+
+                        </div>
+                        
+
+                    </div>
 
                 </div>
-                <div class="team-picture-preview">
-                <img *ngIf="selectedTeamPicture" [src]='"/assets/images/" + selectedTeamPicture' alt="Selected team" />
+
+                <div class="roster-create-container" *ngIf="state.canCreate">
+
+
+                    <div class="roster-create">
+
+                        <h3>Create New Roster</h3>
+
+                        <div class="roster-content">
+
+                            <div class="roster-setting">
+                                <label for="teamName">Team Name:</label>
+                                <input class="roster-input" type="text" placeholder="Team Name"
+                                    [(ngModel)]="newRosterName" />
+
+                            </div>
+
+                            <div class="team-picture">
+                                <div class="team-picture-header">
+
+                                    <label for="teamPicture">Choose a team picture:</label>
+                                    <select class="roster-select" id="teamPicture" [(ngModel)]="selectedTeamPicture">
+                                        <option *ngFor="let entry of rosterService.teamPictures | keyvalue"
+                                            [value]="entry.value">
+                                            {{ entry.key }}
+                                        </option>
+                                    </select>
+
+                                </div>
+                                <div class="team-picture-preview">
+                                    <img *ngIf="selectedTeamPicture" [src]='"/assets/images/" + selectedTeamPicture'
+                                        alt="Selected team" />
+                                </div>
+                            </div>
+
+                            <button class="create-btn" (click)="createRoster()"
+                                [disabled]="!selectedTeamPicture || !newRosterName">Create</button>
+
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-    
-            <button class="create-btn" (click)="createRoster()" [disabled]="!selectedTeamPicture || !newRosterName">Create</button>
-
-        </div>
-
-    </div>
-</div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
 </ng-container>
 
 <ng-template #loading>
     <div class="loading-container">
         <mat-spinner></mat-spinner>
-      </div>
+    </div>
 </ng-template>
-

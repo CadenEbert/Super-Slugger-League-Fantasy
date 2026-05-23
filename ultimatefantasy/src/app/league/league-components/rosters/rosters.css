@@ -48,6 +48,86 @@
     
 }
 
+.header {
+  display: flex;
+  width: 95%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; 
+  border-bottom: 1px solid black;
+  
+  margin: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  
+
+
+}
+
+
+
+.header-name {
+  width: 33%;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  height: 100%;
+  margin-bottom: 10px;
+  font-size: larger;
+  font-style: normal;
+  
+  
+}
+
+
+
+.header-name::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.80);
+  border-radius: inherit;
+}
+
+.header-name > * {
+  position: relative;
+  z-index: 1;
+}
+
+.left-arrow {
+  width: 33%;
+  text-align: left; 
+  margin-left: 40px;
+}
+
+.right-arrow {
+  width: 33%;
+  text-align: right; 
+  margin-right: 40px;
+}
+
+.arrow-btn {
+  padding: 8px;
+  width: 30%;
+  background-color: rgb(228, 228, 228);
+  border: none;
+  border-radius: 15px;
+  font-size: large;
+  cursor: pointer;
+}
+
+.arrow-btn:hover {
+  padding: 8px;
+  width: 30%;
+  background-color: rgb(199, 199, 199);
+  cursor: pointer;
+  border: none;
+  border-radius: 15px;
+  font-size: large;
+}
+
 .my-leagues-header {
   display: flex;
   flex-direction: row;
@@ -56,6 +136,7 @@
   width: 80%;
   border: 1px solid #ccc;
   border-radius: 20px;
+  padding: 10px;
 
   gap: 30px;
 
@@ -67,18 +148,62 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 70%;
+    width: 80%;
     padding: 0.5rem;
     padding-right: 1rem;
     padding-left: 1rem;
     gap: 50px;
-    margin-top: 10px;
-    background-color: rgb(230, 230, 230);
+    margin-top: 5px;
+    background-color: #b1d1fc;
     border-radius: 4px;
     cursor: pointer;
-    margin-bottom: 1rem;
+    margin-bottom: 5px;
 
 }
+
+.players-header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.player-items {
+  display: flex;
+  text-align: right;
+  align-items: center;
+  align-self: flex-end;
+  margin-left: auto; 
+  margin-right: 75px;
+  gap: 170px;
+  text-wrap: nowrap;
+}
+
+.header-players {
+  text-align: center;
+  width: 20%;
+  margin-right: 30px;
+
+}
+
+.player-name {
+  width: 40%;
+
+}
+
+.player-position {
+  width: 30%;
+}
+
+.player-bat-order {
+  width: 10%;
+}
+
+
+
+
+    
 
 .roster-create {
     display: flex;
