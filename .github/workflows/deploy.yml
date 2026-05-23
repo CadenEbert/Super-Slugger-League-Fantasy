@@ -62,5 +62,6 @@ jobs:
           username: root
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
-            pm2 restart sslfantasy
+            cd /var/www/sslfantasy/ultimatefantasy
+            pm2 describe sslfantasy > /dev/null 2>&1 && pm2 restart sslfantasy || pm2 start server.js --name sslfantasy
             pm2 save
