@@ -61,6 +61,8 @@ export class Draft implements OnInit, OnDestroy {
         })
       );
     });
+
+    
   }
 
 

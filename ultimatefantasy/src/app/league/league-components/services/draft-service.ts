@@ -18,9 +18,7 @@ export class DraftService implements OnDestroy {
 
 
   private draftDataSubject = new BehaviorSubject<DraftState | null>(null);
-  draftData$: Observable<DraftState | null> = this.draftDataSubject.pipe(
-    distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
-  );
+  draftData$: Observable<DraftState | null> = this.draftDataSubject.asObservable();
 
   private draftPlayersSubject = new BehaviorSubject<DraftPick[]>([]);
   draftPlayers$: Observable<DraftPick[]> = this.draftPlayersSubject.asObservable();
@@ -123,7 +121,6 @@ export class DraftService implements OnDestroy {
       }).subscribe(({ draft, members, players, canDraft, ownerId, draftPlayers }) => {
         this.setDraftData(draft);
         this.setMembers(members.members);
-        console.log(players);
         if ((draft as any).status === 'not_started') {
           this.setPickOrder(members.members);
         } else {
@@ -138,6 +135,9 @@ export class DraftService implements OnDestroy {
 
         const draftSub = this.onDraftUpdate(draftId).subscribe(update => {
           this.setDraftData(update.new);
+          if (update.new.pick_order) {
+            this.pickOrderSubject.next(update.new.pick_order);
+          }
         });
 
         const playersSub = this.onDraftPlayersUpdate(draftId).subscribe(() => {

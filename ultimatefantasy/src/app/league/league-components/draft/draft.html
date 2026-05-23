@@ -80,7 +80,7 @@
                         <p>Current Pick: {{ draftService.memberMap[pickOrder[draftData.current_pick_index]] }}</p>
                         <p>Round: {{ draftData.current_round }}</p>
                         <p>Pick: {{ draftData.current_pick }}</p>
-                        <button class="start-timer" (click)="toggleTimer(draftData.timer_running)">
+                        <button class="start-timer" (click)="toggleTimer(draftData.timer_running)" [disabled]="!(draftService.isOwner$ | async)">
                           {{ draftData.timer_running ? 'Pause Timer' : 'Start Timer' }}
                         </button>
                       </div>

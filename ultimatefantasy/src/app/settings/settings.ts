@@ -61,7 +61,7 @@ export class Settings {
 
     this.leagueService.resetLeague(this.leagueId).subscribe({
       next: () => {
-        console.log('League deleted successfully');
+        console.log('League reset successfully');
       },
       error: (error) => {
         console.error('Error deleting league:', error);

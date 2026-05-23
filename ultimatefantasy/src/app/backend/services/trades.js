@@ -73,9 +73,9 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
     }
 
     const { data: profile, error: profilerror } = await supabase.client
-    .from('profiles')
-    .select('username')
-    .eq('user_id', userId);
+        .from('profiles')
+        .select('username')
+        .eq('user_id', userId);
 
     if (profilerror) {
         throw new Error(profilerror.message);
@@ -119,7 +119,47 @@ exports.acceptTrade = async (tradeId) => {
 
     const trade = data;
 
-    console.log(trade);
+    const { data: offeredPlayers, error: offeredCheckError } = await supabase.client
+        .from('roster_players')
+        .select('character_id')
+        .in('character_id', trade.offered_player_id)
+        .eq('roster_id', trade.proposing_team_id);
+
+    if (offeredCheckError) throw new Error(offeredCheckError.message);
+
+    if (offeredPlayers.length !== trade.offered_player_id.length) {
+
+        const { data, error } = await supabase.client
+            .from('trades')
+            .update({ status: 'rejected' })
+            .eq('id', tradeId)
+            .select()
+            .single();
+
+        if (error) throw new Error(error.message);
+        throw new Error(`Offered players no longer on proposing roster`);
+    }
+
+    const { data: requestedPlayers, error: requestedCheckError } = await supabase.client
+        .from('roster_players')
+        .select('character_id')
+        .in('character_id', trade.requested_player_id)
+        .eq('roster_id', trade.receiving_team_id);
+
+    if (requestedCheckError) throw new Error(requestedCheckError.message);
+
+    if (requestedPlayers.length !== trade.requested_player_id.length) {
+        const { data, error } = await supabase.client
+            .from('trades')
+            .update({ status: 'rejected' })
+            .eq('id', tradeId)
+            .select()
+            .single();
+
+        if (error) throw new Error(error.message);
+
+        throw new Error(`Requested players no longer on receiving roster`);
+    }
 
     for (const playerId of trade.offered_player_id) {
         const { error: offeredError } = await supabase.client
@@ -127,7 +167,6 @@ exports.acceptTrade = async (tradeId) => {
             .update({ roster_id: trade.receiving_team_id })
             .eq('character_id', playerId);
 
-        console.log('Updating offered player:', { playerId, receivingTeamId: trade.receiving_team_id, offeredError });
         if (offeredError) throw new Error(offeredError.message);
     }
 
@@ -137,12 +176,8 @@ exports.acceptTrade = async (tradeId) => {
             .update({ roster_id: trade.proposing_team_id })
             .eq('character_id', playerId);
 
-        console.log('Updating requested player:', { playerId, proposingTeamId: trade.proposing_team_id, requestedError });
         if (requestedError) throw new Error(requestedError.message);
     }
-
-
-
 
     return data;
 }

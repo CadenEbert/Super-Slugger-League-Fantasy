@@ -19,7 +19,7 @@ export class Leagecreate {
   leagueForm = new FormGroup({
     leagueName: new FormControl('', Validators.required),
     roster_size: new FormControl(9, [Validators.required, Validators.min(9), Validators.max(13)]),
-    leagueSize: new FormControl(8, Validators.required),
+    leagueSize: new FormControl(8, [Validators.required, Validators.min(2), Validators.max(8)]),
   });
 
   constructor(private leagueService: LeagueService, public authService: AuthService, private router: Router) { }

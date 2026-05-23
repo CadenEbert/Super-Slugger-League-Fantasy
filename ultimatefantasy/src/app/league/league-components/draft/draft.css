@@ -202,3 +202,22 @@
 .draft-btn:hover {
     background-color: #f07975;
 }
+
+.start-timer {
+    padding: 8px 22px;
+    background-color: #a9d7fc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+   
+}
+
+.start-timer:hover {
+    background-color: #96cffd;
+}
+
+.start-timer:disabled {
+    background-color: #96cffd;
+    
+}
