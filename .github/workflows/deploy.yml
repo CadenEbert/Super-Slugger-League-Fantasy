@@ -45,7 +45,7 @@ jobs:
           username: root
           key: ${{ secrets.DROPLET_SSH_KEY }}
           source: "ultimatefantasy/dist/"
-          target: "/var/www/sslfantasy/"
+          target: "/var/www/sslfantasy/ultimatefantasy/"
           strip_components: 1
           overwrite: true
 
