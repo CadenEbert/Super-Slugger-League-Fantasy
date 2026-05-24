@@ -136,6 +136,7 @@ export class TradeService {
       next: (response) => {
         console.log('Trade proposed successfully:', response);
         globalThis.alert('Trade proposed successfully!');
+        window.location.reload();
         this.requesting$.next(false);
 
       },
@@ -143,6 +144,7 @@ export class TradeService {
         alert(err.error?.message || 'You have too many active trade requests. Please wait for them to be resolved before proposing new trades.');
         console.error('Error proposing trade:', err);
         this.requesting$.next(false);
+        window.location.reload();
       }
     });
   }
@@ -156,12 +158,14 @@ export class TradeService {
         window.alert('Trade accepted successfully!');
         this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
         this.requesting$.next(false);
+        window.location.reload();
 
       },
       error: (err) => {
         alert(err.error?.message || 'Error accepting trade. Please try again later.');
         console.error('Error accepting trade:', err);
         this.requesting$.next(false);
+        window.location.reload();
       }
     });
   }
@@ -175,12 +179,14 @@ export class TradeService {
         globalThis.alert('Trade rejected successfully!');
         this.trades$.next(this.trades$.value.filter(trade => trade.id !== tradeId));
         this.requesting$.next(false);
+        window.location.reload();
 
       },
       error: (err) => {
         alert(err.error?.message || 'Error rejecting trade. Please try again later.');
         console.error('Error rejecting trade:', err);
         this.requesting$.next(false);
+        window.location.reload();
 
       }
     });
