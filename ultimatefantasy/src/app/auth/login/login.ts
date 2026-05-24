@@ -25,8 +25,7 @@ export class Login {
     const rawFormData = this.form.getRawValue();
     this.authService.login(rawFormData.email ?? '', rawFormData.password ?? '').subscribe({
       next: (response) => {
-        console.log('Login successful:', response);
-        console.log('Received session data:', response.session); 
+
         this.authService.setSession(response.session); 
         this.router.navigate(['']);
       },
