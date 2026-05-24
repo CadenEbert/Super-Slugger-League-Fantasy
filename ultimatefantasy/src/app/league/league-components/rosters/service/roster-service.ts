@@ -60,7 +60,7 @@ export class RosterService {
       this.profile$.next(profile);
       this.canCreateRoster$.next(canCreate);
       this.selectedRoster$.next(rosters[this.rosterIndex$.value]);
-      console.log(this.selectedRoster$.value);
+      console.log(canCreate);
       this.setIsLoading(false);
     })
 
