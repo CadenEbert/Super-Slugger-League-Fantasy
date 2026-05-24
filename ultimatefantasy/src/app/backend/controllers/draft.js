@@ -116,6 +116,16 @@ exports.makeDraftPick = async (req, res) => {
     }
 };
 
+exports.getDraftedPlayers = async (req, res) => {
+    try {
+        const draftId = req.params.draftId;
+        const draftedPlayers = await draftService.getDraftedPlayers(draftId);
+        res.status(201).json(draftedPlayers);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get drafted players' });
+    }
+};
+
 exports.getDraftStatus = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;

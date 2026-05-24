@@ -55,6 +55,7 @@ exports.createTrade = async (req, res) => {
 exports.acceptTrade = async (req, res) => {
     try {
         const tradeId = req.params.tradeId;
+      
         await tradesService.acceptTrade(tradeId);
         res.json({ message: 'Trade accepted successfully' });
     } catch (error) {

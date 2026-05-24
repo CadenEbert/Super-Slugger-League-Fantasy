@@ -7,7 +7,6 @@ const activeTimers = {};
 
 
 exports.getDraftState = async (leagueId) => {
-  console.log('Fetching draft state for leagueId:', leagueId);
 
   const { data, error } = await client
     .from('draft')
@@ -37,7 +36,6 @@ exports.getDraftState = async (leagueId) => {
 
 
 
-  console.log('Draft state data from database:', data);
 
   return data;
 };
@@ -66,9 +64,8 @@ async function updatePlayerPool(draftId) {
 
   const pickedCharacterIds = pickedData.map(p => p.character_picked);
   const availablePlayerIds = allPlayers
-    .filter(player => !pickedCharacterIds.includes(player.ID))
+    .filter(player => !pickedCharacterIds.includes(player.ID) && player.ID)
     .map(player => player.ID);
-
 
   const { error: updateError } = await client
     .from('draft')
@@ -90,7 +87,6 @@ exports.joinDraftChannel = async (draftId, userId, io) => {
 
 
 exports.getDraftIdByLeagueId = async (leagueId) => {
-  console.log('Fetching draft ID for leagueId:', leagueId);
 
   try {
     const { data, error } = await client
@@ -120,7 +116,6 @@ exports.getDraftIdByLeagueId = async (leagueId) => {
 
 
 exports.getAllLeagueMembers = async (leagueId) => {
-  console.log('Fetching league members for leagueId:', leagueId);
 
   const { data, error } = await client
     .from('league_members')
@@ -142,14 +137,12 @@ exports.getAllLeagueMembers = async (leagueId) => {
 };
 
 exports.getDraftStatus = async (leagueId) => {
-  console.log('Fetching draft status for leagueId:', leagueId);
   const { data, error } = await client
     .from('draft')
     .select('status')
     .eq('league_id', leagueId)
     .single();
 
-  console.log('Draft status data from database:', data, 'error:', error);
   if (error) throw new Error(error.message);
 
   return data.status;
@@ -157,7 +150,6 @@ exports.getDraftStatus = async (leagueId) => {
 
 exports.getCanDraft = async (leagueId) => {
 
-  console.log('Checking if user can draft for leagueId:', leagueId);
   const { data: rostersData, error } = await client
     .from('rosters')
     .select('*')
@@ -182,7 +174,6 @@ exports.getCanDraft = async (leagueId) => {
 };
 
 exports.updateDraftData = async (draftId, data) => {
-  console.log(`Updating draft data for draftId: ${draftId} with data:`, data);
   const { error } = await client
     .from('draft')
     .update(data)
@@ -343,7 +334,6 @@ async function getAllPlayers() {
 }
 
 exports.getPlayerPool = async (draftId) => {
-  console.log('hlksadjf;lkasdjfl;ksadjf;lkasjdflk;asjdf;lkasjdf;lkajsdf;lkjsai')
   const { data: draftPlayers, error } = await client
     .from('draft_players')
     .select('character_picked, league_id')
@@ -477,7 +467,7 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
       await finishDraft(draftId, league_id);
     }
 
-    if (newPlayerPool <= 0) {
+    if (newPlayerPool.length <= 0) {
       console.log('Draft completed after this pick');
       exports.pauseDraftTimer(draftId);
       await finishDraft(draftId, league_id);
@@ -512,6 +502,25 @@ exports.makeDraftPick = async (draftId, characterId, memberPicking) => {
   }
 };
 
+exports.getDraftedPlayers = async (draftId) => {
+  const { data, error } = await client
+    .from('draft_players')
+    .select(`
+      *,
+       character_picked(*)
+      `)
+    .eq('draft_id', draftId);
+
+
+  if (error) {
+    console.log(error.message);
+
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 async function autoPick(draftId) {
   try {
     const { data, error } = await client
@@ -520,29 +529,26 @@ async function autoPick(draftId) {
       .eq('uuid', draftId)
       .single();
 
-    if (error) {
-      console.error('Supabase error:', error);
-      throw new Error(error.message);
-    }
-
+    if (error) throw new Error(error.message);
     if (data.status === 'completed') return;
 
-    const {
-      current_pick, pick_order, current_pick_index, league_id,
-      draft_type, player_pool, time_per_pick, reversed,
-      end_of_snake, current_round, number_of_rounds
-    } = data;
-    const totalPicks = pick_order.length;
-    console.log('totalPicks:', totalPicks, 'current_pick_index:', current_pick_index, 'current_round:', current_round);
 
-    if (!player_pool || player_pool.length === 0) {
-      await finishDraft(draftId, league_id);
+    const validPlayers = await exports.getPlayerPool(draftId);
+
+    if (!validPlayers || validPlayers.length === 0) {
+      await finishDraft(draftId, data.league_id);
       await exports.pauseDraftTimer(draftId);
       return;
     }
 
+    const { current_pick, pick_order, current_pick_index, league_id,
+      draft_type, player_pool, time_per_pick, reversed,
+      end_of_snake, current_round, number_of_rounds } = data;
+
+    const totalPicks = pick_order.length;
+
     const memberPicking = pick_order[current_pick_index];
-    const characterId = player_pool[0];
+    const characterId = validPlayers[0].id;
 
     const { error: insertError } = await client
       .from('draft_players')
@@ -551,7 +557,7 @@ async function autoPick(draftId) {
         character_picked: characterId,
         member_picking: memberPicking,
         league_id: league_id,
-        pick_number: current_pick + 1
+        pick_number: current_pick
       });
 
     if (insertError) {
@@ -564,7 +570,6 @@ async function autoPick(draftId) {
     let nextSnakeEnd = end_of_snake;
     let nextRound = current_round;
     let finalRound = false;
-
 
     if (draft_type === 'Snake') {
       if (!reversed) {
@@ -605,6 +610,26 @@ async function autoPick(draftId) {
 
     const newPlayerPool = player_pool.filter(id => id !== characterId);
 
+    if (finalRound || newPlayerPool.length === 0) {
+      await client
+        .from('draft')
+        .update({
+          current_pick: current_pick + 1,
+          current_pick_index: nextIndex,
+          reversed: nextReversed,
+          end_of_snake: nextSnakeEnd,
+          player_pool: newPlayerPool,
+          current_round: nextRound,
+          status: 'completed',
+          timer_seconds: 0
+        })
+        .eq('uuid', draftId);
+
+      await exports.pauseDraftTimer(draftId);
+      await finishDraft(draftId, league_id);
+      return;
+    }
+
     const { error: updateError } = await client
       .from('draft')
       .update({
@@ -614,7 +639,7 @@ async function autoPick(draftId) {
         end_of_snake: nextSnakeEnd,
         player_pool: newPlayerPool,
         current_round: nextRound,
-        status: finalRound ? 'completed' : 'in_progress',
+        status: 'in_progress',
         timer_seconds: time_per_pick
       })
       .eq('uuid', draftId);
@@ -623,8 +648,6 @@ async function autoPick(draftId) {
       console.error('Supabase error updating draft:', updateError);
       throw new Error(updateError.message);
     }
-
-
 
     await exports.startDraftTimer(draftId, time_per_pick);
 
@@ -647,7 +670,6 @@ async function finishDraft(draftId, leagueId) {
       throw new Error(error.message);
     }
 
-    const leagueId = data.league_id;
 
 
     const { data: draftPlayers, error: draftPlayersError } = await client

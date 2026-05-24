@@ -12,7 +12,7 @@
             <h3>Set Roster Limit</h3>
             <div class="form-group">
                 <input type="number" [(ngModel)]="rosterLimit" placeholder="Enter roster limit" />
-                <button (click)="updateRosterLimit(rosterLimit)">Save</button>
+                <button (click)="updateRosterLimit(rosterLimit)" [disabled]="reseting">Save</button>
             </div>
 
         </div>
@@ -21,7 +21,7 @@
             <h3>Set Protection Limit</h3>
             <div class="form-group">
                 <input type="number" [(ngModel)]="protectionLimit" placeholder="Enter protection limit" />
-                <button (click)="updateProtectionLimit(protectionLimit)">Save</button>
+                <button (click)="updateProtectionLimit(protectionLimit)" [disabled]="reseting">Save</button>
             </div>
 
         </div>
@@ -29,7 +29,7 @@
         <div class="setting-section">
             <h3>Reset League</h3>
             <div class="form-group">
-                <button (click)="resetLeague()">Reset League</button>
+                <button (click)="resetLeague()" [disabled]="reseting">Reset League</button>
             </div>
         </div>
 
@@ -37,7 +37,7 @@
         <div class="setting-section">
             <h3>Delete League</h3>
             <div class="form-group">
-                <button class="yes-btn" (click)="toggleDelete()">Delete League</button>
+                <button class="yes-btn" (click)="toggleDelete()" [disabled]="reseting">Delete League</button>
             </div>
         </div>
 

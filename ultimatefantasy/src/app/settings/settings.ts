@@ -20,6 +20,7 @@ export class Settings {
   protectionLimit: number = 0;
   newDraftSetting: string = '';
   deleting$ = new BehaviorSubject<boolean>(false);
+  reseting: boolean = false;
 
 
   constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private router: Router) { }
@@ -34,9 +35,11 @@ export class Settings {
   }
 
   updateDraftSettings(newSetting: string) {
+    this.reseting = true;
     console.log('Updating draft settings...', this.leagueId, newSetting);
     this.leagueService.updateDraftSettings(this.leagueId, newSetting).subscribe({
       next: () => {
+        this.reseting = false;
         console.log('Draft settings updated successfully');
       },
       error: (error) => {
@@ -55,13 +58,16 @@ export class Settings {
   }
 
   deleteLeague() {
+    this.reseting = true;
 
     this.leagueService.deleteLeague(this.leagueId).subscribe({
       next: () => {
         console.log('League deleted successfully');
+        this.reseting = false;
       },
       error: (error) => {
         console.error('Error deleting league:', error);
+        this.reseting = false;
       }
     });
 
@@ -70,15 +76,18 @@ export class Settings {
 
 
     resetLeague() {
+      this.reseting = true;
 
     this.leagueService.resetLeague(this.leagueId).subscribe({
       next: () => {
         console.log('League reset successfully');
         alert('League reset successfully');
+        this.reseting = false;
         window.location.reload();
       },
       error: (error) => {
         console.error('Error deleting league:', error);
+        this.reseting = false;
       }
     });
 
@@ -86,6 +95,7 @@ export class Settings {
   }
 
   updateRosterLimit(newLimit: number) {
+    this.reseting = true;
     if (newLimit < 9) {
       return alert('Cant have less than 9 players');
     }
@@ -100,6 +110,7 @@ export class Settings {
 
     this.leagueService.updateRosterLimit(this.leagueId, newLimit).subscribe({
       next: () => {
+        this.reseting = false;
         console.log('Roster limit updated successfully');
         alert('Roster limit updated successfully');
       },

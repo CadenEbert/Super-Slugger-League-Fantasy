@@ -118,6 +118,7 @@ exports.acceptTrade = async (tradeId) => {
     if (error) throw new Error(error.message);
 
     const trade = data;
+    console.log(trade);
 
     const { data: offeredPlayers, error: offeredCheckError } = await supabase.client
         .from('roster_players')
@@ -133,6 +134,7 @@ exports.acceptTrade = async (tradeId) => {
             .from('trades')
             .update({ status: 'rejected' })
             .eq('id', tradeId)
+            .eq('league_id', trade.league_id)
             .select()
             .single();
 
@@ -144,7 +146,8 @@ exports.acceptTrade = async (tradeId) => {
         .from('roster_players')
         .select('character_id')
         .in('character_id', trade.requested_player_id)
-        .eq('roster_id', trade.receiving_team_id);
+        .eq('roster_id', trade.receiving_team_id)
+        .eq('league_id', trade.league_id);
 
     if (requestedCheckError) throw new Error(requestedCheckError.message);
 
@@ -153,6 +156,7 @@ exports.acceptTrade = async (tradeId) => {
             .from('trades')
             .update({ status: 'rejected' })
             .eq('id', tradeId)
+            .eq('league_id', trade.league_id)
             .select()
             .single();
 
@@ -165,7 +169,9 @@ exports.acceptTrade = async (tradeId) => {
         const { error: offeredError } = await supabase.client
             .from('roster_players')
             .update({ roster_id: trade.receiving_team_id })
-            .eq('character_id', playerId);
+            .eq('character_id', playerId)
+            .eq('league_id', trade.league_id)
+            .eq('roster_id', trade.proposing_team_id);
 
         if (offeredError) throw new Error(offeredError.message);
     }
@@ -174,7 +180,9 @@ exports.acceptTrade = async (tradeId) => {
         const { error: requestedError } = await supabase.client
             .from('roster_players')
             .update({ roster_id: trade.proposing_team_id })
-            .eq('character_id', playerId);
+            .eq('character_id', playerId)
+            .eq('league_id', trade.league_id)
+            .eq('roster_id', trade.receiving_team_id);
 
         if (requestedError) throw new Error(requestedError.message);
     }

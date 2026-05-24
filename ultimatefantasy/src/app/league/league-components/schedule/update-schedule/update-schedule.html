@@ -51,7 +51,7 @@
             Please enter a score for both teams to update the game.
         </p>
         <button (click)="updateGame()" class="update-btn"
-            [disabled]="game.home_score === null || game.away_score === null">Update Game</button>
+            [disabled]="game.home_score === null || game.away_score === null || game.home_score < 0 || game.away_score < 0 || game.home_score > 25 || game.away_score > 25">Update Game</button>
     </div>
 </div>
 

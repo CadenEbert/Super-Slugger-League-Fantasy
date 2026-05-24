@@ -61,24 +61,7 @@ export class DraftService implements OnDestroy {
     })
   );
 
-  draftedPlayersWithStats$: Observable<DraftedPlayer[]> = combineLatest([this.draftPlayersSubject, this.characterStatsSubject]).pipe(
-    map(([picks, characterStats]) =>
-      picks
-        .map(pick => {
-          const character = characterStats.find(c => Number(c.id) === Number(pick.character_picked));
-          if (!character) return null;
-
-          return {
-
-            character,
-            member_picking: pick.member_picking,
-            pick_number: pick.pick_number
-          };
-        })
-        .filter((p): p is DraftedPlayer => p !== null)
-        .sort((a, b) => a.pick_number - b.pick_number)
-    )
-  );
+  readonly draftedPlayersWithStats$ = new BehaviorSubject<any[]>([]);
 
 
 
@@ -117,8 +100,9 @@ export class DraftService implements OnDestroy {
         players: this.getPlayerPool(),
         canDraft: this.canDraft(leagueId),
         ownerId: this.leagueService.getOwnerId(leagueId),
-        draftPlayers: this.getDraftPlayers(draftId)
-      }).subscribe(({ draft, members, players, canDraft, ownerId, draftPlayers }) => {
+        draftPlayers: this.getDraftPlayers(draftId),
+        draftedPlayers: this.leagueService.getDraftedPlayers(draftId),
+      }).subscribe(({ draft, members, players, canDraft, ownerId, draftPlayers, draftedPlayers }) => {
         this.setDraftData(draft);
         this.setMembers(members.members);
         if ((draft as any).status === 'not_started') {
@@ -126,6 +110,8 @@ export class DraftService implements OnDestroy {
         } else {
           this.pickOrderSubject.next((draft as any).pick_order);
         }
+
+        this.draftedPlayersWithStats$.next(draftedPlayers);
 
         this.setCharacterStats(players.playerPool);
         this.setDraftPlayers(draftPlayers.players);
@@ -141,13 +127,19 @@ export class DraftService implements OnDestroy {
         });
 
         const playersSub = this.onDraftPlayersUpdate(draftId).subscribe(() => {
-          setTimeout(() => {
-            this.getDraftPlayers(draftId).subscribe({
-              next: (data) => this.setDraftPlayers(data.players)
-            });
-          }, 500);
-        });
 
+          forkJoin({
+            draftPlayers: this.getDraftPlayers(draftId),
+            draftedPlayers: this.leagueService.getDraftedPlayers(draftId)
+          }).subscribe(({ draftPlayers, draftedPlayers }) => {
+
+            this.setDraftPlayers(draftPlayers.players);
+
+            this.draftedPlayersWithStats$.next(draftedPlayers);
+
+          });
+
+        });
 
         this.draftSubscriptions.push(draftSub, playersSub);
         this.setIsLoading(false);
@@ -266,6 +258,7 @@ export class DraftService implements OnDestroy {
 
   setDraftPlayers(players: DraftPick[]) {
     this.draftPlayersSubject.next(players);
+    this.draftDataSubject.value;
   }
 
 

@@ -22,6 +22,8 @@ router.post('/draft/:draftId/start', authMiddleware, draftController.startDraftT
 
 router.get('/draft/:draftId/playerpool', authMiddleware, draftController.getPlayerPool);
 
+router.get('/leagues/:draftId/drafted-players', authMiddleware, draftController.getDraftedPlayers)
+
 router.get('/players', authMiddleware, draftController.getAllPlayers);
 
 router.post('/draft/:draftId/pick', authMiddleware, draftController.makeDraftPick);

@@ -61,6 +61,10 @@ export class LeagueService {
     );
   }
 
+  getDraftedPlayers(draftId: string): Observable<any> {
+    return this.http.get(`/api/leagues/${draftId}/drafted-players`);
+  }
+
   joinLeague(leagueId: string, userId: string): Observable<any> {
     return this.http.post(`/api/leagues/${leagueId}/join`, { userId });
   }
