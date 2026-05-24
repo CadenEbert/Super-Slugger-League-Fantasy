@@ -12,7 +12,7 @@
         <div class="player-container" *ngIf="(ownerId$ | async) == (userId$ | async)">
 
             <div class="my-leagues-header">
-                <button (click)="rosterpageService.rosterInfo()" class="create-btn">Team Settings</button>
+                <button (click)="rosterInfo()" class="create-btn">Team Settings</button>
             </div>
 
             <mat-card *ngFor="let p of players" class="indiv-players">

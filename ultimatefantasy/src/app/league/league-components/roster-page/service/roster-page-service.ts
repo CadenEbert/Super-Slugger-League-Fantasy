@@ -27,8 +27,8 @@ export class RosterPageService {
   constructor(
     private leagueService: LeagueCompService,
     private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
+    
 
   ) {
     this.userId$.next(this.authService.getUserId());
@@ -85,12 +85,7 @@ export class RosterPageService {
     });
   }
 
-  rosterInfo() {
-    this.router.navigate(['/league-page', this.route.parent?.snapshot.params['leagueId'], 'teams', this.route.snapshot.params['rosterId'], 'update-roster'],
-      { state: { rosterId: this.route.snapshot.params['rosterId'] } }
-    );
 
-  }
 
   getNumberOfProtected() {
     let count = 0;

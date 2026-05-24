@@ -18,10 +18,17 @@ import { RosterPageService } from './service/roster-page-service';
 export class RosterPage {
 
 
-  constructor(public rosterpageService: RosterPageService, private route: ActivatedRoute) {}
+  constructor(public rosterpageService: RosterPageService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.rosterpageService.loadRosterPage(this.route.parent?.snapshot.params['leagueId'], this.route.snapshot.params['rosterId']);
+  }
+
+    rosterInfo() {
+    this.router.navigate(['/league-page', this.route.parent?.snapshot.params['leagueId'], 'teams', this.route.snapshot.params['rosterId'], 'update-roster'],
+      { state: { rosterId: this.route.snapshot.params['rosterId'] } }
+    );
+
   }
 
 }
