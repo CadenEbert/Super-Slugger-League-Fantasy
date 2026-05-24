@@ -1,43 +1,44 @@
-
-
 <div class="login-container">
 
-<div class="login-panel">
-  <h1 class="login-text">Login</h1>
+  <div class="login-panel">
+    <h1 class="login-text">Login</h1>
 
-  <form class="login-form" [formGroup]="form" (submit)="onSubmit()"> 
+    <form class="login-form" [formGroup]="form" (submit)="onSubmit()">
 
-    <label class="email-text" for="email">Email:</label>
-    <input type="email" placeholder="Enter your email" id="email" formControlName="email" required>
-    <div class="nothing-entered">
-    @if (form.get('email')?.invalid && form.get('email')?.touched) {
+      <label class="email-text" for="email">Email:</label>
+      <input type="email" placeholder="Enter your email" id="email" formControlName="email" required>
+      <div class="nothing-entered">
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
         <span class="error">Email is required</span>
-      }
+        }
       </div>
-   
 
-    <label class="password-text" for="password">Password:</label>
-    <input type="password" placeholder="Enter your password" id="password" formControlName="password" required>
-    
-      
-    
-    <div class="nothing-entered">
-    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+
+      <label class="password-text" for="password">Password:</label>
+      <input type="password" placeholder="Enter your password" id="password" formControlName="password" required>
+
+
+
+      <div class="nothing-entered">
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
         <span class="error">Password is required</span>
-      }
+        }
       </div>
 
-    
-    
-    <button class="login-button" type="submit">Login</button>
-  </form>
-  
-<div class="forgot-links">
+
+      <div class="btn-holder">
+        <button class="login-button" type="submit">Login</button>
+
+      </div>
+      
+    </form>
+
+    <div class="forgot-links">
 
 
-  <a routerLink="/forgot-password">Forgot password?</a>
-  <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+      <a routerLink="/forgot-password">Forgot password?</a>
+      <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
 
-</div>
-</div>
+    </div>
+  </div>
 </div>

@@ -412,7 +412,7 @@
 .standings {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: top;
     align-items: center;
     height: 100%;
     width: 50%;

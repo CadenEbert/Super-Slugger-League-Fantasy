@@ -9,7 +9,7 @@ export class StandingsService {
   standingsSubject$ = new BehaviorSubject<any[]>([]);
   isLoading$ = new BehaviorSubject<boolean>(true);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   loadStandings(league_id: string) {
     this.http.put(`/api/leagues/${league_id}/standings/update`, {}).subscribe(data => {
@@ -36,5 +36,12 @@ export class StandingsService {
 
   positive(team: any) {
     return team.wins > team.losses;
+  }
+
+  negative(team: any) {
+    return team.wins < team.losses;
+  }
+  neutral(team: any) {
+    return team.wins === team.losses;
   }
 }

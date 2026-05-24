@@ -8,45 +8,60 @@
     </div>
 
     <div class="teams" *ngIf="!(standingsService.isLoading$ | async)">
-        
-    
+
+
         <ng-container *ngIf="standingsService.standingsSubject$ | async as standings">
-        <div class="team-standings" *ngFor="let team of standings">
-            <div class="green" *ngIf="standingsService.positive(team)">
-                <div class="team-name">
-                    <p>{{team.username}}</p>
-                </div>
-                
-                
-                <div class="team-record" >
-                    <p>Record: {{team.wins}}-{{team.losses}}</p>
-                </div>
-                <div class="team-image">
-                    <img [src]="'/assets/images/' + team.team_image" alt="{{team.username}}'s team">           
+            <div class="team-standings" *ngFor="let team of standings">
+                <div class="green" *ngIf="standingsService.positive(team)">
+                    <div class="team-name">
+                        <p>{{team.username}}</p>
+                    </div>
+
+
+                    <div class="team-record">
+                        <p>Record: {{team.wins}}-{{team.losses}}</p>
+                    </div>
+                    <div class="team-image">
+                        <img [src]="'/assets/images/' + team.team_image" alt="{{team.username}}'s team">
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="red" *ngIf="(standingsService.negative(team))">
+                    <div class="team-name">
+                        <p>{{team.username}}</p>
+                    </div>
 
-            <div class="red" *ngIf="!(standingsService.positive(team))">
-                <div class="team-name">
-                    <p>{{team.username}}</p>
-                </div>
-                
-                
-                <div class="team-record" >
-                    <p>Record: {{team.wins}}-{{team.losses}}</p>
-                </div>
-                <div class="team-image">
-                    <img [src]="'/assets/images/' + team.team_image" alt="{{team.username}}'s team">           
+
+                    <div class="team-record">
+                        <p>Record: {{team.wins}}-{{team.losses}}</p>
+                    </div>
+                    <div class="team-image">
+                        <img [src]="'/assets/images/' + team.team_image" alt="{{team.username}}'s team">
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="white" *ngIf="(standingsService.neutral(team))">
+                    <div class="team-name">
+                        <p>{{team.username}}</p>
+                    </div>
 
-            
+
+                    <div class="team-record">
+                        <p>Record: {{team.wins}}-{{team.losses}}</p>
+                    </div>
+                    <div class="team-image">
+                        <img [src]="'/assets/images/' + team.team_image" alt="{{team.username}}'s team">
+                    </div>
+
+                </div>
+
+
             </div>
         </ng-container>
 
-       
+
 
 
 

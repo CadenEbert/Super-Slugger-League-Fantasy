@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { LeagueCompService } from '../league/league-components/league-comp-service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ObjectEncodingOptions } from 'fs';
 
 @Component({
   selector: 'app-settings',
@@ -17,6 +19,7 @@ export class Settings {
   rosterLimit: number = 0;
   protectionLimit: number = 0;
   newDraftSetting: string = '';
+  deleting$ = new BehaviorSubject<boolean>(false);
 
 
   constructor(private leagueService: LeagueCompService, private route: ActivatedRoute, private router: Router) { }
@@ -42,6 +45,15 @@ export class Settings {
     });
   }
 
+  toggleDelete() {
+    if (this.deleting$.value === true) {
+      this.deleting$.next(false);
+    } else {
+      this.deleting$.next(true);
+    }
+  
+  }
+
   deleteLeague() {
 
     this.leagueService.deleteLeague(this.leagueId).subscribe({
@@ -62,6 +74,8 @@ export class Settings {
     this.leagueService.resetLeague(this.leagueId).subscribe({
       next: () => {
         console.log('League reset successfully');
+        alert('League reset successfully');
+        window.location.reload();
       },
       error: (error) => {
         console.error('Error deleting league:', error);

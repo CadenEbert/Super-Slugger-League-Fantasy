@@ -70,6 +70,21 @@
    
 }
 
+.white {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    padding: 10px;
+    gap: 50px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    margin: 10px;
+    background-color: #f1f1f1; 
+   
+}
+
 .team-standings {
     display: flex;
     flex-direction: row;

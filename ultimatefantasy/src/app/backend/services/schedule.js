@@ -382,7 +382,7 @@ exports.updateStandings = async (leagueId) => {
 
 
         for (let i = 1; i <= curr_week; i++) {
-            const gamesForWeek = scheduleGames.filter(game => game.week === i && !game.bye);
+            const gamesForWeek = scheduleGames.filter(game => !game.bye);
 
             console.log('Processing standings for week', i, 'with games:', gamesForWeek);
             for (let j = 0; j < gamesForWeek.length; j++) {

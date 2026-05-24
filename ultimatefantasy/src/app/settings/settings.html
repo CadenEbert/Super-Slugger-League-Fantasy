@@ -7,18 +7,6 @@
             <button class="close-button" (click)="toggleSettings()">X</button>
         </div>
 
-        <div class="setting-section">
-            <h3>Draft Settings</h3>
-
-            <div class="form-group">
-                <select [(ngModel)]="newDraftSetting">
-                    <option value="" disabled selected>Select Draft Type</option>
-                    <option *ngFor="let setting of draftSettings" [value]="setting">{{ setting }}</option>
-                </select>
-                <button (click)="updateDraftSettings(newDraftSetting)">Save</button>
-            </div>
-
-        </div>
 
         <div>
             <h3>Set Roster Limit</h3>
@@ -49,10 +37,34 @@
         <div class="setting-section">
             <h3>Delete League</h3>
             <div class="form-group">
-                <button (click)="deleteLeague()">Delete League</button>
+                <button class="yes-btn" (click)="toggleDelete()">Delete League</button>
             </div>
         </div>
 
+    </div>
+
+</div>
+
+<div class="deleting" *ngIf="(deleting$ | async)">
+   
+    <div class="delete-container">
+    <div>
+        ARE YOU SURE YOU WANT TO DELETE?
+
+    </div>
+
+    <div class="buttons">
+        <button class="yes-btn" (click)="delteLeague()">
+            YES
+
+        </button>
+
+        <button class="no-btn" (click)="toggleDelete()">
+            NO
+
+        </button>
+
+    </div>
     </div>
 
 </div>
