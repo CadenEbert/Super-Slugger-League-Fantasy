@@ -40,6 +40,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Trades } from './league/league-components/trades/trades';
 import { Profile } from './profile/profile/profile.js';
 import { UpdateRoster } from './league/league-components/roster-page/update-roster/update-roster';
+import { FilterInterceptor } from './core/filter.interceptor';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,11 @@ import { UpdateRoster } from './league/league-components/roster-page/update-rost
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: FilterInterceptor,
+      multi: true
     },
   ],
   bootstrap: [App],

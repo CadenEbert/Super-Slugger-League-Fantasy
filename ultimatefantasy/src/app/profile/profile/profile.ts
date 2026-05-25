@@ -51,15 +51,16 @@ export class Profile {
 
   changeUsername() {
     this.changingUsername = true;
-    console.log('Attempting to change username to:', this.newUsername);
     this.profileService.updateUsername(this.newUsername).subscribe({
       next: (updatedProfile) => {
+        alert('profile name change successfull');
         this.profile = updatedProfile;
         this.newUsername = '';
         this.changingUsername = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
+        alert('profile name change unsuccessfull');
         console.error('Error updating username:', err);
         this.changingUsername = false;
         this.cdr.detectChanges();
