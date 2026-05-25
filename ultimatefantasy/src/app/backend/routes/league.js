@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const leagueController = require('../controllers/leagueController.js');
 const authMiddleware = require('../middleware/auth.js');
-const filterMiddleware = require('../middleware/filter.js');
 
 
 router.get('/leagues', authMiddleware, leagueController.getLeagues);
 
 
-router.post('/leagues', authMiddleware, filterMiddleware, leagueController.createLeague);
+router.post('/leagues', authMiddleware, leagueController.createLeague);
 
 router.get('/leagues/:id/roster/players/leagueid', authMiddleware, leagueController.getRosterPlayersByLeagueId);
 
