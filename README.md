@@ -1,16 +1,19 @@
 # Super Slugger League Fantasy
 
-A full-stack fantasy baseball league app with real-time drafting, roster management, and automated schedule generation.
+A full-stack fantasy league app built for custom leagues in **Mario Super Sluggers** (Wii). Designed with CPU vs CPU gameplay in mind, SSL Fantasy handles everything from real-time drafting to full season management and continuous league resets.
 
-🌐 **Live:** [sslfantasy.com](https://sslfantasy.com/homepage)
+**URL to Live Website:** [sslfantasy.com](https://sslfantasy.com/homepage)
 
 ---
 
 ## Features
 
-- **Real-time Draft** — Live snake draft with Socket.io, synced across all connected users
-- **Roster Management** — Add, drop, and manage players throughout the season
-- **Automated Scheduling** — Schedule engine generates regular season matchups, standings, and playoff brackets
+- **Real-time Draft** — Live snake draft or standard draft with Socket.io, synced across all connected users
+- **Roster Management** — Build and manage your team of Mario Super Sluggers CPU characters
+- **Automated Scheduling** — Schedule engine generates full regular season matchups, standings, and playoff brackets
+- **Stat Tracking** — Track player stats across the season with live updates
+- **Live Standings** — Real-time standings updated as scores are submitted
+- **League Resets** — Full league reset system for continuous season-over-season play
 - **Authentication** — Secure user auth via Supabase with JWT validation
 - **Server-Side Rendering** — Built with Angular SSR for fast initial load times
 
@@ -97,22 +100,3 @@ npm run serve:ssr:ultimatefantasy
 
 ---
 
-## Project Structure
-
-```
-ultimatefantasy/
-├── src/
-│   ├── app/
-│   │   ├── components/
-│   │   ├── services/
-│   │   └── ...
-├── server.js        # Express + Socket.io server
-├── proxy.conf.json  # Dev proxy config
-└── ...
-```
-
----
-
-## License
-
-MIT
