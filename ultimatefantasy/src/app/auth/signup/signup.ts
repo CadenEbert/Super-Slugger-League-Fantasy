@@ -22,7 +22,14 @@ export class Signup {
     password: ['', Validators.required],
   });
 
+  isSubmitting = false;
+
   onSubmit() {
+    if (this.form.invalid || this.isSubmitting) {
+      return;
+    }
+
+    this.isSubmitting = true;
     const rawFormData = this.form.getRawValue();
     this.authService.signUp(
       rawFormData.email ?? '',
@@ -31,6 +38,7 @@ export class Signup {
     ).subscribe({
       next: (response) => {
         if (response.error) {
+          this.isSubmitting = false;
           console.error('Error during signup:', response.error);
           window.alert('Signup failed: ' + response.error);
           return;
@@ -45,6 +53,7 @@ export class Signup {
         this.router.navigate(['/login']);
       },
       error: (err) => {
+        this.isSubmitting = false;
         console.error('Signup request failed:', err);
         window.alert('Signup failed: ' + (err.error?.error ?? 'Unable to create account.'));
       }

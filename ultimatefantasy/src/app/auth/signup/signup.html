@@ -40,7 +40,9 @@
       </div>
 
       <div class="btn-holder">
-      <button id="signup-button" type="submit" [disabled]="form.invalid">Sign Up</button>
+      <button id="signup-button" type="submit" [disabled]="form.invalid || isSubmitting">
+        {{ isSubmitting ? 'Signing up...' : 'Sign Up' }}
+      </button>
       </div>
     </form>
     <div class="forgot-links">
