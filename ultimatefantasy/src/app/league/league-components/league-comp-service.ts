@@ -162,6 +162,12 @@ export class LeagueCompService {
     return this.http.get<any[]>(`/api/leagues/${leagueId}/freeagents`);
   }
 
+  getRosterLimit(leagueId: string): Observable<number> {
+    return this.http.get<{ rosterLimit: number }>(`/api/leagues/${leagueId}/roster-limit`).pipe(
+      map(res => res.rosterLimit)
+    );
+  }
+
   getProtections(leagueId: string): Observable<number> {
     return this.http.get<{ protections: number }>(`/api/leagues/${leagueId}/protections`).pipe(
       map(res => res.protections)

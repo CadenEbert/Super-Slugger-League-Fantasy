@@ -33,12 +33,14 @@ export class TradeService {
   receivingTeamPlayers$ = new BehaviorSubject<any[]>([]);
 
   pastTrades$ = new BehaviorSubject<any[]>([]);
+  outgoingTrades$ = new BehaviorSubject<any[]>([]);
   allCharacters$ = new BehaviorSubject<any[]>([]);
 
   myRosters$ = new BehaviorSubject<any[]>([]);
   rosters$ = new BehaviorSubject<any[]>([]);
   otherRosters$ = new BehaviorSubject<any[]>([]);
   userId$ = new BehaviorSubject<string>('');
+  rosterLimit$ = new BehaviorSubject<number>(0);
 
 
 
@@ -57,10 +59,12 @@ export class TradeService {
       characters: this.leagueCompService.getAllCharacters(leagueId),
       characterNames: this.leagueCompService.getAllCharacterNames(),
       allMembers: this.leagueCompService.getAllMembers(leagueId),
-      tradeMembers: this.leagueCompService.getAllTradeMembers(leagueId)
-    }).subscribe(({ trades, characters, characterNames, allMembers, tradeMembers }) => {
+      tradeMembers: this.leagueCompService.getAllTradeMembers(leagueId),
+      rosterLimit: this.leagueCompService.getRosterLimit(leagueId)
+    }).subscribe(({ trades, characters, characterNames, allMembers, tradeMembers, rosterLimit }) => {
       this.trades$.next(trades.filter(trade => trade.receiving_team_user_id === this.userId$.value && trade.status === 'pending'));
-      this.pastTrades$.next(trades.filter(trade => trade.status !== 'pending'));
+      this.pastTrades$.next(trades.filter(trade => this.userId$.value === trade.receiving_team_user_id && trade.status !== 'pending'));
+      this.outgoingTrades$.next(trades.filter(trade => trade.proposing_team_user_id === this.userId$.value && trade.status === 'pending'));
 
       const characterMap = new Map(characterNames.map((char: any) => [char.ID, char.character_name]));
       this.characters$.next(characters.map((char: any) => ({
@@ -68,7 +72,9 @@ export class TradeService {
         name: characterMap.get(char.character_id) || 'Unknown Character'
       })));
 
-      console.log(trades);
+      this.rosterLimit$.next(rosterLimit);
+
+
       this.members$.next(allMembers.filter((member: any) => member.user_id !== this.userId$.value));
       this.rosters$.next(tradeMembers);
       this.myRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
@@ -116,7 +122,20 @@ export class TradeService {
     this.rosters$.next(this.rosters$.value.filter((r: any) => r.owner_id !== this.proposingTeamId$.value));
   }
 
+  clearTrade() {
+    this.receivingTradeCharacters$.next([]);
+    this.proposingTradeCharacters$.next([]);
+    this.propAdded$.next(false);
+    this.recAdded$.next(false);
+  }
+
   proposeTrade() {
+    const resultingRosterSize = this.receivingTeamPlayers$.value.length - this.receivingTradeCharacters$.value.length + this.proposingTradeCharacters$.value.length;
+    const resultingRosterLimitProposal = this.proposingTeamPlayers$.value.length - this.proposingTradeCharacters$.value.length + this.receivingTradeCharacters$.value.length;
+    if (resultingRosterSize > this.rosterLimit$.value || resultingRosterLimitProposal > this.rosterLimit$.value) {
+      alert('The receiving team has too many players. Please select a different team.');
+      return;
+    }
     this.requesting$.next(true);
     const tradeData = {
       proposingTeamId: this.proposingTeamId$.value,
@@ -124,13 +143,14 @@ export class TradeService {
       receivingTeamId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.id,
       offeredPlayerId: this.proposingTradeCharacters$.value.map(trade => trade.id),
       requestedPlayerId: this.receivingTradeCharacters$.value.map(trade => trade.id),
+      proposingTeamUserId: this.userId$.value,
 
       offeredPlayerName: this.proposingTradeCharacters$.value.map(trade => trade.character_name),
       requestedPlayerName: this.receivingTradeCharacters$.value.map(trade => trade.character_name),
       receivingTeamUserId: this.otherRosters$.value.find(r => r.id === this.receivingTeamId$.value)?.owner_id
     };
 
-    console.log('Trade data being sent to server:', tradeData);
+
     this.leagueCompService.proposeTrade(this.leagueId$.value, tradeData).subscribe({
       next: (response) => {
         console.log('Trade proposed successfully:', response);

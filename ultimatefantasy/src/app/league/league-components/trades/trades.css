@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     height: 95%;
     width: 98%;
     background-color: white;
@@ -31,7 +31,7 @@
     justify-content: center;
     height: 95%;
     width: 100%;
-  
+
 }
 
 .trade-creator {
@@ -40,12 +40,12 @@
     align-items: center;
     justify-content: center;
     width: 80%;
-  
+
     border: 1px solid #ccc;
     border-radius: 10px;
     margin-top: 10px;
 
-    
+
 }
 
 .header {
@@ -54,8 +54,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-  
-   
+
+
     font-size: 1.1rem;
     border-bottom: 2px solid #ccc;
     width: 80%;
@@ -80,9 +80,9 @@
     justify-content: center;
     width: 100%;
     padding: 20px;
-    
+
     gap: 60px;
-    
+
 }
 
 .propose-btn {
@@ -94,6 +94,7 @@
     cursor: pointer;
     font-size: 1em;
     margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .propose-btn:disabled {
@@ -107,7 +108,7 @@
     align-items: center;
     justify-content: center;
     width: 50%;
-  
+
 }
 
 .trade-content {
@@ -116,7 +117,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
- 
+
 }
 
 .trade-header-content {
@@ -145,26 +146,26 @@ ul {
 }
 
 .trade-requests-body {
-    
-    
-   
+
+
+
     width: 100%;
     gap: 10px;
-    
-   
+
+
 }
 
 .trade-requests-header {
-    
+
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-   
-    
+
+
     width: 100%;
-    
-   
+
+
 }
 
 
@@ -200,7 +201,7 @@ ul {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    
+
     width: 100%;
 }
 

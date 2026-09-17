@@ -3,7 +3,7 @@ const tradesService = require('../services/trades.js');
 exports.getTrades = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
-        const userId = req.user.id; 
+        const userId = req.user.id;
         const trades = await tradesService.getTrades(leagueId, userId);
         res.json(trades);
     } catch (error) {
@@ -18,6 +18,16 @@ exports.getAllCharacters = async (req, res) => {
         res.json(characters);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch characters' });
+    }
+};
+
+exports.getRosterLimit = async (req, res) => {
+    try {
+        const leagueId = req.params.leagueId;
+        const rosterLimit = await tradesService.getRosterLimit(leagueId);
+        res.json({ rosterLimit });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch roster limit' });
     }
 };
 
@@ -43,7 +53,7 @@ exports.getAllCharacterNames = async (req, res) => {
 exports.createTrade = async (req, res) => {
     try {
         const leagueId = req.params.leagueId;
-        const userId = req.user.id; 
+        const userId = req.user.id;
         const tradeData = req.body;
         const newTrade = await tradesService.createTrade(leagueId, userId, tradeData);
         res.status(201).json(newTrade);
@@ -55,7 +65,7 @@ exports.createTrade = async (req, res) => {
 exports.acceptTrade = async (req, res) => {
     try {
         const tradeId = req.params.tradeId;
-      
+
         await tradesService.acceptTrade(tradeId);
         res.json({ message: 'Trade accepted successfully' });
     } catch (error) {

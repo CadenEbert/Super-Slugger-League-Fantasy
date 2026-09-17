@@ -19,5 +19,6 @@ router.put('/trades/:tradeId/accept', authMiddleware, tradesController.acceptTra
 
 router.put('/trades/:tradeId/reject', authMiddleware, tradesController.rejectTrade);
 
+router.get('/leagues/:leagueId/roster-limit', authMiddleware, tradesController.getRosterLimit);
 
 module.exports = router;

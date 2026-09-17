@@ -1,223 +1,280 @@
 <div class="loading" *ngIf="(tradeService.isLoading$ | async)">
-    <mat-spinner></mat-spinner>
+  <mat-spinner></mat-spinner>
 </div>
 
 
 <div class="trade-container" *ngIf="!(tradeService.isLoading$ | async)">
-    <ng-container *ngIf="tradeService.proposingTeamPlayers$ | async as proposingTeamPlayers">
-        <ng-container *ngIf="tradeService.receivingTradeCharacters$ | async as receivingTradeCharacters">
-            <ng-container *ngIf="tradeService.proposingTradeCharacters$ | async as proposingTradeCharacters">
-                <ng-container *ngIf="tradeService.trades$ | async as trades">
-                    <ng-container *ngIf="tradeService.pastTrades$ | async as pastTrades">
-                        <ng-container *ngIf="tradeService.receivingTeamPlayers$ | async as receivingTeamPlayers">
-                            <ng-container *ngIf="tradeService.otherRosters$ | async as otherRosters">
+  <ng-container *ngIf="tradeService.proposingTeamPlayers$ | async as proposingTeamPlayers">
+    <ng-container *ngIf="tradeService.receivingTradeCharacters$ | async as receivingTradeCharacters">
+      <ng-container *ngIf="tradeService.proposingTradeCharacters$ | async as proposingTradeCharacters">
+        <ng-container *ngIf="tradeService.trades$ | async as trades">
+          <ng-container *ngIf="tradeService.outgoingTrades$ | async as outgoingTrades">
+            <ng-container *ngIf="tradeService.pastTrades$ | async as pastTrades">
+              <ng-container *ngIf="tradeService.receivingTeamPlayers$ | async as receivingTeamPlayers">
+                <ng-container *ngIf="tradeService.otherRosters$ | async as otherRosters">
 
 
-                                <div class="trade-header">
-                                    <h3>Trade Requests</h3>
-                                </div>
+                  <div class="trade-header">
+                    <h3>Trade Requests</h3>
+                  </div>
 
-                                <div class="trade-creator">
-                                    <div class="header">
-                                        <h4>Propose a Trade</h4>
-                                    </div>
-
-
-                                    <div class="trade-form">
-                                        <div class="form-group">
-                                            <label for="proposingTeam">Proposing Team: {{ profile?.username }}</label>
-
-                                            <div class="trade-header-content">
-                                                <select id="offeredPlayer" [(ngModel)]="offeredPlayerId">
-                                                    <option *ngFor="let player of proposingTeamPlayers"
-                                                        [value]="player.character_id">{{ player.name
-                                                        }}
-                                                    </option>
-                                                </select>
-                                                <button (click)="tradeService.addToTradeProposing()">Add to
-                                                    Trade</button>
-
-                                            </div>
+                  <div class="trade-creator">
+                    <div class="header">
+                      <h4>Propose a Trade</h4>
+                    </div>
 
 
+                    <div class="trade-form">
+                      <div class="form-group">
+                        <label for="proposingTeam">Proposing Team: {{ profile?.username }}</label>
 
-                                        </div>
+                        <div class="trade-header-content">
+                          <select id="offeredPlayer" [(ngModel)]="offeredPlayerId">
+                            <option *ngFor="let player of proposingTeamPlayers" [value]="player.character_id">{{
+                              player.name
+                              }}
+                            </option>
+                          </select>
+                          <button (click)="tradeService.addToTradeProposing()">Add to
+                            Trade</button>
 
-                                        <div class="form-group">
-                                            <label for="receivingTeam">Receiving Team:</label>
-
-                                            <div class="trade-header-content">
-
-                                                <select id="receivingTeam" [(ngModel)]="receivingTeamId">
-                                                    <option *ngFor="let roster of otherRosters" [value]="roster.id">
-                                                        {{ roster.team_name }}
-                                                    </option>
-                                                </select>
-
-                                                <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
-                                                    <option
-                                                        *ngFor="let player of (tradeService.receivingTeamPlayers$ | async)"
-                                                        [value]="player.character_id">
-                                                        {{ player.name }}
-                                                    </option>
-                                                </select>
-                                                <button (click)="tradeService.addToTradeReceiving()">Add to
-                                                    Trade</button>
-
-                                            </div>
+                        </div>
 
 
 
+                      </div>
+
+                      <div class="form-group">
+                        <label for="receivingTeam">Receiving Team:</label>
+
+                        <div class="trade-header-content">
+
+                          <select id="receivingTeam" [(ngModel)]="receivingTeamId">
+                            <option *ngFor="let roster of otherRosters" [value]="roster.id">
+                              {{ roster.team_name }}
+                            </option>
+                          </select>
+
+                          <select id="requestedPlayer" [(ngModel)]="requestedPlayerId">
+                            <option *ngFor="let player of (tradeService.receivingTeamPlayers$ | async)"
+                              [value]="player.character_id">
+                              {{ player.name }}
+                            </option>
+                          </select>
+                          <button (click)="tradeService.addToTradeReceiving()">Add to
+                            Trade</button>
+
+                        </div>
 
 
-                                        </div>
 
 
-                                    </div>
 
-                                    <div class="trade-content"
-                                        *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+                      </div>
 
 
-                                        <div class="trade-details"
-                                            *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+                    </div>
+
+                    <div class="trade-content"
+                      *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
 
 
-                                            <div class="trade-chars" *ngFor="let trade of proposingTradeCharacters">
-                                                <ul>
-                                                    <li>{{ trade.character_name }}</li>
-                                                </ul>
-                                            </div>
+                      <div class="trade-details"
+                        *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
 
 
-                                        </div>
-                                        <div class="trade-details"
-                                            *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
+                        <div class="trade-chars" *ngFor="let trade of proposingTradeCharacters">
+                          <ul>
+                            <li>{{ trade.character_name }}</li>
+                          </ul>
+                        </div>
 
 
-                                            <div class="trade-chars" *ngFor="let trade of receivingTradeCharacters">
-                                                <ul>
-                                                    <li>{{ trade.character_name }}</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button (click)="tradeService.proposeTrade()" class="propose-btn"
-                                        [disabled]="!(tradeService.propAdded$ | async) || !(tradeService.recAdded$ | async) ||  (tradeService.requesting$ | async)">Propose
-                                        Trade</button>
-                                </div>
-
-                                <mat-card class="trade-requests">
-                                    <mat-accordion class="trade-requests-body">
-                                        <mat-expansion-panel *ngFor="let trade of trades" class="trade-requests-body">
-                                            <mat-expansion-panel-header class="trade-requests-header">
-                                                <mat-panel-title class="trade-requests-header">
-                                                    {{ trade.proposing_team_username }} proposes a trade to {{
-                                                    trade.receiving_team_username }}
-                                                </mat-panel-title>
-                                            </mat-expansion-panel-header>
-
-                                            <div class="trade-details-dropdown">
-                                                <div class="dropdown-header">
-                                                    <div class="trade-header-dropdown-content">
-                                                        <p>{{ trade.proposing_team_username }}</p>
-                                                    </div>
-                                                    <div class="trade-header-dropdown-content">
-                                                        <p>{{ trade.receiving_team_username }}</p>
-                                                    </div>
-                                                </div>
+                      </div>
+                      <div class="trade-details"
+                        *ngIf="proposingTradeCharacters.length > 0 || receivingTradeCharacters.length > 0">
 
 
-                                                <div class="dropdown-content">
+                        <div class="trade-chars" *ngFor="let trade of receivingTradeCharacters">
+                          <ul>
+                            <li>{{ trade.character_name }}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
 
-                                                    <div class="dropdown-content-details">
-                                                        <div *ngFor="let name of trade.offered_player_name">
-                                                            <p>{{ name }}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="dropdown-content-details">
-                                                        <div *ngFor="let name of trade.requested_player_name">
-                                                            <p>{{ name }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="trade-actions">
-                                                    <button (click)="tradeService.acceptTrade(trade.id)"
-                                                        class="accept-btn"
-                                                        [disabled]="(tradeService.requesting$ | async)">Accept</button>
-                                                    <button (click)="tradeService.rejectTrade(trade.id)"
-                                                        class="reject-btn"
-                                                        [disabled]="(tradeService.requesting$ | async)">Reject</button>
-                                                </div>
-                                            </div>
-
-                                        </mat-expansion-panel>
-                                    </mat-accordion>
-                                </mat-card>
+                    <div class="trade-actions">
 
 
-                                <div class="trade-header" *ngIf="pastTrades.length > 0">
-                                    <h3>Past Trades</h3>
-                                </div>
-                                <mat-card class="trade-requests">
-                                    <mat-accordion class="trade-requests-body">
-                                        <mat-expansion-panel *ngFor="let trade of pastTrades"
-                                            class="trade-requests-body">
-                                            <mat-expansion-panel-header class="trade-requests-header">
-                                                <mat-panel-title class="trade-requests-header"
-                                                    *ngIf="trade.status === 'accepted'">
-                                                    {{ trade.proposing_team_username }}'s trade to {{
-                                                    trade.receiving_team_username }} was accepted
-                                                </mat-panel-title>
-                                                <mat-panel-title class="trade-requests-header"
-                                                    *ngIf="trade.status === 'rejected'">
-                                                    {{ trade.proposing_team_username }}'s trade to {{
-                                                    trade.receiving_team_username }} was rejected
-                                                </mat-panel-title>
-                                            </mat-expansion-panel-header>
+                    <button (click)="tradeService.proposeTrade()" class="propose-btn"
+                      [disabled]="!(tradeService.propAdded$ | async) || !(tradeService.recAdded$ | async) ||  (tradeService.requesting$ | async)">Propose
+                      Trade</button>
 
-                                            <div class="trade-details-dropdown">
-                                                <div class="dropdown-header">
-                                                    <div class="trade-header-dropdown-content">
-                                                        <p>{{ trade.proposing_team_username }}</p>
-                                                    </div>
-                                                    <div class="trade-header-dropdown-content">
-                                                        <p>{{ trade.receiving_team_username }}</p>
-                                                    </div>
-                                                </div>
+                    <button (click)="tradeService.clearTrade()" class="clear-btn"
+                      [disabled]="!(tradeService.propAdded$ | async) && !(tradeService.recAdded$ | async)" class="propose-btn">Clear
+                      Trade</button>
+                      </div>
+                  </div>
 
+                  <mat-card class="trade-requests">
+                    <mat-accordion class="trade-requests-body">
+                      <mat-expansion-panel *ngFor="let trade of trades" class="trade-requests-body">
+                        <mat-expansion-panel-header class="trade-requests-header">
+                          <mat-panel-title class="trade-requests-header">
+                            {{ trade.proposing_team_username }} proposes a trade to {{
+                            trade.receiving_team_username }}
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
 
-                                                <div class="dropdown-content">
-
-                                                    <div class="dropdown-content-details">
-                                                        <div *ngFor="let name of trade.offered_player_name">
-                                                            <p>{{ name }}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="dropdown-content-details">
-                                                        <div *ngFor="let name of trade.requested_player_name">
-                                                            <p>{{ name }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                        <div class="trade-details-dropdown">
+                          <div class="dropdown-header">
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.proposing_team_username }}</p>
+                            </div>
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.receiving_team_username }}</p>
+                            </div>
+                          </div>
 
 
-                                            </div>
+                          <div class="dropdown-content">
 
-                                        </mat-expansion-panel>
-                                    </mat-accordion>
-                                </mat-card>
-                            </ng-container>
-                        </ng-container>
-                    </ng-container>
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.offered_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.requested_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="trade-actions">
+                            <button (click)="tradeService.acceptTrade(trade.id)" class="accept-btn"
+                              [disabled]="(tradeService.requesting$ | async)">Accept</button>
+                            <button (click)="tradeService.rejectTrade(trade.id)" class="reject-btn"
+                              [disabled]="(tradeService.requesting$ | async)">Reject</button>
+                          </div>
+                        </div>
+
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </mat-card>
+
+
+                  <div class="trade-header" *ngIf="pastTrades.length > 0">
+                    <h3>Past Trades</h3>
+                  </div>
+                  <mat-card class="trade-requests">
+                    <mat-accordion class="trade-requests-body">
+                      <mat-expansion-panel *ngFor="let trade of pastTrades" class="trade-requests-body">
+                        <mat-expansion-panel-header class="trade-requests-header">
+                          <mat-panel-title class="trade-requests-header" *ngIf="trade.status === 'accepted'">
+                            {{ trade.proposing_team_username }}'s trade to {{
+                            trade.receiving_team_username }} was accepted
+                          </mat-panel-title>
+                          <mat-panel-title class="trade-requests-header" *ngIf="trade.status === 'rejected'">
+                            {{ trade.proposing_team_username }}'s trade to {{
+                            trade.receiving_team_username }} was rejected
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div class="trade-details-dropdown">
+                          <div class="dropdown-header">
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.proposing_team_username }}</p>
+                            </div>
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.receiving_team_username }}</p>
+                            </div>
+                          </div>
+
+
+                          <div class="dropdown-content">
+
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.offered_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.requested_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+
+                        </div>
+
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </mat-card>
+
+                  <div class="trade-header" *ngIf="pastTrades.length > 0">
+                    <h3>Outgoing Trades</h3>
+                  </div>
+                  <mat-card class="trade-requests">
+                    <mat-accordion class="trade-requests-body">
+                      <mat-expansion-panel *ngFor="let trade of outgoingTrades" class="trade-requests-body">
+                        <mat-expansion-panel-header class="trade-requests-header">
+                          <mat-panel-title class="trade-requests-header">
+                            {{ trade.proposing_team_username }}'s trade to {{
+                            trade.receiving_team_username }} is ongoing
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div class="trade-details-dropdown">
+                          <div class="dropdown-header">
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.proposing_team_username }}</p>
+                            </div>
+                            <div class="trade-header-dropdown-content">
+                              <p>{{ trade.receiving_team_username }}</p>
+                            </div>
+                          </div>
+
+
+                          <div class="dropdown-content">
+
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.offered_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+
+                            <div class="dropdown-content-details">
+                              <div *ngFor="let name of trade.requested_player_name">
+                                <p>{{ name }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="trade-actions">
+
+                            <button (click)="tradeService.rejectTrade(trade.id)" class="reject-btn"
+                              [disabled]="(tradeService.requesting$ | async)">Cancel</button>
+                          </div>
+
+
+                        </div>
+
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </mat-card>
+
                 </ng-container>
+              </ng-container>
             </ng-container>
+          </ng-container>
         </ng-container>
+      </ng-container>
     </ng-container>
+  </ng-container>
 
 
 

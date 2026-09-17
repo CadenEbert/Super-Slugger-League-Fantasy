@@ -6,8 +6,7 @@ exports.getTrades = async (leagueId, userId) => {
     const { data, error } = await supabase.client
         .from('trades')
         .select('*')
-        .eq('league_id', leagueId)
-        .eq('receiving_team_user_id', userId);
+        .eq('league_id', leagueId);
 
     if (error) throw new Error(error.message);
     console.log('Fetched trades:', data);
@@ -92,6 +91,7 @@ exports.createTrade = async (leagueId, userId, tradeData) => {
             receiving_team_username: tradeData.receivingTeamUsername,
             proposing_team_username: profile[0].username,
             proposing_team_id: tradeData.proposingTeamId,
+            proposing_team_user_id: tradeData.proposingTeamUserId,
             offered_player_id: tradeData.offeredPlayerId,
             offered_player_name: tradeData.offeredPlayerName,
             requested_player_id: tradeData.requestedPlayerId,
@@ -206,4 +206,16 @@ exports.rejectTrade = async (tradeId) => {
 }
 
 
+exports.getRosterLimit = async (leagueId) => {
+    const { data, error } = await supabase.client
+        .from('leagues')
+        .select('roster_size')
+        .eq('id', leagueId)
+        .single();
 
+    if (error) throw new Error(error.message);
+
+
+
+    return data.roster_size;
+};
