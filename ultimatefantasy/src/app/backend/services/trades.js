@@ -10,6 +10,7 @@ exports.getTrades = async (leagueId, userId) => {
         .eq('receiving_team_user_id', userId);
 
     if (error) throw new Error(error.message);
+    console.log('Fetched trades:', data);
 
     return data;
 }

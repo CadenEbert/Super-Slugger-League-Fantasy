@@ -78,7 +78,7 @@
                         <div class="my-leagues-header" *ngIf="rosterService.userId$.value === selected.ownerId">
                             <button (click)="rosterService.onRosterClick(selected)" class="create-btn">Edit
                                 Roster</button>
-                            <button (click)="rosterService.trades()" class="create-btn" [disabled]="true">Trade Requests (Under Development)</button>
+                            <button (click)="rosterService.trades()" class="create-btn">Trade Requests (Under Development)</button>
                         </div>
 
 

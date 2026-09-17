@@ -68,13 +68,13 @@ export class TradeService {
         name: characterMap.get(char.character_id) || 'Unknown Character'
       })));
 
-
+      console.log(trades);
       this.members$.next(allMembers.filter((member: any) => member.user_id !== this.userId$.value));
       this.rosters$.next(tradeMembers);
       this.myRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id === this.userId$.value));
-      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id !== this.userId$.value));      
+      this.otherRosters$.next(tradeMembers.filter((roster: any) => roster.owner_id !== this.userId$.value));
       this.proposingTeamId$.next(this.myRosters$.value[0]?.id);
-  
+
       this.populateProposingTeamPlayers();
       this.setIsLoading(false);
     })
@@ -94,15 +94,14 @@ export class TradeService {
       this.receivingTeamPlayers$.next(this.characters$.value.filter(
         (char: any) => char.roster_id === newRoster.id
       ));
+      this.receivingTradeCharacters$.next([]);
     } else {
       this.receivingTeamPlayers$.next([]);
     }
 
 
   }
-  onRequestedPlayerChange() {
 
-  }
 
   populateProposingTeamPlayers() {
     const myRoster = this.rosters$.value.find((r: any) => r.owner_id === this.userId$.value);
