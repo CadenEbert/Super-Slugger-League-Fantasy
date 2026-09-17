@@ -17,6 +17,9 @@ function checkValue(value: unknown): boolean {
 @Injectable()
 export class FilterInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    if (req.url.endsWith('/save-player')) {
+      return next.handle(req);
+    }
     if (req.body && checkValue(req.body)) {
       return throwError(() => new Error('Inappropriate content detected.'));
     }
