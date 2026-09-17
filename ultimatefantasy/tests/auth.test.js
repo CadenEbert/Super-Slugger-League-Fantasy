@@ -54,7 +54,10 @@ describe('signUp', () => {
 
     const result = await signUp('test@gmail.com', 'password123', 'testuser');
 
-    expect(result).toEqual({ id: 'user-id', email: 'test@gmail.com' });
+    expect(result).toEqual({
+      user: { id: 'user-id', email: 'test@gmail.com' },
+      session: undefined,
+    });
     expect(signUpMock).toHaveBeenCalledWith({
       email: 'test@gmail.com',
       password: 'password123',

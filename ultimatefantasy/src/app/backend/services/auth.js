@@ -11,7 +11,7 @@ exports.signUp = async (email, password, username) => {
   const userId = data.user.id;
 
   
-  const { data: profileData, error: profileError } = await client
+  const { error: profileError } = await client
     .from('profiles')
     .insert({ username, user_id: userId })
     .select()
@@ -22,7 +22,10 @@ exports.signUp = async (email, password, username) => {
     throw new Error(profileError.message);
   }
 
-  return data.user;
+  return {
+    user: data.user,
+    session: data.session,
+  };
 };
 
 exports.signIn = async (email, password) => {

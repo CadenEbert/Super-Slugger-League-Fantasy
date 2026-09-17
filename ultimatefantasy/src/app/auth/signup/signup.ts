@@ -33,15 +33,20 @@ export class Signup {
         if (response.error) {
           console.error('Error during signup:', response.error);
           window.alert('Signup failed: ' + response.error);
-          this.router.navigate(['']);
-        } else {
-          console.log('Signup successful:', response);
-          this.authService.setSession({ access_token: response.access_token });
-          this.router.navigate(['']);
+          return;
         }
+
+        if (response.session?.access_token) {
+          this.authService.setSession(response.session);
+        } else {
+          window.alert('Account created. Check your email to confirm your account, then sign in.');
+        }
+
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Signup request failed:', err);
+        window.alert('Signup failed: ' + (err.error?.error ?? 'Unable to create account.'));
       }
     });
     
