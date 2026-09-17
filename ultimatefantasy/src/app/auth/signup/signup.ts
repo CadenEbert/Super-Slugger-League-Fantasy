@@ -32,6 +32,8 @@ export class Signup {
       next: (response) => {
         if (response.error) {
           console.error('Error during signup:', response.error);
+          window.alert('Signup failed: ' + response.error);
+          this.router.navigate(['']);
         } else {
           console.log('Signup successful:', response);
           this.authService.setSession({ access_token: response.access_token });
