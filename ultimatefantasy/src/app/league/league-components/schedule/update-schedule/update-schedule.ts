@@ -31,6 +31,7 @@ export class UpdateSchedule {
     }).subscribe(({ members, players }) => {
       this.members = members;
       this.players = players;
+      console.log('Members:', members);
       this.isLoading = false;
       this.cdr.detectChanges();
       console.log(players);
@@ -43,14 +44,12 @@ export class UpdateSchedule {
   onHomeTeamChange(username: string) {
     const member = this.members.find(m => m.profiles.username === username);
     this.game.home_team_uuid = member.user_id;
-    console.log('Selected home team:', username, 'with UUID:', this.game.home_team_uuid);
 
   }
 
   onAwayTeamChange(teamName: string) {
-    const member = this.members.find(m => m.team_name === teamName);
+    const member = this.members.find(m => m.profiles.username === teamName);
     this.game.away_team_uuid = member.user_id;
-    console.log('Selected away team:', teamName, 'with UUID:', this.game.away_team_uuid);
   }
 
   getHomeRoster() {
