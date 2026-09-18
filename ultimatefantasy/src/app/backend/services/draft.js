@@ -289,7 +289,7 @@ exports.startDraftTimer = async (draftId, timerSeconds) => {
 async function getAllPlayers() {
   const { data, error } = await client
     .from('characters')
-    .select('ID, character_name, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type, character_image');
+    .select('ID, character_name, ranking, weight, captain, bunting, speed, fielding, curve, traj, stamina, pitching_arm, batting_arm, character_class, star_pitch, fielding_ability, star_swing, baserunning_ability, slap_size, charge_size, slap_power, charge_power, outfield_throwing, displayed_pitching, displayed_batting, displayed_fielding, dis_speed, curveball_speed, charge_pitch_speed, hit_curve, star_pitch_type, character_image');
 
   if (error) {
     console.error('Supabase error:', error);
@@ -302,6 +302,7 @@ async function getAllPlayers() {
     id: player.ID,
     character_image: player.character_image,
     name: player.character_name,
+    rank: player.ranking,
     weight: player.weight,
     captain: player.captain,
     bunting: player.bunting,

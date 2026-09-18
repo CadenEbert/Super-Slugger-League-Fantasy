@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { io, Socket } from 'socket.io-client';
-import { Observable, map, distinctUntilChanged, combineLatest, Subscription, forkJoin } from 'rxjs';
+import { Observable, map, distinctUntilChanged, combineLatest, Subscription, forkJoin, startWith, Subject } from 'rxjs';
 import { DraftState, DraftPick, playerPool, CharacterStats, DraftedPlayer } from '../../../core/models/draft.model';
 import { LeagueService } from '../../league-service';
 import { AuthService } from '../../../auth/auth-service';
@@ -48,16 +48,36 @@ export class DraftService implements OnDestroy {
 
   private supabase: SupabaseClient;
   private activeChannels: Map<string, RealtimeChannel> = new Map();
+  private playerFilterSubject = new Subject<string>();
+
+  playerFilter$ = this.playerFilterSubject.asObservable().pipe(
+    startWith('All')
+  );
 
   availablePlayers$: Observable<CharacterStats[]> = combineLatest([
     this.draftDataSubject,
-    this.characterStatsSubject
+    this.characterStatsSubject,
+    this.playerFilter$
   ]).pipe(
-    map(([draftData, characters]) => {
+    map(([draftData, characters, filter]) => {
 
       if (!draftData) return [];
       const pool = draftData.player_pool as unknown as number[];
-      return characters.filter(c => pool.includes(Number(c.id)));
+      const availablePlayers = characters.filter(c => pool.includes(Number(c.id)));
+
+      if (filter === 'Captains') {
+        return availablePlayers.filter(player => player.captain);
+      } else if (filter === 'Power Class') {
+        return availablePlayers.filter(player => player.character_class?.includes('Power'));
+      } else if (filter === 'Technique Class') {
+        return availablePlayers.filter(player => player.character_class?.includes('Technique'));
+      } else if (filter === 'Speed Class') {
+        return availablePlayers.filter(player => player.character_class?.includes('Speed'));
+      } else if (filter === 'Balanced Class') {
+        return availablePlayers.filter(player => player.character_class?.includes('Balanced'));
+      }
+
+      return availablePlayers.sort((a, b) => this.comparePlayers(a, b, filter));
     })
   );
 
@@ -113,11 +133,14 @@ export class DraftService implements OnDestroy {
 
         this.draftedPlayersWithStats$.next(draftedPlayers);
 
+
         this.setCharacterStats(players.playerPool);
         this.setDraftPlayers(draftPlayers.players);
         this.setCanDraft(canDraft);
         this.setOwnerId(ownerId);
         this.setIsOwner(this.userId$.value, ownerId);
+
+
 
         const draftSub = this.onDraftUpdate(draftId).subscribe(update => {
           this.setDraftData(update.new);
@@ -143,6 +166,7 @@ export class DraftService implements OnDestroy {
 
         this.draftSubscriptions.push(draftSub, playersSub);
         this.setIsLoading(false);
+
       });
     });
   }
@@ -283,6 +307,7 @@ export class DraftService implements OnDestroy {
       id: player.id,
       character_image: player.character_image,
       character_name: player.name,
+      rank: player.rank,
       weight: player.weight,
       captain: player.captain,
       bunting: player.bunting,
@@ -313,7 +338,39 @@ export class DraftService implements OnDestroy {
       star_pitch_type: player.starPitchType,
     }));
 
-    this.characterStatsSubject.next(mapped);
+    const sorted = mapped.sort((a, b) => a.rank - b.rank);
+    this.characterStatsSubject.next(sorted);
+  }
+
+  changePlayerPoolOrder(newOrder: String) {
+    this.playerFilterSubject.next(String(newOrder));
+  }
+
+  private comparePlayers(a: CharacterStats, b: CharacterStats, category: string): number {
+    switch (category) {
+      case 'Tier':
+        return a.rank - b.rank;
+      case 'Speed':
+        return b.speed - a.speed;
+      default:
+        return 0;
+    }
+  }
+
+  changeDraftedSort(newSort: String) {
+    if (newSort === 'All Picks') {
+      this.draftedPlayersWithStats$.next(this.draftedPlayersWithStats$.value.sort((a, b) => a.pick_number - b.pick_number));
+    } else if (newSort === 'My Team') {
+      const myTeamDrafted = this.draftedPlayersWithStats$.value.filter(player => player.member_picking === this.userId$.value);
+      this.draftedPlayersWithStats$.next(myTeamDrafted.sort((a, b) => a.pick_number - b.pick_number));
+    }
+  }
+
+  private compareClass(a: CharacterStats, b: CharacterStats, className: string): number {
+    const aMatches = a.character_class?.includes(className) ? 1 : 0;
+    const bMatches = b.character_class?.includes(className) ? 1 : 0;
+
+    return bMatches - aMatches || a.rank - b.rank;
   }
 
   setMembers(members: any[]) {

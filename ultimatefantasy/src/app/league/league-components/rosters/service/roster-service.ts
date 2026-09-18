@@ -64,6 +64,14 @@ export class RosterService {
       this.setIsLoading(false);
     })
 
+    for (let i = 0; i < this.rosters$.value.length; i++) {
+      if (this.rosters$.value[i].owner_id === this.userId$.value) {
+        this.rosterIndex$.next(i);
+        this.selectedRoster$.next(this.rosters$.value[i]);
+        break;
+      }
+    }
+
   }
 
 

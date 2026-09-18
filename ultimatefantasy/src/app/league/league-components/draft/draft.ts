@@ -17,7 +17,8 @@ export class Draft implements OnInit, OnDestroy {
   leagueId: string = '';
   isLoading: boolean = true;
   isMakingPick = false;
-
+  characterCategories = ['Tier', 'Speed', 'Power Class', 'Speed Class', 'Technique Class', 'Balanced Class', 'Captains', ''];
+  draftedSortBy = ['All Picks', 'My Team'];
   timePerPick: number = 60;
   draftType: string = 'Snake';
   numberOfRounds: number = 10;
@@ -62,7 +63,7 @@ export class Draft implements OnInit, OnDestroy {
       );
     });
 
-    
+
   }
 
 

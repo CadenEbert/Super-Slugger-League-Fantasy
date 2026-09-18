@@ -86,6 +86,23 @@
                         {{ draftData.timer_running ? 'Pause Timer' : 'Start Timer' }}
                       </button>
                     </div>
+
+                    <div class="draft-info">
+                      <select (change)="draftService.changeDraftedSort($any($event.target).value)">
+                        <option *ngFor="let sort of draftedSortBy" [value]="sort">
+                          {{ sort }}
+
+                        </option>
+
+                      </select>
+                      <select (change)="draftService.changePlayerPoolOrder($any($event.target).value)">
+                        <option *ngFor="let category of characterCategories" [value]="category">
+                          {{ category }}
+                        </option>
+
+                      </select>
+                    </div>
+
                   </div>
 
 
@@ -158,6 +175,10 @@
                                 <mat-panel-title>
                                   <img [src]="'/' + pp.character_image" alt="">
                                   {{ pp.character_name }}
+                                  <div class="player-header">
+                                    <p>Rank: {{ pp.rank }}</p>
+                                </div>
+
                                 </mat-panel-title>
                               </mat-expansion-panel-header>
                               <div class="drop-down">

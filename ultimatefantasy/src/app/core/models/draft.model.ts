@@ -31,6 +31,7 @@ export interface playerPool {
 export interface CharacterStats {
   id: number | string;
   character_name: string;
+  rank: number;
   weight: number;
   captain: boolean;
   bunting: number;
