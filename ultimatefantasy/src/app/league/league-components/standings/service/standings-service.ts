@@ -14,7 +14,6 @@ export class StandingsService {
   loadStandings(league_id: string) {
     this.http.put(`/api/leagues/${league_id}/standings/update`, {}).subscribe(data => {
       this.standingsSubject$.next(this.sortByWins(Object.values(data)));
-      console.log(Object.values(data));
       this.setIsLoading(false);
     })
   }

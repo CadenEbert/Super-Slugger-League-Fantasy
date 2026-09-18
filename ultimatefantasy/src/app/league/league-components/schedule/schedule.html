@@ -2,7 +2,7 @@
 
   <div class="schedule-container" *ngIf="vm.isLoading">
     <div class="schedule-header">
-      
+
       <div class="loading-container">
         <mat-spinner></mat-spinner>
       </div>
@@ -110,9 +110,14 @@
     <div class="schedule-container" *ngIf="!vm.isOwner && vm.scheduleMetadata?.status === 'in_progress'">
       <div class="schedule-header">
         <h1>Schedule</h1>
+        <select [(ngModel)]="selectedWeek" class="week-select">
+          <option *ngFor="let week of vm.weeks" [ngValue]="week">
+            Week {{ week }}
+          </option>
+        </select>
         <div class="schedule-grid-progress">
           <div class="schedule-metadata"
-            *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
+            *ngFor="let game of vm.scheduleGames | filterByWeek: selectedWeek">
             <ng-container *ngIf="game.bye; else regularGame">
               <div class="game-bye">
                 <div class="game-header">
@@ -120,6 +125,8 @@
                     <p class="head-text">Home Team</p>
                   </div>
                   <p class="head-text">Week : {{ game.week }}</p>
+
+
                   <div class="away">
                     <p class="head-text">Away Team</p>
                   </div>
@@ -176,8 +183,12 @@
 
         <div class="schedule-info">
           <div class="current-week">
-            <p>Current Week:</p>
-            <p>{{ vm.scheduleMetadata.current_week }}</p>
+            <p> Current Week: </p>
+            <select [(ngModel)]="selectedWeek" class="week-select">
+              <option *ngFor="let week of vm.weeks" [ngValue]="week">
+                {{ week }}
+              </option>
+            </select>
           </div>
           <div class="buttons">
             <button (click)="scheduleService.completeWeek(leagueId)" class="complete-btn">
@@ -188,7 +199,7 @@
 
         <div class="schedule-grid-progress">
           <div class="schedule-metadata"
-            *ngFor="let game of vm.scheduleGames | filterByWeek: vm.scheduleMetadata.current_week">
+            *ngFor="let game of vm.scheduleGames | filterByWeek: selectedWeek">
             <ng-container *ngIf="game.bye; else regularGame">
               <div class="game-bye">
                 <div class="game-header">

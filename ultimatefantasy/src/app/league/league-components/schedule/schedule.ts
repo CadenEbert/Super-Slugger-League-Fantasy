@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Game } from '../../../core/models/schedule.model';
 import { ScheduleService } from './service/schedule-service';
 
@@ -15,6 +16,9 @@ import { ScheduleService } from './service/schedule-service';
   styleUrl: './schedule.css',
 })
 export class Schedule {
+  selectedWeek = 1;
+  private weeksSubscription?: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     public scheduleService: ScheduleService,
@@ -22,7 +26,20 @@ export class Schedule {
   ) {}
 
   ngOnInit() {
+    this.weeksSubscription = this.scheduleService.weeks$.subscribe(weeks => {
+      if (weeks.length > 0) {
+        this.selectedWeek = weeks[weeks.length - 1];
+      }
+    });
+
     this.scheduleService.loadSchedule(this.route.parent?.snapshot.params['leagueId']);
+  }
+
+  ngOnDestroy() {
+    this.weeksSubscription?.unsubscribe();
+  }
+  get weeks$() {
+    return this.scheduleService.weeks$;
   }
 
   get leagueId() {
@@ -30,6 +47,10 @@ export class Schedule {
   }
 
   updateGame(game: Game) {
+    if (!this.scheduleService.isGameEditable(game)) {
+      return;
+    }
+
     this.router.navigate([`/league-page/${this.leagueId}/update-schedule`], { state: { game } });
   }
 

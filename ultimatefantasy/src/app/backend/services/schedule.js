@@ -276,9 +276,33 @@ exports.startSeason = async (leagueId) => {
     }
 }
 
-exports.updateGame = async (gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid) => {
+exports.updateGame = async (leagueId, gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid) => {
 
     try {
+        const [{ data: game, error: gameError }, { data: schedule, error: scheduleError }] = await Promise.all([
+            client
+                .from('schedule_games')
+                .select('week')
+                .eq('id', gameId)
+                .eq('league_id', leagueId)
+                .single(),
+            client
+                .from('schedule')
+                .select('current_week')
+                .eq('league_id', leagueId)
+                .single()
+        ]);
+
+        if (gameError || scheduleError) {
+            throw new Error('Game or schedule not found');
+        }
+
+        if (Number(game.week) < Number(schedule.current_week)) {
+            const error = new Error('Past games cannot be edited');
+            error.status = 403;
+            throw error;
+        }
+
         const { error } = await client
             .from('schedule_games')
             .update({

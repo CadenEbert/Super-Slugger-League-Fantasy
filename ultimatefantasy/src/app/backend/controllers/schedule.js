@@ -66,6 +66,7 @@ exports.startSeason = async (req, res) => {
 
 exports.updateGame = async (req, res) => {
     try {
+        const leagueId = req.params.leagueId;
         const gameId = req.params.gameId;
         const homeScore = req.body.home_score;
         const awayScore = req.body.away_score;
@@ -75,10 +76,10 @@ exports.updateGame = async (req, res) => {
         const homeTeamuuid = req.body.home_team_uuid;
         const awayTeamuuid = req.body.away_team_uuid;
 
-        await scheduleService.updateGame(gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid);
+        await scheduleService.updateGame(leagueId, gameId, homeTeam, awayTeam, homeScore, awayScore, stadium, homeTeamuuid, awayTeamuuid);
         res.json({ message: 'Game updated successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to update game' });
+        res.status(error.status || 500).json({ error: error.message || 'Failed to update game' });
     }
 }
 

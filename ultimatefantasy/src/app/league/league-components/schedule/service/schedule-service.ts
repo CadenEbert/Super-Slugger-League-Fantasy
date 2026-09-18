@@ -9,10 +9,11 @@ import { AuthService } from '../../../../auth/auth-service.js';
 @Pipe({ name: 'filterByWeek' })
 export class FilterByWeekPipe implements PipeTransform {
   transform(games: any[], week: number | string | null): any[] {
-    if (!games) return [];
-    if (!week) return games;
-    const weekNum = typeof week === 'string' ? parseInt(week, 10) : week;
-    return games.filter(game => game.week === weekNum);
+    if (!games || week == null) return games ?? [];
+
+    const weekNumber = Number(week);
+
+    return games.filter(game => Number(game.week) === weekNumber);
   }
 }
 
@@ -48,6 +49,8 @@ export class ScheduleService {
   public canDraft$ = new BehaviorSubject<boolean>(false);
   canDraftObservable$ = this.canDraft$.asObservable();
 
+
+
   private scheduleGamesSubject = new BehaviorSubject<Game[]>([]);
   scheduleGames$: Observable<Game[]> = this.scheduleGamesSubject.pipe(
     distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
@@ -67,6 +70,7 @@ export class ScheduleService {
   public isLoading$ = new BehaviorSubject<boolean>(false);
   public playoffGames$ = new BehaviorSubject<Game[]>([]);
   private initialLoadDone = false;
+  public weeks$ = new BehaviorSubject<number[]>([]);
 
   public vm$ = combineLatest([
     this.schedule$,
@@ -81,12 +85,13 @@ export class ScheduleService {
     this.playoffTeamsFinal$,
     this.totalWeeks$,
     this.number_of_playoffs$,
-    this.isLoading$
+    this.isLoading$,
+    this.weeks$
   ]).pipe(
-    map(([schedule, userId, ownerId, canDraft, scheduleMetadata, scheduleGames, generating, gen_playoffs, playoffTeams, playoffTeamsFinal, totalWeeks, number_of_playoffs, isLoading]) => ({
+    map(([schedule, userId, ownerId, canDraft, scheduleMetadata, scheduleGames, generating,  gen_playoffs, playoffTeams, playoffTeamsFinal, totalWeeks, number_of_playoffs, isLoading, weeks]) => ({
       schedule, userId, ownerId, canDraft, scheduleMetadata, scheduleGames,
       generating, gen_playoffs, playoffTeams, playoffTeamsFinal,
-      totalWeeks, number_of_playoffs, isLoading,
+      totalWeeks, number_of_playoffs, isLoading, weeks,
       isOwner: scheduleMetadata ? userId === scheduleMetadata.owner_id : false
     }))
   );
@@ -100,7 +105,7 @@ export class ScheduleService {
     this.initialLoadDone = false;
     this.setLoading(true);
     this.setUserId(this.authService.getUserId());
-  
+
 
     this.leagueService.canDraft(league_id).subscribe({
       next: (canDraft) => this.setCanDraft(canDraft),
@@ -124,6 +129,7 @@ export class ScheduleService {
       next: (metadata) => {
         this.setScheduleMetadata(metadata);
         this.loadGamesByStatus(metadata, league_id);
+        this.weeks$.next(Array.from({ length: this.scheduleMetadataSubject.getValue()?.current_week || 0 }, (_, i) => i + 1));
         this.initialLoadDone = true;
         this.setLoading(false);
       },
@@ -158,6 +164,7 @@ export class ScheduleService {
       },
       error: (err) => console.error('Error on metadata update stream:', err)
     });
+
   }
 
   private loadGamesByStatus(metadata: any, league_id: string) {
@@ -202,7 +209,6 @@ export class ScheduleService {
 
     this.leagueCompService.generateSchedule(league_id, this.totalWeeks$.value, this.number_of_playoffs$.value).subscribe({
       next: (response) => {
-        console.log(response);
         this.generating$.next(false);
       },
       error: (err) => {
@@ -221,7 +227,7 @@ export class ScheduleService {
 
   startSeason(league_id: string) {
     this.leagueCompService.startSeason(league_id).subscribe({
-      next: () => console.log('Season started successfully'),
+      next: () => {},
       error: (err) => console.error('Error starting season:', err)
     });
   }
@@ -231,7 +237,7 @@ export class ScheduleService {
   completeWeek(league_id: string) {
     const current_week = this.scheduleMetadataSubject.getValue()?.current_week;
     this.leagueCompService.completeWeek(league_id, current_week).subscribe({
-      next: () => console.log('Week completed successfully'),
+      next: () => {},
       error: (err) => console.error('Error completing week:', err)
     });
   }
@@ -258,7 +264,6 @@ export class ScheduleService {
     this.gen_playoffs$.next(true);
     this.leagueCompService.completeRound(league_id, playoffGames).subscribe({
       next: () => {
-        console.log('Round completed successfully');
         this.gen_playoffs$.next(false);
       },
       error: (err) => {
@@ -290,5 +295,10 @@ export class ScheduleService {
 
   setScheduleGames(games: Game[]) {
     this.scheduleGamesSubject.next(games);
+  }
+
+  isGameEditable(game: Game): boolean {
+    const currentWeek = Number(this.scheduleMetadataSubject.value?.current_week);
+    return !currentWeek || Number(game.week) >= currentWeek;
   }
 }
