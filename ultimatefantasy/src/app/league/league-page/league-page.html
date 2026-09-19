@@ -1,23 +1,25 @@
+<app-settings
+  class="desktop-only"
+  *ngIf="(ownerId$ | async) === user_id">
+</app-settings>
 
-<app-sidebar></app-sidebar>
-
-<app-settings *ngIf="(ownerId$ | async) === user_id"></app-settings>
-
-<div class="leaguepage-container">
-    
-    <div class="leaguepage-content">       
-        <nav class="tab-nav">
-            <a class="route-button" routerLink="teams" routerLinkActive="active">Teams</a>
-            <a class="route-button" routerLink="schedule" routerLinkActive="active">Schedule</a>
-            <a class="route-button" routerLink="standings" routerLinkActive="active">Standings</a>
-            <a class="route-button" routerLink="free-agents" routerLinkActive="active">Free Agents</a>
-            <a class="route-button" routerLink="player-stats" routerLinkActive="active">Player Stats</a>
-            <a class="route-button" routerLink="draft-board" routerLinkActive="active">Draft Board</a>
-        </nav>
-        <div class="tab-content">
-        <router-outlet></router-outlet>
-        </div>
-        
-
-    </div>
+<div class="leaguepage-container desktop-only">
+  <div class="leaguepage-content">
+    <nav class="tab-nav">
+      <a routerLink="teams" routerLinkActive="active">Teams</a>
+      <a routerLink="schedule" routerLinkActive="active">Schedule</a>
+      <a routerLink="standings" routerLinkActive="active">Standings</a>
+      <a routerLink="free-agents" routerLinkActive="active">Free Agents</a>
+      <a routerLink="player-stats" routerLinkActive="active">Player Stats</a>
+      <a routerLink="draft-board" routerLinkActive="active">Draft Board</a>
+    </nav>
+  </div>
 </div>
+
+<div class="mobile-only">
+  <app-sidebar></app-sidebar>
+</div>
+
+<main class="tab-content">
+  <router-outlet></router-outlet>
+</main>

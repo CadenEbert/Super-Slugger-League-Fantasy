@@ -2,7 +2,7 @@
 ::ng-deep .leaguecreate-container {
   display: flex;
   flex-direction: column;
-  
+
   height: 100%;
   width: 100%;
     background-image: url('/assets/images/mariobackgroundcolor.png');
@@ -35,13 +35,13 @@
 .league-container {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   height: 100%;
   width: 50%;
-  min-width: 320px; 
+  min-width: 320px;
   background-color: #90bffd;
   border-radius: 20px;
-  
+
 }
 
 .league-title  {
@@ -56,7 +56,7 @@
 
 .leaguejoin-header {
     font-size: 1.5em;
-    
+
     width: 80%;
     text-align: center;
     text-overflow: none;
@@ -85,11 +85,11 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+
   align-items: center;
   justify-content: center;
 
-  
+
 }
 
 .league-content {
@@ -104,7 +104,7 @@
   border-radius: 10px;
   padding: 2.3rem;
   margin-bottom: 2rem;
-  
+
 
 }
 
@@ -119,7 +119,7 @@
 
 .form-label {
   font-size: 1.2em;
-  
+
 }
 
 #create-button {
@@ -156,3 +156,4 @@
   background-color: #cccccc;
   cursor: not-allowed;
 }
+

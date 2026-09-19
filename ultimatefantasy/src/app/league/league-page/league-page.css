@@ -1,26 +1,26 @@
-::ng-deep .leaguepage-container {
+.leaguepage-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   height: 100%;
   width: 100%;
     background-image: url('/assets/images/mariobackgroundcolor.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
- 
+
 }
 
 .leaguepage-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   margin-bottom: 20px;
   height: 100%;
-  
+
   margin-top: 20px;
   width: auto;
   width: 70%;
@@ -28,8 +28,8 @@
   background-color: #90bffd;
   border-radius: 10px;
   min-height: 80%;
-  
-  
+
+
   overflow: hidden;
 }
 
@@ -37,18 +37,18 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  
+
   gap: 20px;
   width: 100%;
   border-bottom: black solid 1px;
-  
-  
+
+
   margin: 20px 0;
   padding-top: 10px;
   padding-bottom: 20px;
-  
-  
-  
+
+
+
 }
 
 .league-description-header {
@@ -59,22 +59,22 @@
 .league-description {
   font-size: 1.2rem;
   color: #313131;
-  
+
 }
 
 .league-title {
   font-size: 2.5rem;
   font-weight: bold;
   color: #333;
-  
-  
+
+
 }
 
 .tab-nav {
   display: flex;
   flex-direction: row;
- 
-  
+
+
   margin-top: 20px;
 }
 
@@ -86,17 +86,17 @@
   padding: 0 20px;
   text-wrap: nowrap;
   height: 35px;
- 
+
   color: #333;
   background-color: white;
   border: 1px solid #ccc;
-  
+
   cursor: pointer;
   text-decoration: none;
-  
-  
+
+
   transition: background-color 0.3s ease;
-  
+
 
 }
 
@@ -119,9 +119,38 @@
   overflow: hidden;
   background-color: #6caafc;
   border-radius: 10px;
-  
+
 }
 
 
 
+.desktop-only {
+  display: block;
+}
 
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .tab-content {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

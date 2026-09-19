@@ -1,7 +1,7 @@
 ::ng-deep .myleague-container {
   display: flex;
   flex-direction: column;
-  
+
   height: 100%;
   width: 100%;
     background-image: url('/assets/images/mariobackgroundcolor.png');
@@ -35,9 +35,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  
-  
-  
+
+
+
   height: 80%;
   width: 60%;
   background-color: #90bffd;
@@ -59,16 +59,16 @@
     align-items: center;
     justify-content: center;
     border-bottom: black solid 1px;
-    
-    
-   
-    
+
+
+
+
     width: 50%;
 }
 
 .leaguejoin-header {
     font-size: 1.5em;
-    
+
     width: 80%;
     text-align: center;
     text-overflow: none;
@@ -119,8 +119,8 @@
     gap: 1rem;
     margin-top: 20px;
     overflow-y: auto;
-    scrollbar-width: none; 
-    
+    scrollbar-width: none;
+
 }
 
 .indiv-leagues {
@@ -134,3 +134,4 @@
     cursor: pointer;
     margin-bottom: 1rem;
 }
+

@@ -16,10 +16,10 @@
     width: 100%;
     margin-top: 10px;
     overflow-y: auto;
-   
+
      overflow-x: hidden;
-  
-  
+
+
   }
 
 .player-stats-content {
@@ -40,7 +40,7 @@
 .player-stats-table {
     width: 95%;
     border-collapse: collapse;
-    
+
     margin-right: 40px;
     margin-left: 40px;
     margin-bottom: 20px;
@@ -50,7 +50,7 @@
     border-collapse: collapse;
     table-layout: fixed;
     overflow-x: hidden;
-    
+
 
 }
 
@@ -68,8 +68,8 @@
     line-height: 40px;
     padding: 8px;
     background: #fff;
-    
-   
+
+
 }
 
 
@@ -88,17 +88,74 @@
 }
 
 .player-stats-header-mvp {
-   
+
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     font-size: 1rem;
     margin-bottom: 10px;
-   
+    gap: 10px;
+
 }
 
 .player-stats-table tbody {
-    min-height: 200px; 
+    min-height: 200px;
 
+}
+
+@media (max-width: 768px) {
+  .player-stats-container {
+    width: 100%;
+    height: auto;
+    margin-top: 0;
+    overflow-x: hidden;
+  }
+
+  .player-stats-content {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    align-items: stretch;
+    overflow-x: auto;
+  }
+
+  .player-stats-header,
+  .player-stats-header-mvp {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .player-stats-header select,
+  .player-stats-header button,
+  .player-stats-header-mvp select {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+  }
+
+  .player-stats-table {
+    width: max-content;
+    min-width: 850px;
+    margin: 0 12px 20px;
+    table-layout: auto;
+  }
+
+  .player-stats-table th,
+  .player-stats-table td {
+    white-space: nowrap;
+    line-height: normal;
+    height: auto;
+    padding: 10px 8px;
+  }
+
+  .input {
+    width: 60px;
+    height: 36px;
+  }
 }
