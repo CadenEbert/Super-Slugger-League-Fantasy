@@ -43,6 +43,7 @@ export class Settings {
         console.log('Draft settings updated successfully');
       },
       error: (error) => {
+        this.reseting = false;
         console.error('Error updating draft settings:', error);
       }
     });
@@ -54,7 +55,7 @@ export class Settings {
     } else {
       this.deleting$.next(true);
     }
-  
+
   }
 
   deleteLeague() {
@@ -91,20 +92,23 @@ export class Settings {
       }
     });
 
-   
+
   }
 
   updateRosterLimit(newLimit: number) {
     this.reseting = true;
     if (newLimit < 9) {
+      this.reseting = false;
       return alert('Cant have less than 9 players');
     }
 
     if (!Number.isInteger(newLimit)) {
+      this.reseting = false;
       return alert('Please enter a whole number');
     }
 
     if (newLimit > 11) {
+      this.reseting = false;
       return alert('Cant have more than 11 players');
     }
 
@@ -115,6 +119,7 @@ export class Settings {
         alert('Roster limit updated successfully');
       },
       error: (error) => {
+        this.reseting = false;
         console.error('Error updating roster limit:', error);
         alert('Error updating roster limit');
       }
@@ -122,23 +127,29 @@ export class Settings {
   }
 
   updateProtectionLimit(newLimit: number) {
+    this.reseting = true;
     if (newLimit < 0) {
+      this.reseting = false;
       return alert('No Negative Numbers');
     }
 
     if (!Number.isInteger(newLimit)) {
+      this.reseting = false;
       return alert('Please enter a whole number');
     }
 
     if (newLimit > 11) {
+      this.reseting = false;
       return alert('Too Many Protections');
     }
     this.leagueService.updateProtctionLimit(this.leagueId, newLimit).subscribe({
       next: () => {
+        this.reseting = false;
         console.log('Protection limit updated successfully');
         alert('Protections updated successfully');
       },
       error: (error) => {
+        this.reseting = false;
         console.error('Error updating roster limit:', error);
         alert('Protections update failed');
       }
