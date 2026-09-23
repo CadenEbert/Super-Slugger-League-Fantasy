@@ -60,6 +60,7 @@ export class Settings {
 
   deleteLeague() {
     this.reseting = true;
+    console.log('Deleting league...', this.leagueId);
 
     this.leagueService.deleteLeague(this.leagueId).subscribe({
       next: () => {
