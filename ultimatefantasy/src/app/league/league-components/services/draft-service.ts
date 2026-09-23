@@ -50,6 +50,7 @@ export class DraftService implements OnDestroy {
   private activeChannels: Map<string, RealtimeChannel> = new Map();
   private playerFilterSubject = new Subject<string>();
 
+  private allDraftedPlayers: any[] = [];
   playerFilter$ = this.playerFilterSubject.asObservable().pipe(
     startWith('All')
   );
@@ -130,7 +131,7 @@ export class DraftService implements OnDestroy {
         } else {
           this.pickOrderSubject.next((draft as any).pick_order);
         }
-
+        this.allDraftedPlayers = draftedPlayers;
         this.draftedPlayersWithStats$.next(draftedPlayers);
 
 
@@ -158,6 +159,7 @@ export class DraftService implements OnDestroy {
 
             this.setDraftPlayers(draftPlayers.players);
 
+            this.allDraftedPlayers = draftedPlayers;
             this.draftedPlayersWithStats$.next(draftedPlayers);
 
           });
@@ -359,10 +361,14 @@ export class DraftService implements OnDestroy {
 
   changeDraftedSort(newSort: String) {
     if (newSort === 'All Picks') {
-      this.draftedPlayersWithStats$.next(this.draftedPlayersWithStats$.value.sort((a, b) => a.pick_number - b.pick_number));
+      this.draftedPlayersWithStats$.next(
+        [...this.allDraftedPlayers].sort((a, b) => a.pick_number - b.pick_number)
+      );
     } else if (newSort === 'My Team') {
-      const myTeamDrafted = this.draftedPlayersWithStats$.value.filter(player => player.member_picking === this.userId$.value);
-      this.draftedPlayersWithStats$.next(myTeamDrafted.sort((a, b) => a.pick_number - b.pick_number));
+      const myTeamDrafted = this.allDraftedPlayers.filter(player => player.member_picking === this.userId$.value);
+      this.draftedPlayersWithStats$.next(
+        myTeamDrafted.sort((a, b) => a.pick_number - b.pick_number)
+      );
     }
   }
 
