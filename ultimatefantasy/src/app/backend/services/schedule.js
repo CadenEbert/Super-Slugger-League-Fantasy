@@ -297,11 +297,7 @@ exports.updateGame = async (leagueId, gameId, homeTeam, awayTeam, homeScore, awa
             throw new Error('Game or schedule not found');
         }
 
-        if (Number(game.week) < Number(schedule.current_week)) {
-            const error = new Error('Past games cannot be edited');
-            error.status = 403;
-            throw error;
-        }
+
 
         const { error } = await client
             .from('schedule_games')

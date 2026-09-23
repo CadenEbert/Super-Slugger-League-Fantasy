@@ -235,9 +235,14 @@ export class ScheduleService {
 
 
   completeWeek(league_id: string) {
+    this.setLoading(true);
     const current_week = this.scheduleMetadataSubject.getValue()?.current_week;
     this.leagueCompService.completeWeek(league_id, current_week).subscribe({
-      next: () => {},
+      next: () => {
+        this.setLoading(false);
+        alert(`Week ${current_week} completed successfully.`);
+        window.location.reload();
+      },
       error: (err) => console.error('Error completing week:', err)
     });
   }

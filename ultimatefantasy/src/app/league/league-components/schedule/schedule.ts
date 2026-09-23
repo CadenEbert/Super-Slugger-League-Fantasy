@@ -47,9 +47,7 @@ export class Schedule {
   }
 
   updateGame(game: Game) {
-    if (!this.scheduleService.isGameEditable(game)) {
-      return;
-    }
+
 
     this.router.navigate([`/league-page/${this.leagueId}/update-schedule`], { state: { game } });
   }
