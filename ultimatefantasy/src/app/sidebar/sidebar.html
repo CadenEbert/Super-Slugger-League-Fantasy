@@ -1,35 +1,27 @@
+
 <button *ngIf="!isSidebarOpen" class="menu-button" (click)="toggleSidebar()">☰</button>
 
 
 <aside class="sidebar">
-  <div class="sidebar-header">
-    <h2>SSL Fantasy</h2>
-    <button class="close-button" (click)="toggleSidebar()">X</button>
+    <div class="sidebar-header">
+        <h2>SSL Fantasy</h2>
+        <button class="close-button" (click)="toggleSidebar()">X</button>
 
-  </div>
-  <nav class="nav">
-    <ul>
-      <li><a class="sidebar-btn" routerLink="/homepage">Home</a></li>
-      <li><a class="sidebar-btn" routerLink="/create-league">Create League</a></li>
-      <li><a class="sidebar-btn" routerLink="/my-leagues">My Leagues</a></li>
-
-
-    </ul>
-
-    <ul class="mobile-league-nav">
-      <li><a class="sidebar-btn" routerLink="teams">Teams</a></li>
-      <li><a class="sidebar-btn" routerLink="schedule">Schedule</a></li>
-      <li><a class="sidebar-btn" routerLink="standings">Standings</a></li>
-      <li><a class="sidebar-btn" routerLink="free-agents">Free Agents</a></li>
-      <li><a class="sidebar-btn" routerLink="player-stats">Player Stats</a></li>
-      <li><a class="sidebar-btn" routerLink="draft-board">Draft Board</a></li>
-    </ul>
-  </nav>
+    </div>
+    <nav class="nav">
+        <ul>
+        <li><a class="sidebar-btn" routerLink="/homepage">Home</a></li>
+        <li><a class="sidebar-btn" routerLink="/create-league">Create League</a></li>
+        <li><a class="sidebar-btn" routerLink="/my-leagues">My Leagues</a></li>
+       
+        
+        </ul>
+    </nav>
 
 
-  <div class="sidebar-footer" *ngIf="!(sidebarService.isOwner$ | async)">
-    <button class="sidebar-btn" (click)="sidebarService.leaveLeague()">Leave League</button>
-  </div>
+    <div class="sidebar-footer" *ngIf="!(sidebarService.isOwner$ | async)">
+        <button class="sidebar-btn" (click)="sidebarService.leaveLeague()">Leave League</button>
+    </div>
 
 
 

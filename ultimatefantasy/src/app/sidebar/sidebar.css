@@ -20,7 +20,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
+   
 }
 
 .dark-theme {
@@ -51,11 +51,11 @@
     text-align: left;
     text-decoration: none;
     font-size: 20px;
-
+    
 
 
     background-color: #90bffd;
-
+    
     border: none;
     cursor: pointer;
     border-radius: 4px;
@@ -87,7 +87,7 @@
     right: 20px;
     z-index: 1100;
     background-color: #90bffd;
-
+    
     border: none;
     padding: 10px 15px;
     cursor: pointer;
@@ -106,37 +106,6 @@
     cursor: pointer;
     border-radius: 4px;
     margin-left: 10px;
-
+    
 }
 
-.mobile-league-nav {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .mobile-league-nav {
-        display: block;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(0, 0, 0, 0.25);
-    }
-
-    .sidebar {
-        top: 0;
-        left: 0;
-        width: min(80vw, 280px);
-        height: 100vh;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
-
-    .menu-button {
-        top: 12px;
-        left: 12px;
-        right: auto;
-    }
-
-    .tab-nav {
-        display: none;
-    }
-}
